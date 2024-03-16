@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">testAndroidPro</string>
+    <string name="HomePage">home</string>
+    <string name="InfoPage">info</string>
+</resources>

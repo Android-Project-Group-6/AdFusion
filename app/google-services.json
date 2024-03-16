@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "39860544479",
+    "project_id": "testandroidpro-179da",
+    "storage_bucket": "testandroidpro-179da.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:39860544479:android:65658c4d328eb3a8c41a6a",
+        "android_client_info": {
+          "package_name": "com.example.testandroidpro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfw1T1DqqoDvZkrsn5VcZnLZTc2yR_xHQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
