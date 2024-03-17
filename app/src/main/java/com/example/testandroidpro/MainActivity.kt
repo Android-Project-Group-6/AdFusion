@@ -1,18 +1,24 @@
 package com.example.testandroidpro
 
-//import com.github.barteksc.pdfviewer.PDFView
+import android.annotation.SuppressLint
+import com.github.barteksc.pdfviewer.PDFView
 import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -59,12 +65,21 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.navOptions
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.lifecycleScope
+import com.github.barteksc.pdfviewer.util.FitPolicy
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.io.File
 
 
@@ -165,21 +180,85 @@ fun InfoScreen(navController: NavController) {
             .padding(top = 16.dp, bottom = 16.dp)
     )
 }
-//@Composable
-//fun PdfViewer(pdfFile: File) {
-//    AndroidView(
-//        factory = { context ->
-//            PDFView(context, null).apply {
-//                fromFile(pdfFile).load()
-//            }
-//        },
-//        update = { view ->
-//            view.fromFile(pdfFile).load()
-//        }
-//    )
-//}
+@Composable
+fun PdfViewer(pdfFile: File, modifier: Modifier = Modifier) {
+
+        AndroidView(
+            factory = { context ->
+                PDFView(context, null).apply {
+                    fromFile(pdfFile)
+                        .enableSwipe(true) // 启用滑动翻页
+                        .swipeHorizontal(false) // 设置为垂直滑动
+                        .enableDoubletap(true) // 启用双击缩放
+                        .defaultPage(0) // 设置默认打开的页面
+                        .enableAnnotationRendering(false) // 渲染注释（默认为false）
+                        .password(null) // 如果PDF有密码，则输入密码
+                        .scrollHandle(null) // 设置滚动条样式（默认为null）
+                        .enableAntialiasing(true) // 改善低分辨率屏幕上的渲染
+                        .spacing(0) // 在页面之间添加间距（默认为0）
+                        .autoSpacing(false) // 在页面之间添加动态间距以适应屏幕方向
+                        .pageFitPolicy(FitPolicy.WIDTH) // 模式设置为适应屏幕宽度
+                        .load()
+                }
+            },
+            update = { view ->
+                view.fromFile(pdfFile).load()
+            },
+            modifier = modifier
+        )
+
+}
+//    val storage = Firebase.storage
+//    var storageRef = storage.reference
+//    val pathReference = storageRef.child("Koko-Suomen-tarjoukset-to-14-3-ke-20-3-05.pdf")
+////    val gsReference = storage.getReferenceFromUrl("gs://testandroidpro-179da.appspot.com/Koko-Suomen-tarjoukset-to-14-3-ke-20-3-05.pdf")
+//    var islandRef = storageRef.child("Koko-Suomen-tarjoukset-to-14-3-ke-20-3-05.pdf")
+//
+//    val localFile = File.createTempFile("tmpPDF", "pdf")
+//
+//    islandRef.getFile(localFile).addOnSuccessListener {
+//        // Local temp file has been created
+//        Log.d("TestPdf1","success1")
+//    }.addOnFailureListener {
+//        // Handle any errors
+//    }
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun MainScreen(navController: NavController) {
+//    val context = LocalContext.current
+//    val storageReference = FirebaseStorage.getInstance().reference
+//    val pathReference = storageReference.child("Koko-Suomen-tarjoukset-to-14-3-ke-20-3-05.pdf")
+//    val localFile = File.createTempFile("tempPdf", "pdf")
+//
+//    val pdfFile = remember { mutableStateOf<File?>(null) }
+//
+//    val lifecycleOwner = LocalLifecycleOwner.current
+//
+//    lifecycleOwner.lifecycleScope.launch {
+//        pathReference.getFile(localFile).addOnSuccessListener {
+//            pdfFile.value = localFile
+//            Log.d("TestPdf","success")
+//        }.addOnFailureListener {
+//            // Handle any errors
+//        }
+//    }
+    val context = LocalContext.current
+    val storageReference = FirebaseStorage.getInstance().reference
+    val pathReference = storageReference.child("Koko-Suomen-tarjoukset-to-14-3-ke-20-3-05.pdf")
+    val localFile = File.createTempFile("tempPdf", "pdf")
+
+    val pdfFile = remember { mutableStateOf<File?>(null) }
+
+    LaunchedEffect(Unit) {
+        try {
+            pathReference.getFile(localFile).await() // 等待文件下载完成
+            pdfFile.value = localFile
+            Log.d("TestPdf","success")
+        } catch (e: Exception) {
+            Log.e("TestPdf", "Error loading PDF", e)
+            // 处理加载PDF文件时的错误
+        }
+    }
     Scaffold (
         topBar = {MainTopBar(navController)},
         content = {
@@ -196,16 +275,38 @@ fun MainScreen(navController: NavController) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 16.dp, bottom = 16.dp)
+                        .weight(0.1f)
                 )
-                //在这里显示PDF
 
+                Box(
+                    modifier = Modifier
+                        .background(Color.LightGray)
+                        .border(2.dp, Color.Black) // 添加2dp的黑色边框
+                        .weight(1f)
+                ) {
+                    pdfFile.value?.let {
+                        PdfViewer(
+                            it, Modifier
+                                .fillMaxSize() // 设置宽度为最大
+                                .padding(16.dp)
+                                .clipToBounds()
+                        ) // 添加16dp的填充
 
+                    }
+                }
             }
         }
     )
-
 }
 
+//                Column(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .padding(it)
+////                        .verticalScroll(rememberScrollState())
+//                        .clipToBounds(),
+//                )
+//                {
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SignupScreen(navController: NavController,adViewModel: adViewModel = viewModel()) {
