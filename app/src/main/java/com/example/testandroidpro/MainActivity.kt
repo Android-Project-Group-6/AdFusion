@@ -353,6 +353,7 @@ fun SignupScreen(navController: NavController,adViewModel: adViewModel = viewMod
                 .fillMaxWidth()
                 .padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
         )
+
         OutlinedTextField(
             value = adViewModel.userName,
             onValueChange = {adViewModel.userName = it.replace(',','.')},
