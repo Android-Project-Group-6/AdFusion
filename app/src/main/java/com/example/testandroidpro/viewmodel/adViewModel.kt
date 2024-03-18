@@ -8,23 +8,93 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.tasks.await
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import androidx.navigation.navOptions
-import kotlinx.coroutines.launch
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.storage.FirebaseStorage
+import java.io.File
 
-class adViewModel: ViewModel()  {
+class AdViewModel: ViewModel()  {
     var email: String by  mutableStateOf("")
     var passWord: String by  mutableStateOf("")
     var userAddress: String by  mutableStateOf("")
     var userPhoneNum: String by  mutableStateOf("")
     var userName: String by  mutableStateOf("")
     var userState: String by  mutableStateOf("")
-    val db = Firebase.firestore
+
     val fAuth = Firebase.auth
     val currentUser = fAuth.currentUser
 
+    val db = Firebase.firestore
+    val dataState = mutableStateOf<List<DocumentSnapshot>>(emptyList())
+
+    val localFilesIcon = mutableListOf<File>()
+
+    init {
+        readSuppliersData()
+    }
+    fun readSuppliersData(){
+        db.collection("suppliers")
+            .get()
+            .addOnSuccessListener { result ->
+                dataState.value = result.documents
+                Log.d("Read suppliers Data", "success")
+                for (document in dataState.value) {
+                    Log.d("Read suppliers Data", "${document.id} => ${document.data}")
+                }
+                readSuppliersResIcon()
+            }
+            .addOnFailureListener { e ->
+                Log.w("Read suppliers Data", "Error adding document", e)
+            }
+    }
+
+    fun readSuppliersResIcon(){
+        val storageReference = FirebaseStorage.getInstance().reference
+        var pathReference = storageReference.child("Koko-Suomen-tarjoukset-to-14-3-ke-20-3-05.pdf")
+
+        val pdfFile =   mutableStateOf<File?>(null)
+        val loading =   mutableStateOf(true)
+
+        for (document in dataState.value) {
+            Log.d("Read suppliers Icon Data", "${document.id} => ${document.data}")
+            val icon = document.getString("icon")
+            val name = document.id
+
+            if (icon != "") {
+                val localFile = File.createTempFile(name, "png")
+                localFilesIcon.add(localFile)
+                pathReference = storageReference.child(icon ?: "")
+                pathReference
+                    .getFile(localFile)
+                    .addOnSuccessListener {
+                        pdfFile.value = localFile
+                        loading.value = false
+                        Log.d("Read suppliers Icon Data", "success $name")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("Read suppliers Icon Data", "Error loading PDF", e)
+                    }
+            }
+            else{
+                Log.d("Read suppliers Icon Data", "fail")
+            }
+        }
+        for (file in localFilesIcon) {
+            Log.d("Read suppliers Icon Data", "File: ${file.name}")
+        }
+    }
+    fun getLocalFile(iconName: String): File? {
+        val file = localFilesIcon.find { it.name.contains(iconName) }
+        if (file == null) {
+            Log.d("getLocalFile", "No local file found for $iconName")
+        }
+        else{
+            Log.d("getLocalFile", "success found for $iconName")
+            val fileContent = file.readText()
+            Log.d("FileContent", fileContent)
+        }
+        return file
+    }
     fun userSignup(navController: NavController) {
         if (email.isNotEmpty() && passWord.isNotEmpty()) {
             fAuth.createUserWithEmailAndPassword(email, passWord)
@@ -96,4 +166,6 @@ class adViewModel: ViewModel()  {
             Log.d("Login", "Email or Password is empty")
         }
     }
+
+
 }

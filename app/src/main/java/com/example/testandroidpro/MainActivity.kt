@@ -8,10 +8,14 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +23,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -26,6 +32,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -60,28 +67,35 @@ import com.example.testandroidpro.ui.theme.TestAndroidProTheme
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.example.testandroidpro.viewmodel.adViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.navOptions
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.lifecycleScope
 import com.github.barteksc.pdfviewer.util.FitPolicy
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.io.File
-
+import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
+import coil.request.ImageResult
+import com.example.testandroidpro.viewmodel.AdViewModel
 
 
 class MainActivity : ComponentActivity() {
@@ -182,7 +196,6 @@ fun InfoScreen(navController: NavController) {
 }
 @Composable
 fun PdfViewer(pdfFile: File, modifier: Modifier = Modifier) {
-
         AndroidView(
             factory = { context ->
                 PDFView(context, null).apply {
@@ -222,9 +235,9 @@ fun PdfViewer(pdfFile: File, modifier: Modifier = Modifier) {
 //    }.addOnFailureListener {
 //        // Handle any errors
 //    }
-@SuppressLint("CoroutineCreationDuringComposition")
-@Composable
-fun MainScreen(navController: NavController) {
+
+
+
 //    val context = LocalContext.current
 //    val storageReference = FirebaseStorage.getInstance().reference
 //    val pathReference = storageReference.child("Koko-Suomen-tarjoukset-to-14-3-ke-20-3-05.pdf")
@@ -242,23 +255,115 @@ fun MainScreen(navController: NavController) {
 //            // Handle any errors
 //        }
 //    }
+
+
+@Composable
+fun PdfScreen(navController: NavController) {
+
     val context = LocalContext.current
     val storageReference = FirebaseStorage.getInstance().reference
     val pathReference = storageReference.child("Koko-Suomen-tarjoukset-to-14-3-ke-20-3-05.pdf")
     val localFile = File.createTempFile("tempPdf", "pdf")
 
     val pdfFile = remember { mutableStateOf<File?>(null) }
+    val loading = remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
         try {
             pathReference.getFile(localFile).await() // 等待文件下载完成
             pdfFile.value = localFile
+            loading.value = false
             Log.d("TestPdf","success")
         } catch (e: Exception) {
             Log.e("TestPdf", "Error loading PDF", e)
             // 处理加载PDF文件时的错误
         }
     }
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+    ) {
+        Text(
+            text = "I am Pdf",
+            fontSize = 24.sp,
+            color = MaterialTheme.colorScheme.primary,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp, bottom = 16.dp)
+                .weight(0.1f)
+        )
+        if (loading.value) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f)
+                    .align(Alignment.CenterHorizontally),
+            ) {
+                Text(
+                    text = "Loading...",
+                    fontSize = 24.sp,
+                    color = MaterialTheme.colorScheme.primary,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp, bottom = 16.dp)
+                        .weight(0.1f)
+                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally // 水平居中对齐
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+        } else {
+            Box(
+                modifier = Modifier
+                    .background(Color.LightGray)
+                    .border(2.dp, Color.Black)
+                    .weight(1f)
+            ) {
+                pdfFile.value?.let {
+                    PdfViewer(
+                        it, Modifier
+                            .fillMaxSize()
+                            .padding(16.dp)
+                            .clipToBounds()
+                    )
+                }
+            }
+        }
+    }
+}
+//    val db = Firebase.firestore
+//    db.collection("suppliers")
+//        .get()
+//        .addOnSuccessListener { result ->
+//            for (document in result) {
+//                Log.d(TAG, "${document.id} => ${document.data}")
+//            }
+//        }
+//        .addOnFailureListener { e ->
+//            Log.w("test read database", "Error adding document", e)
+//        }
+//    val db = Firebase.firestore
+//    val dataState = remember { mutableStateOf<List<DocumentSnapshot>>(emptyList()) }
+//
+//    LaunchedEffect(Unit) {
+//        try {
+//            val result = db.collection("suppliers").get().await()
+//            dataState.value = result.documents
+//        } catch (e: Exception) {
+//            Log.e(TAG, "Error fetching data: ", e)
+//        }
+//    }
+@SuppressLint("CoroutineCreationDuringComposition")
+@Composable
+fun MainScreen(navController: NavController,adViewModel: AdViewModel = viewModel()) {
+    Log.d("MainScreen","AAAAAAAAAAAAAAA")
     Scaffold (
         topBar = {MainTopBar(navController)},
         content = {
@@ -267,6 +372,7 @@ fun MainScreen(navController: NavController) {
                     .fillMaxSize()
                     .padding(it),
             ) {
+                Log.d("MainScreen","BBBBBBBBBBBB")
                 Text(
                     text = "I am Main",
                     fontSize = 24.sp,
@@ -277,27 +383,76 @@ fun MainScreen(navController: NavController) {
                         .padding(top = 16.dp, bottom = 16.dp)
                         .weight(0.1f)
                 )
-
-                Box(
+                Log.d("MainScreen","CCCCCCCCCCCCCCCCCC")
+                LazyColumn(
                     modifier = Modifier
-                        .background(Color.LightGray)
-                        .border(2.dp, Color.Black) // 添加2dp的黑色边框
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp)
                         .weight(1f)
                 ) {
-                    pdfFile.value?.let {
-                        PdfViewer(
-                            it, Modifier
-                                .fillMaxSize() // 设置宽度为最大
-                                .padding(16.dp)
-                                .clipToBounds()
-                        ) // 添加16dp的填充
+                    Log.d("MainScreen","DDDDDDDDDDDDDDDD")
+                    items(adViewModel.dataState.value) { document ->
+                        val name = document.id
+                        Row(
+                            modifier = Modifier
+//                                .border(1.dp, Color.Black)
+                                .padding(8.dp)
+                                .clickable {
+                                    Log.d("test click","click success")
+                                    navController.navigate("pdf")
+                                },
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            name.let { iconName ->
+                                val localFile = adViewModel.getLocalFile(iconName) // 获取本地文件
 
+                                if (localFile != null) {
+                                    Image(
+                                        painter = rememberAsyncImagePainter(
+                                            ImageRequest.Builder(
+                                                LocalContext.current
+                                            ).data(data = localFile).apply(block = fun ImageRequest.Builder.() {
+                                                crossfade(true)
+                                            }).build()
+                                        ),
+                                        contentDescription = null,
+                                        modifier = Modifier
+                                            .padding(16.dp)
+                                            .weight(0.5f)
+                                            .size(50.dp)
+                                    )
+                                }
+                            }
+
+                            Text(
+                                text = document.id,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(16.dp),
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
                 }
             }
         }
     )
 }
+//                            AsyncImage(
+//                                model = (R.drawable.lidl),
+//                                contentDescription = null,
+//                                modifier = Modifier
+//                                    .padding(16.dp)
+//                                    .weight(0.5f)
+//                                    .size(50.dp)
+//                            )
+//                            Text(
+//                                text = "document.id",
+//                                modifier = Modifier
+//                                    .weight(1f)
+//                                    .padding(16.dp),
+//                                textAlign = TextAlign.Center
+//                            )
 
 //                Column(
 //                    modifier = Modifier
@@ -309,7 +464,7 @@ fun MainScreen(navController: NavController) {
 //                {
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun SignupScreen(navController: NavController,adViewModel: adViewModel = viewModel()) {
+fun SignupScreen(navController: NavController,adViewModel: AdViewModel = viewModel()) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -409,7 +564,7 @@ fun SignupScreen(navController: NavController,adViewModel: adViewModel = viewMod
 }
 
 @Composable
-fun LoginScreen(navController: NavController,adViewModel: adViewModel = viewModel()) {
+fun LoginScreen(navController: NavController,adViewModel: AdViewModel = viewModel()) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -507,6 +662,10 @@ fun MyApp() {
         composable(route = "info"){
             InfoScreen(navController)
         }
+        composable(route = "pdf"){
+            PdfScreen(navController)
+        }
+
     }
 }
 
