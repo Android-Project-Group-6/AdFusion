@@ -183,7 +183,7 @@ fun MainTopBar(navController: NavController) {
 
 
 @Composable
-fun InfoScreen(navController: NavController) {
+fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
     Text(
         text = "I am Info",
         fontSize = 24.sp,
@@ -258,7 +258,7 @@ fun PdfViewer(pdfFile: File, modifier: Modifier = Modifier) {
 
 
 @Composable
-fun PdfScreen(navController: NavController) {
+fun PdfScreen(navController: NavController, adViewModel: AdViewModel) {
 
     val context = LocalContext.current
     val storageReference = FirebaseStorage.getInstance().reference
@@ -362,7 +362,7 @@ fun PdfScreen(navController: NavController) {
 //    }
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun MainScreen(navController: NavController,adViewModel: AdViewModel = viewModel()) {
+fun MainScreen(navController: NavController,adViewModel: AdViewModel) {
     Log.d("MainScreen","AAAAAAAAAAAAAAA")
     Scaffold (
         topBar = {MainTopBar(navController)},
@@ -464,7 +464,7 @@ fun MainScreen(navController: NavController,adViewModel: AdViewModel = viewModel
 //                {
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun SignupScreen(navController: NavController,adViewModel: AdViewModel = viewModel()) {
+fun SignupScreen(navController: NavController, adViewModel: AdViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -564,7 +564,7 @@ fun SignupScreen(navController: NavController,adViewModel: AdViewModel = viewMod
 }
 
 @Composable
-fun LoginScreen(navController: NavController,adViewModel: AdViewModel = viewModel()) {
+fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -646,24 +646,24 @@ fun LoginScreen(navController: NavController,adViewModel: AdViewModel = viewMode
 fun MyApp() {
     val navController = rememberNavController()
     val context = LocalContext.current
-
+    val adViewModel: AdViewModel = viewModel()
     NavHost(navController = navController, startDestination = "login"
     )
     {
         composable(route = "login"){
-            LoginScreen(navController)
+            LoginScreen(navController,adViewModel)
         }
         composable(route = context.getString(R.string.HomePage)){
-            MainScreen(navController)
+            MainScreen(navController,adViewModel)
         }
         composable(route = "signup"){
-            SignupScreen(navController)
+            SignupScreen(navController,adViewModel)
         }
         composable(route = "info"){
-            InfoScreen(navController)
+            InfoScreen(navController,adViewModel)
         }
         composable(route = "pdf"){
-            PdfScreen(navController)
+            PdfScreen(navController,adViewModel)
         }
 
     }
