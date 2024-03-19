@@ -30,9 +30,11 @@ class AdViewModel: ViewModel()  {
     val localFilesIcon = mutableListOf<File>()
 
     init {
+        Log.d("MVVM","Init")
         readSuppliersData()
     }
     fun readSuppliersData(){
+        Log.d("MVVM","Init readSuppliersData")
         db.collection("suppliers")
             .get()
             .addOnSuccessListener { result ->
@@ -54,7 +56,7 @@ class AdViewModel: ViewModel()  {
 
         val pdfFile =   mutableStateOf<File?>(null)
         val loading =   mutableStateOf(true)
-
+        Log.d("MVVM","Init readSuppliersResIcon")
         for (document in dataState.value) {
             Log.d("Read suppliers Icon Data", "${document.id} => ${document.data}")
             val icon = document.getString("icon")
@@ -62,14 +64,17 @@ class AdViewModel: ViewModel()  {
 
             if (icon != "") {
                 val localFile = File.createTempFile(name, "png")
-                localFilesIcon.add(localFile)
+
                 pathReference = storageReference.child(icon ?: "")
                 pathReference
                     .getFile(localFile)
                     .addOnSuccessListener {
                         pdfFile.value = localFile
                         loading.value = false
+                        localFilesIcon.add(localFile)
                         Log.d("Read suppliers Icon Data", "success $name")
+                        val fileContent = localFile.readText()
+                        Log.d("FileContent", fileContent)
                     }
                     .addOnFailureListener { e ->
                         Log.e("Read suppliers Icon Data", "Error loading PDF", e)
