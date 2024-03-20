@@ -30,7 +30,10 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -81,6 +84,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.lifecycleScope
 import com.github.barteksc.pdfviewer.util.FitPolicy
@@ -96,7 +103,8 @@ import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
 import coil.request.ImageResult
 import com.example.testandroidpro.viewmodel.AdViewModel
-
+import androidx.compose.material.icons.outlined.Visibility
+import androidx.compose.material.icons.outlined.VisibilityOff
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -565,6 +573,7 @@ fun SignupScreen(navController: NavController, adViewModel: AdViewModel) {
 
 @Composable
 fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
+    var showKey by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -590,23 +599,60 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
         )
         OutlinedTextField(
             value = adViewModel.email,
-            onValueChange = {adViewModel.email = it.replace(',','.')},
-            label =  {Text("Email")},
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            onValueChange = {
+                adViewModel.email = it.replace(',','.')
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Email,
+                    contentDescription = "Email Icon"
+                )
+            },
+            trailingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "Person Icon"
+                )
+            },
+            label = { Text(text = "Email") },
+            placeholder = { Text(text = "Type your email") },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+                .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Email,
+                capitalization = KeyboardCapitalization.None
+            )
         )
         OutlinedTextField(
             value = adViewModel.passWord,
-            onValueChange = {adViewModel.passWord = it.replace(',','.')},
-            label = {Text("PassWord")},
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            onValueChange = {
+                adViewModel.passWord = it.replace(',','.')
+            },
+            label = { Text(text = "Password") },
+            placeholder = { Text(text = "Enter your password") },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Outlined.Lock,
+                    contentDescription = "Lock Icon"
+                )
+            },
+            trailingIcon = {
+                IconButton(onClick = { showKey = !showKey }) {
+                    Icon(
+                        imageVector = if (showKey) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
+                        contentDescription = if (showKey) "Show Password" else "Hide Password"
+                    )
+                }
+            },
+            visualTransformation = if (showKey) VisualTransformation.None else PasswordVisualTransformation(),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+                .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done
+            )
         )
         Button(
             modifier = Modifier
