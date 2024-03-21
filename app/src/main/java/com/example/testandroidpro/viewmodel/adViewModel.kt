@@ -3,6 +3,7 @@ package com.example.testandroidpro.viewmodel
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.ktx.auth
@@ -29,10 +30,12 @@ class AdViewModel: ViewModel()  {
 
     val localFilesIcon = mutableListOf<File>()
 
+
     init {
         Log.d("MVVM","Init")
         readSuppliersData()
     }
+
     fun readSuppliersData(){
         Log.d("MVVM","Init readSuppliersData")
         db.collection("suppliers")
@@ -52,10 +55,7 @@ class AdViewModel: ViewModel()  {
 
     fun readSuppliersResIcon(){
         val storageReference = FirebaseStorage.getInstance().reference
-        var pathReference = storageReference.child("Koko-Suomen-tarjoukset-to-14-3-ke-20-3-05.pdf")
 
-        val pdfFile =   mutableStateOf<File?>(null)
-        val loading =   mutableStateOf(true)
         Log.d("MVVM","Init readSuppliersResIcon")
         for (document in dataState.value) {
             Log.d("Read suppliers Icon Data", "${document.id} => ${document.data}")
@@ -65,16 +65,14 @@ class AdViewModel: ViewModel()  {
             if (icon != "") {
                 val localFile = File.createTempFile(name, "png")
 
-                pathReference = storageReference.child(icon ?: "")
+                val pathReference = storageReference.child(icon ?: "")
                 pathReference
                     .getFile(localFile)
                     .addOnSuccessListener {
-                        pdfFile.value = localFile
-                        loading.value = false
                         localFilesIcon.add(localFile)
                         Log.d("Read suppliers Icon Data", "success $name")
-                        val fileContent = localFile.readText()
-                        Log.d("FileContent", fileContent)
+//                        val fileContent = localFile.readText()
+//                        Log.d("FileContent", fileContent)
                     }
                     .addOnFailureListener { e ->
                         Log.e("Read suppliers Icon Data", "Error loading PDF", e)
@@ -88,6 +86,9 @@ class AdViewModel: ViewModel()  {
             Log.d("Read suppliers Icon Data", "File: ${file.name}")
         }
     }
+
+
+
     fun getLocalFile(iconName: String): File? {
         val file = localFilesIcon.find { it.name.contains(iconName) }
         if (file == null) {
@@ -95,8 +96,8 @@ class AdViewModel: ViewModel()  {
         }
         else{
             Log.d("getLocalFile", "success found for $iconName")
-            val fileContent = file.readText()
-            Log.d("FileContent", fileContent)
+//            val fileContent = file.readText()
+//            Log.d("FileContent", fileContent)
         }
         return file
     }

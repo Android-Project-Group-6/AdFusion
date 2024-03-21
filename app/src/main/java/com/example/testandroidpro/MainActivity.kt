@@ -105,6 +105,7 @@ import coil.request.ImageResult
 import com.example.testandroidpro.viewmodel.AdViewModel
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
+import com.example.testandroidpro.viewmodel.PdfLoadViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -266,27 +267,29 @@ fun PdfViewer(pdfFile: File, modifier: Modifier = Modifier) {
 
 
 @Composable
-fun PdfScreen(navController: NavController, adViewModel: AdViewModel) {
+fun PdfScreen(navController: NavController, adViewModel: AdViewModel, filePath: String) {
 
     val context = LocalContext.current
     val storageReference = FirebaseStorage.getInstance().reference
-    val pathReference = storageReference.child("Koko-Suomen-tarjoukset-to-14-3-ke-20-3-05.pdf")
+    val pathReference = storageReference.child(filePath)//pdfLoadViewModel.filePath
     val localFile = File.createTempFile("tempPdf", "pdf")
 
     val pdfFile = remember { mutableStateOf<File?>(null) }
-    val loading = remember { mutableStateOf(true) }
+    val pdfLoading = remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
         try {
-            pathReference.getFile(localFile).await() // 等待文件下载完成
+            pathReference.getFile(localFile).await()
             pdfFile.value = localFile
-            loading.value = false
+            pdfLoading.value = false
             Log.d("TestPdf","success")
         } catch (e: Exception) {
             Log.e("TestPdf", "Error loading PDF", e)
-            // 处理加载PDF文件时的错误
+//            Log.d("TestPdf",pdfLoadViewModel.filePath)
         }
     }
+
+//    pdfLoadViewModel.loadPdfFile()
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -301,7 +304,8 @@ fun PdfScreen(navController: NavController, adViewModel: AdViewModel) {
                 .padding(top = 16.dp, bottom = 16.dp)
                 .weight(0.1f)
         )
-        if (loading.value) {
+        Log.d("qqqqq",pdfLoading.value.toString())//pdfLoadViewModel.
+        if (pdfLoading.value) {//pdfLoadViewModel.
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -334,7 +338,7 @@ fun PdfScreen(navController: NavController, adViewModel: AdViewModel) {
                     .border(2.dp, Color.Black)
                     .weight(1f)
             ) {
-                pdfFile.value?.let {
+                pdfFile.value?.let {//pdfLoadViewModel.
                     PdfViewer(
                         it, Modifier
                             .fillMaxSize()
@@ -370,7 +374,7 @@ fun PdfScreen(navController: NavController, adViewModel: AdViewModel) {
 //    }
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun MainScreen(navController: NavController,adViewModel: AdViewModel) {
+fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadViewModel:PdfLoadViewModel) {
     Log.d("MainScreen","AAAAAAAAAAAAAAA")
     Scaffold (
         topBar = {MainTopBar(navController)},
@@ -406,14 +410,15 @@ fun MainScreen(navController: NavController,adViewModel: AdViewModel) {
 //                                .border(1.dp, Color.Black)
                                 .padding(8.dp)
                                 .clickable {
+                                    pdfLoadViewModel.filePath = document.getString("pdf").toString()
+//                                    pdfLoadViewModel.loadPdfFile()
                                     Log.d("test click","click success")
                                     navController.navigate("pdf")
                                 },
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             name.let { iconName ->
-                                val localFile = adViewModel.getLocalFile(iconName) // 获取本地文件
-
+                                val localFile = adViewModel.getLocalFile(iconName)
                                 if (localFile != null) {
                                     Image(
                                         painter = rememberAsyncImagePainter(
@@ -427,7 +432,7 @@ fun MainScreen(navController: NavController,adViewModel: AdViewModel) {
                                         modifier = Modifier
                                             .padding(16.dp)
                                             .weight(0.5f)
-                                            .size(50.dp)
+                                            .size(80.dp)
                                     )
                                 }
                             }
@@ -688,30 +693,65 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
     }
 }
 
+//@Composable
+//fun MyApp() {
+//    val navController = rememberNavController()
+//    val context = LocalContext.current
+//    val adViewModel: AdViewModel = viewModel()
+//    val pdfLoadViewModel:PdfLoadViewModel = viewModel()
+//    NavHost(navController = navController, startDestination = "login"
+//    )
+//    {
+//        composable(route = "login"){
+//            LoginScreen(navController,adViewModel)
+//        }
+//        composable(route = context.getString(R.string.HomePage)){
+//            MainScreen(navController,adViewModel,pdfLoadViewModel)
+//        }
+//        composable(route = "signup"){
+//            SignupScreen(navController,adViewModel)
+//        }
+//        composable(route = "info"){
+//            InfoScreen(navController,adViewModel)
+//        }
+//        composable(route = "pdf"){
+//            PdfScreen(navController,adViewModel,pdfLoadViewModel)
+//        }
+//
+//    }
+//}
 @Composable
 fun MyApp() {
     val navController = rememberNavController()
     val context = LocalContext.current
     val adViewModel: AdViewModel = viewModel()
-    NavHost(navController = navController, startDestination = "login"
-    )
-    {
-        composable(route = "login"){
-            LoginScreen(navController,adViewModel)
+    val pdfLoadViewModel:PdfLoadViewModel = viewModel()
+    NavHost(navController = navController, startDestination = "login") {
+        composable(route = "login") {
+            when (navController.currentDestination?.route) {
+                "login" -> LoginScreen(navController,adViewModel)
+            }
         }
-        composable(route = context.getString(R.string.HomePage)){
-            MainScreen(navController,adViewModel)
+        composable(route = context.getString(R.string.HomePage)) {
+            when (navController.currentDestination?.route) {
+                context.getString(R.string.HomePage) -> MainScreen(navController,adViewModel,pdfLoadViewModel)
+            }
         }
-        composable(route = "signup"){
-            SignupScreen(navController,adViewModel)
+        composable(route = "signup") {
+            when (navController.currentDestination?.route) {
+                "signup" -> SignupScreen(navController,adViewModel)
+            }
         }
-        composable(route = "info"){
-            InfoScreen(navController,adViewModel)
+        composable(route = "info") {
+            when (navController.currentDestination?.route) {
+                "info" -> InfoScreen(navController,adViewModel)
+            }
         }
-        composable(route = "pdf"){
-            PdfScreen(navController,adViewModel)
+        composable(route = "pdf") {
+            when (navController.currentDestination?.route) {
+                "pdf" -> PdfScreen(navController,adViewModel,pdfLoadViewModel.filePath)
+            }
         }
-
     }
 }
 
