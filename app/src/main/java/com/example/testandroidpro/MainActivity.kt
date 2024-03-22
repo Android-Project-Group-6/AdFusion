@@ -164,7 +164,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainTopBar(navController: NavController) {
+fun MainTopBar(navController: NavController, adViewModel:AdViewModel) {
     var expanded by remember { mutableStateOf(false) }
     TopAppBar(
         title = { Text("AdFusion") },
@@ -181,10 +181,15 @@ fun MainTopBar(navController: NavController) {
                 onDismissRequest = { expanded = false }) {
                 DropdownMenuItem(
                     text = { Text("info") },
-                    onClick = { navController.navigate("info") })
-//                DropdownMenuItem(
-//                    text = { Text("Settings") },
-//                    onClick = { navController.navigate("Settings") })
+                    onClick = { navController.navigate("info") }
+                )
+                DropdownMenuItem(
+                    text = { Text("Signout") },
+                    onClick = {
+                        adViewModel.userSignOut(navController)
+//                        navController.navigate("Settings")
+                    }
+                )
             }
         }
     )
@@ -267,29 +272,11 @@ fun PdfViewer(pdfFile: File, modifier: Modifier = Modifier) {
 
 
 @Composable
-fun PdfScreen(navController: NavController, adViewModel: AdViewModel, filePath: String) {
-
+fun PdfScreen(navController: NavController, filePath: String) {
     val context = LocalContext.current
-    val storageReference = FirebaseStorage.getInstance().reference
-    val pathReference = storageReference.child(filePath)//pdfLoadViewModel.filePath
-    val localFile = File.createTempFile("tempPdf", "pdf")
+    val pdfLoadViewModel: PdfLoadViewModel = viewModel()
+    pdfLoadViewModel.loadPdfFile(filePath)
 
-    val pdfFile = remember { mutableStateOf<File?>(null) }
-    val pdfLoading = remember { mutableStateOf(true) }
-
-    LaunchedEffect(Unit) {
-        try {
-            pathReference.getFile(localFile).await()
-            pdfFile.value = localFile
-            pdfLoading.value = false
-            Log.d("TestPdf","success")
-        } catch (e: Exception) {
-            Log.e("TestPdf", "Error loading PDF", e)
-//            Log.d("TestPdf",pdfLoadViewModel.filePath)
-        }
-    }
-
-//    pdfLoadViewModel.loadPdfFile()
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -304,8 +291,7 @@ fun PdfScreen(navController: NavController, adViewModel: AdViewModel, filePath: 
                 .padding(top = 16.dp, bottom = 16.dp)
                 .weight(0.1f)
         )
-        Log.d("qqqqq",pdfLoading.value.toString())//pdfLoadViewModel.
-        if (pdfLoading.value) {//pdfLoadViewModel.
+        if (pdfLoadViewModel.pdfLoading.value) {//pdfLoadViewModel.
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -338,7 +324,7 @@ fun PdfScreen(navController: NavController, adViewModel: AdViewModel, filePath: 
                     .border(2.dp, Color.Black)
                     .weight(1f)
             ) {
-                pdfFile.value?.let {//pdfLoadViewModel.
+                pdfLoadViewModel.pdfFile.value?.let {//pdfLoadViewModel.
                     PdfViewer(
                         it, Modifier
                             .fillMaxSize()
@@ -375,18 +361,17 @@ fun PdfScreen(navController: NavController, adViewModel: AdViewModel, filePath: 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadViewModel:PdfLoadViewModel) {
-    Log.d("MainScreen","AAAAAAAAAAAAAAA")
     Scaffold (
-        topBar = {MainTopBar(navController)},
+        topBar = {MainTopBar(navController,adViewModel)},
         content = {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(it),
             ) {
-                Log.d("MainScreen","BBBBBBBBBBBB")
+                Log.d("MainScreen",adViewModel.userName)
                 Text(
-                    text = "I am Main",
+                    text = "Welcome "+adViewModel.userName.toString(),
                     fontSize = 24.sp,
                     color = MaterialTheme.colorScheme.primary,
                     textAlign = TextAlign.Center,
@@ -395,14 +380,12 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadVi
                         .padding(top = 16.dp, bottom = 16.dp)
                         .weight(0.1f)
                 )
-                Log.d("MainScreen","CCCCCCCCCCCCCCCCCC")
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(horizontal = 16.dp)
                         .weight(1f)
                 ) {
-                    Log.d("MainScreen","DDDDDDDDDDDDDDDD")
                     items(adViewModel.dataState.value) { document ->
                         val name = document.id
                         Row(
@@ -410,9 +393,11 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadVi
 //                                .border(1.dp, Color.Black)
                                 .padding(8.dp)
                                 .clickable {
-                                    pdfLoadViewModel.filePath = document.getString("pdf").toString()
+                                    adViewModel.filePath = document
+                                        .getString("pdf")
+                                        .toString()
 //                                    pdfLoadViewModel.loadPdfFile()
-                                    Log.d("test click","click success")
+                                    Log.d("test click", "click success")
                                     navController.navigate("pdf")
                                 },
                             verticalAlignment = Alignment.CenterVertically,
@@ -424,9 +409,10 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadVi
                                         painter = rememberAsyncImagePainter(
                                             ImageRequest.Builder(
                                                 LocalContext.current
-                                            ).data(data = localFile).apply(block = fun ImageRequest.Builder.() {
-                                                crossfade(true)
-                                            }).build()
+                                            ).data(data = localFile)
+                                                .apply(block = fun ImageRequest.Builder.() {
+                                                    crossfade(true)
+                                                }).build()
                                         ),
                                         contentDescription = null,
                                         modifier = Modifier
@@ -436,7 +422,6 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadVi
                                     )
                                 }
                             }
-
                             Text(
                                 text = document.id,
                                 modifier = Modifier
@@ -451,22 +436,6 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadVi
         }
     )
 }
-//                            AsyncImage(
-//                                model = (R.drawable.lidl),
-//                                contentDescription = null,
-//                                modifier = Modifier
-//                                    .padding(16.dp)
-//                                    .weight(0.5f)
-//                                    .size(50.dp)
-//                            )
-//                            Text(
-//                                text = "document.id",
-//                                modifier = Modifier
-//                                    .weight(1f)
-//                                    .padding(16.dp),
-//                                textAlign = TextAlign.Center
-//                            )
-
 //                Column(
 //                    modifier = Modifier
 //                        .fillMaxSize()
@@ -575,10 +544,16 @@ fun SignupScreen(navController: NavController, adViewModel: AdViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
+@Composable
+fun WaitingScreen(navController: NavController, adViewModel: AdViewModel) {
 
+
+
+}
 @Composable
 fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
     var showKey by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -726,7 +701,7 @@ fun MyApp() {
     val context = LocalContext.current
     val adViewModel: AdViewModel = viewModel()
     val pdfLoadViewModel:PdfLoadViewModel = viewModel()
-    NavHost(navController = navController, startDestination = "login") {
+    NavHost(navController = navController, startDestination = adViewModel.startDestination) {
         composable(route = "login") {
             when (navController.currentDestination?.route) {
                 "login" -> LoginScreen(navController,adViewModel)
@@ -749,7 +724,7 @@ fun MyApp() {
         }
         composable(route = "pdf") {
             when (navController.currentDestination?.route) {
-                "pdf" -> PdfScreen(navController,adViewModel,pdfLoadViewModel.filePath)
+                "pdf" -> PdfScreen(navController,adViewModel.filePath)
             }
         }
     }
