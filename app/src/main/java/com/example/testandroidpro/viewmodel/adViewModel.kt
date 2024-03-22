@@ -2,6 +2,7 @@ package com.example.testandroidpro.viewmodel
 
 import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -24,16 +25,17 @@ class AdViewModel: ViewModel()  {
 
     val fAuth = Firebase.auth
     val currentUser = fAuth.currentUser
-
+    var startDestination = "login"
     val db = Firebase.firestore
     val dataState = mutableStateOf<List<DocumentSnapshot>>(emptyList())
 
-    val localFilesIcon = mutableListOf<File>()
+    val localFilesIcon = mutableStateListOf<File>()
 
-
+    var filePath = ""
     init {
         Log.d("MVVM","Init")
         readSuppliersData()
+        checkUserLogin()
     }
 
     fun readSuppliersData(){
@@ -105,6 +107,7 @@ class AdViewModel: ViewModel()  {
         if (email.isNotEmpty() && passWord.isNotEmpty()) {
             fAuth.createUserWithEmailAndPassword(email, passWord)
                 .addOnSuccessListener {
+                    val currentUser = fAuth.currentUser
                     if (currentUser != null) {
 
                         db.collection("users")
@@ -113,7 +116,7 @@ class AdViewModel: ViewModel()  {
                             .document("subscribe")
                             .set(Myusub(false,false,false,false))
                             .addOnSuccessListener {
-                                Log.d("Signup Init Database", "DocumentSnapshot added with ID:")
+                                Log.d("Signup Init Database", "DocumentSnapshot added with ID: ${currentUser.uid}")
                             }
                             .addOnFailureListener { e ->
                                 Log.w("Signup Init Database", "Error adding document", e)
@@ -154,7 +157,25 @@ class AdViewModel: ViewModel()  {
         if (email.isNotEmpty() && passWord.isNotEmpty()) {
             fAuth.signInWithEmailAndPassword(email, passWord)
                 .addOnSuccessListener {
+                    val currentUser = fAuth.currentUser
                     if (currentUser != null) {
+                        db.collection("users")
+                            .document(currentUser.uid)
+                            .collection("inf")
+                            .document("details")
+                            .get()
+                            .addOnSuccessListener { document ->
+                                userAddress = document.getString("address").toString()
+                                userPhoneNum = document.getString("phonenum").toString()
+                                userName = document.getString("name").toString()
+
+                                Log.d("Signup Init Database", "DocumentSnapshot added with ID:")
+                            }
+                            .addOnFailureListener { e ->
+                                Log.w("Signup Init Database", "Error adding document", e)
+                            }
+
+
                         Log.d("Login", currentUser.uid)
                         userState = "Login success"
                         navController.popBackStack("login", inclusive = true)
@@ -173,5 +194,36 @@ class AdViewModel: ViewModel()  {
         }
     }
 
+    fun userSignOut(navController: NavController) {
+        fAuth.signOut()
+        userState = ""
+        userAddress = ""
+        userPhoneNum = ""
+        userName = ""
 
+        navController.navigate("login")
+    }
+
+    fun checkUserLogin(){
+        startDestination = if (currentUser != null) "home" else "login"
+        if (currentUser != null) {
+            db.collection("users")
+                .document(currentUser.uid)
+                .collection("inf")
+                .document("details")
+                .get()
+                .addOnSuccessListener { document ->
+                    userAddress = document.getString("address").toString()
+                    userPhoneNum = document.getString("phonenum").toString()
+                    userName = document.getString("name").toString()
+                    Log.d("checkUserLogin", currentUser.uid)
+                    Log.d("checkUserLogin", userAddress)
+                    Log.d("checkUserLogin", userPhoneNum)
+                    Log.d("checkUserLogin", userName)
+                }
+                .addOnFailureListener { e ->
+                    Log.w("checkUserLogin", "Error adding document", e)
+                }
+        }
+    }
 }
