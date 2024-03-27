@@ -5,6 +5,7 @@ import com.github.barteksc.pdfviewer.PDFView
 import android.content.ContentValues.TAG
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
+import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.os.ParcelFileDescriptor
 import android.util.Log
@@ -30,9 +31,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -114,6 +117,7 @@ import coil.request.ImageResult
 import com.example.testandroidpro.viewmodel.AdViewModel
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
+import androidx.compose.material3.Divider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
@@ -126,6 +130,7 @@ import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import com.example.testandroidpro.viewmodel.PdfLoadViewModel
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -142,44 +147,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-
-// Create a new user with a first and last name
-    val user = hashMapOf(
-        "first" to "Ada",
-        "last" to "Lovelace",
-        "born" to 1815
-    )
-
-    val sub = hashMapOf(
-        "P" to false,
-        "S" to false,
-        "K" to false
-    )
-
-    data class Myuser(val fname:String, val lname:String, val street:String, val house:Int)
-    data class Myusub(val P:Boolean, val S:Boolean, val K:Boolean, val L:Boolean)
-
-//    db.collection("users")
-//        .document("z7M2oq3IcMM1lvJBFRkb9tcowdR2")
-//        .collection("inf")
-//        .document("subscribe")
-//        .set(Myusub(false,false,false,false))
-//        .addOnSuccessListener { documentReference ->
-//            Log.d(TAG, "DocumentSnapshot added with ID:")
-//        }
-//        .addOnFailureListener { e ->
-//            Log.w(TAG, "Error adding document", e)
-//        }
-
-
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -215,18 +182,105 @@ fun MainTopBar(navController: NavController, adViewModel:AdViewModel) {
     )
 }
 
-
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun InfoTopBar(navController: NavController, adViewModel:AdViewModel) {
+    var expanded by remember { mutableStateOf(false) }
+    TopAppBar(
+        title = { Text("AdFusion") },
+        actions = {
+            IconButton(
+                onClick = {
+                    expanded = !expanded
+                }
+            ) {
+                Icon(Icons.Filled.MoreVert,contentDescription = null)
+            }
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }) {
+//                DropdownMenuItem(
+//                    text = { Text("info") },
+//                    onClick = { navController.navigate("info") }
+//                )
+                DropdownMenuItem(
+                    text = { Text("Signout") },
+                    onClick = {
+                        adViewModel.userSignOut(navController)
+//                        navController.navigate("Settings")
+                    }
+                )
+            }
+        }
+    )
+}
 @Composable
 fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
-    Text(
-        text = "I am Info",
-        fontSize = 24.sp,
-        color = MaterialTheme.colorScheme.primary,
-        textAlign = TextAlign.Center,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 16.dp, bottom = 16.dp)
+    Scaffold (
+        topBar = {InfoTopBar(navController,adViewModel)},
+        content = {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(it),
+            ) {
+                Text(
+                    text = "I am Info",
+                    fontSize = 24.sp,
+                    color = MaterialTheme.colorScheme.primary,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp, bottom = 16.dp)
+                )
+                OutlinedTextField(
+                    value = adViewModel.userName,
+                    onValueChange = {adViewModel.userName = it.replace(',','.')},
+                    label = {Text("Name")},
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+                )
+                OutlinedTextField(
+                    value = adViewModel.userPhoneNum,
+                    onValueChange = {adViewModel.userPhoneNum = it.replace(',','.')},
+                    label = {Text("Phone Number")},
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+                )
+                OutlinedTextField(
+                    value = adViewModel.userAddress,
+                    onValueChange = {adViewModel.userAddress = it.replace(',','.')},
+                    label = {Text("Address")},
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+                )
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp)
+                        .padding(8.dp),
+                    onClick = {
+                        adViewModel.modifyInfo(navController)
+                    },
+                ) {
+                    Text(text = "Modify")
+                }
+            }
+        }
     )
+
+
+
+
 }
 @Composable
 fun PdfViewer(pdfFile: File, modifier: Modifier = Modifier) {
@@ -310,41 +364,6 @@ fun PdfRendererView(pdfFile: File) {
         }
     }
 }
-//    val storage = Firebase.storage
-//    var storageRef = storage.reference
-//    val pathReference = storageRef.child("Koko-Suomen-tarjoukset-to-14-3-ke-20-3-05.pdf")
-////    val gsReference = storage.getReferenceFromUrl("gs://testandroidpro-179da.appspot.com/Koko-Suomen-tarjoukset-to-14-3-ke-20-3-05.pdf")
-//    var islandRef = storageRef.child("Koko-Suomen-tarjoukset-to-14-3-ke-20-3-05.pdf")
-//
-//    val localFile = File.createTempFile("tmpPDF", "pdf")
-//
-//    islandRef.getFile(localFile).addOnSuccessListener {
-//        // Local temp file has been created
-//        Log.d("TestPdf1","success1")
-//    }.addOnFailureListener {
-//        // Handle any errors
-//    }
-
-
-
-//    val context = LocalContext.current
-//    val storageReference = FirebaseStorage.getInstance().reference
-//    val pathReference = storageReference.child("Koko-Suomen-tarjoukset-to-14-3-ke-20-3-05.pdf")
-//    val localFile = File.createTempFile("tempPdf", "pdf")
-//
-//    val pdfFile = remember { mutableStateOf<File?>(null) }
-//
-//    val lifecycleOwner = LocalLifecycleOwner.current
-//
-//    lifecycleOwner.lifecycleScope.launch {
-//        pathReference.getFile(localFile).addOnSuccessListener {
-//            pdfFile.value = localFile
-//            Log.d("TestPdf","success")
-//        }.addOnFailureListener {
-//            // Handle any errors
-//        }
-//    }
-
 
 @Composable
 fun PdfScreen(navController: NavController, filePath: String) {
@@ -411,28 +430,7 @@ fun PdfScreen(navController: NavController, filePath: String) {
         }
     }
 }
-//    val db = Firebase.firestore
-//    db.collection("suppliers")
-//        .get()
-//        .addOnSuccessListener { result ->
-//            for (document in result) {
-//                Log.d(TAG, "${document.id} => ${document.data}")
-//            }
-//        }
-//        .addOnFailureListener { e ->
-//            Log.w("test read database", "Error adding document", e)
-//        }
-//    val db = Firebase.firestore
-//    val dataState = remember { mutableStateOf<List<DocumentSnapshot>>(emptyList()) }
-//
-//    LaunchedEffect(Unit) {
-//        try {
-//            val result = db.collection("suppliers").get().await()
-//            dataState.value = result.documents
-//        } catch (e: Exception) {
-//            Log.e(TAG, "Error fetching data: ", e)
-//        }
-//    }
+
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadViewModel:PdfLoadViewModel) {
@@ -445,6 +443,7 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadVi
                     .padding(it),
             ) {
                 Log.d("MainScreen",adViewModel.userName)
+                val state = adViewModel.listState
                 Text(
                     text = "Welcome "+adViewModel.userName.toString(),
                     fontSize = 24.sp,
@@ -459,217 +458,281 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadVi
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(horizontal = 4.dp)
-                        .weight(1f)
+                        .weight(1f),
+                    state = state
                 ) {
-                    items(adViewModel.dataState.value.chunked(2)) { chunk ->
-                        LazyRow(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            items(chunk) { document ->
-                                val name = document.id
-//                                Spacer(modifier = Modifier.weight(1f).border(1.dp, Color.Green))
-                                Box(
-                                    modifier = Modifier
-//                                        .border(1.dp, Color.Black)
-//                                        .padding(10.dp)
-                                        .weight(1f)
-                                        .fillParentMaxWidth(0.44f)
-                                        .aspectRatio(0.6f)
-//                                        .shadow(1.dp, shape = RoundedCornerShape(8.dp))
-                                        .clickable {
-                                            adViewModel.filePath = document
-                                                .getString("pdf")
-                                                .toString()
-                                            Log.d("test click", "click success")
-                                            navController.navigate("pdf")
-                                        }
-                                        .clipToBounds()
-                                        .drawWithContent {
-                                            drawContent()
-                                            drawRect(
-                                                brush = Brush.verticalGradient(
-                                                    colors = listOf(Color.Transparent, Color.LightGray),
-                                                    startY = 0f,
-                                                    endY = 6.dp.toPx()
-                                                ),
-                                                size = Size(size.width-12.dp.toPx(), 6.dp.toPx()),
-                                                topLeft = Offset(6.dp.toPx(), 0f)
-                                            )
-                                            drawRect(
-                                                brush = Brush.horizontalGradient(
-                                                    colors = listOf(Color.Transparent, Color.LightGray),
-                                                    startX = 0f,
-                                                    endX = 6.dp.toPx()
-                                                ),
-                                                size = Size(6.dp.toPx(), size.height-12.dp.toPx()),
-                                                topLeft = Offset(0f, 6.dp.toPx())
-                                            )
-                                            drawRect(
-                                                brush = Brush.verticalGradient(
-                                                    colors = listOf(Color.LightGray, Color.Transparent),
-                                                    startY = size.height-6.dp.toPx(),
-                                                    endY = size.height
-                                                ),
-                                                size = Size(size.width-12.dp.toPx(), 6.dp.toPx()),
-                                                topLeft = Offset(6.dp.toPx(), size.height-6.dp.toPx())
-                                            )
-                                            drawRect(
-                                                brush = Brush.horizontalGradient(
-                                                    colors = listOf(Color.LightGray, Color.Transparent),
-                                                    startX = size.width-6.dp.toPx(),
-                                                    endX = size.width
-                                                ),
-                                                size = Size(6.dp.toPx(), size.height-12.dp.toPx()),
-                                                topLeft = Offset(size.width-6.dp.toPx(), 6.dp.toPx())
-                                            )
-                                            drawArc(
-                                                brush = Brush.radialGradient(
-                                                    colors = listOf(Color.LightGray, Color.Transparent),
-                                                    center = Offset(6.dp.toPx(),6.dp.toPx()),
-                                                    radius  = 6.dp.toPx()
-                                                ),
-                                                startAngle = -180f,
-                                                sweepAngle = 90f,
-                                                useCenter = true,
-                                                topLeft = Offset(0.dp.toPx(),0.dp.toPx()),
-                                                size = Size(12.dp.toPx(), 12.dp.toPx()),
-                                            )
-                                            drawArc(
-                                                brush = Brush.radialGradient(
-                                                    colors = listOf(Color.LightGray, Color.Transparent),
-                                                    center = Offset(6.dp.toPx(),size.height-6.dp.toPx()),
-                                                    radius  = 6.dp.toPx()
-                                                ),
-                                                startAngle = -270f,
-                                                sweepAngle = 90f,
-                                                useCenter = true,
-                                                topLeft = Offset(0.dp.toPx(),size.height-12.dp.toPx()),
-                                                size = Size(12.dp.toPx(), 12.dp.toPx()),
-                                            )
-                                            drawArc(
-                                                brush = Brush.radialGradient(
-                                                    colors = listOf(Color.LightGray, Color.Transparent),
-                                                    center = Offset(size.width-6.dp.toPx(),size.height-6.dp.toPx()),
-                                                    radius  = 6.dp.toPx()
-                                                ),
-                                                startAngle = -0f,
-                                                sweepAngle = 90f,
-                                                useCenter = true,
-                                                topLeft = Offset(size.width-12.dp.toPx(),size.height-12.dp.toPx()),
-                                                size = Size(12.dp.toPx(), 12.dp.toPx()),
-                                            )
-                                            drawArc(
-                                                brush = Brush.radialGradient(
-                                                    colors = listOf(Color.LightGray, Color.Transparent),
-                                                    center = Offset(size.width-6.dp.toPx(),6.dp.toPx()),
-                                                    radius  = 6.dp.toPx()
-                                                ),
-                                                startAngle = -90f,
-                                                sweepAngle = 90f,
-                                                useCenter = true,
-                                                topLeft = Offset(size.width-12.dp.toPx(),0.dp.toPx()),
-                                                size = Size(12.dp.toPx(), 12.dp.toPx()),
-                                            )
-                                        }
-                                    ,
-//                                    horizontalAlignment = Alignment.CenterHorizontally,
-//                                    verticalArrangement = Arrangement.Center
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Column(
+                    adViewModel.adList.value.let { it1 ->
+                        items(it1.chunked(2)) { chunk ->
+                            LazyRow(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                items(chunk) { document ->
+                                    val name = document.supplier.id
+                                    val shadowSize = 3.dp
+                                    //                                Spacer(modifier = Modifier.weight(1f).border(1.dp, Color.Green))
+                                    Box(
                                         modifier = Modifier
-//                                            .border(1.dp, Color.Red)
-//                                            .fillMaxSize()
-                                            .padding(4.dp)
-//                                            .fillParentMaxWidth(0.40f)
-                                            .aspectRatio(0.6f),
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        verticalArrangement = Arrangement.Center
+                                            .weight(1f)
+                                            .fillParentMaxWidth(0.44f)
+                                            .aspectRatio(0.6f)
+                                            .clipToBounds()
+                                            .drawWithContent {
+                                                drawContent()
+                                                drawRect(
+                                                    brush = Brush.verticalGradient(
+                                                        colors = listOf(Color.Transparent, Color.LightGray),
+                                                        startY = 0f,
+                                                        endY = shadowSize.toPx()
+                                                    ),
+                                                    size = Size(size.width-shadowSize.toPx()*2, shadowSize.toPx()),
+                                                    topLeft = Offset(shadowSize.toPx(), 0f)
+                                                )
+                                                drawRect(
+                                                    brush = Brush.horizontalGradient(
+                                                        colors = listOf(Color.Transparent, Color.LightGray),
+                                                        startX = 0f,
+                                                        endX = shadowSize.toPx()
+                                                    ),
+                                                    size = Size(shadowSize.toPx(), size.height-shadowSize.toPx()*2),
+                                                    topLeft = Offset(0f, shadowSize.toPx())
+                                                )
+                                                drawRect(
+                                                    brush = Brush.verticalGradient(
+                                                        colors = listOf(Color.LightGray, Color.Transparent),
+                                                        startY = size.height-shadowSize.toPx(),
+                                                        endY = size.height
+                                                    ),
+                                                    size = Size(size.width-shadowSize.toPx()*2, shadowSize.toPx()),
+                                                    topLeft = Offset(shadowSize.toPx(), size.height-shadowSize.toPx())
+                                                )
+                                                drawRect(
+                                                    brush = Brush.horizontalGradient(
+                                                        colors = listOf(Color.LightGray, Color.Transparent),
+                                                        startX = size.width-shadowSize.toPx(),
+                                                        endX = size.width
+                                                    ),
+                                                    size = Size(shadowSize.toPx(), size.height-shadowSize.toPx()*2),
+                                                    topLeft = Offset(size.width-shadowSize.toPx(), shadowSize.toPx())
+                                                )
+                                                drawArc(
+                                                    brush = Brush.radialGradient(
+                                                        colors = listOf(Color.LightGray, Color.Transparent),
+                                                        center = Offset(shadowSize.toPx(),shadowSize.toPx()),
+                                                        radius = shadowSize.toPx()
+                                                    ),
+                                                    startAngle = -180f,
+                                                    sweepAngle = 90f,
+                                                    useCenter = true,
+                                                    topLeft = Offset(0.dp.toPx(),0.dp.toPx()),
+                                                    size = Size(shadowSize.toPx()*2, shadowSize.toPx()*2),
+                                                )
+                                                drawArc(
+                                                    brush = Brush.radialGradient(
+                                                        colors = listOf(Color.LightGray, Color.Transparent),
+                                                        center = Offset(shadowSize.toPx(),size.height-shadowSize.toPx()),
+                                                        radius = shadowSize.toPx()
+                                                    ),
+                                                    startAngle = -270f,
+                                                    sweepAngle = 90f,
+                                                    useCenter = true,
+                                                    topLeft = Offset(0.dp.toPx(),size.height-shadowSize.toPx()*2),
+                                                    size = Size(shadowSize.toPx()*2, shadowSize.toPx()*2),
+                                                )
+                                                drawArc(
+                                                    brush = Brush.radialGradient(
+                                                        colors = listOf(Color.LightGray, Color.Transparent),
+                                                        center = Offset(size.width-shadowSize.toPx(),size.height-shadowSize.toPx()),
+                                                        radius = shadowSize.toPx()
+                                                    ),
+                                                    startAngle = -0f,
+                                                    sweepAngle = 90f,
+                                                    useCenter = true,
+                                                    topLeft = Offset(size.width-shadowSize.toPx()*2,size.height-shadowSize.toPx()*2),
+                                                    size = Size(shadowSize.toPx()*2, shadowSize.toPx()*2),
+                                                )
+                                                drawArc(
+                                                    brush = Brush.radialGradient(
+                                                        colors = listOf(Color.LightGray, Color.Transparent),
+                                                        center = Offset(size.width-shadowSize.toPx(),shadowSize.toPx()),
+                                                        radius = shadowSize.toPx()
+                                                    ),
+                                                    startAngle = -90f,
+                                                    sweepAngle = 90f,
+                                                    useCenter = true,
+                                                    topLeft = Offset(size.width-shadowSize.toPx()*2,0.dp.toPx()),
+                                                    size = Size(shadowSize.toPx()*2, shadowSize.toPx()*2),
+                                                )
+                                            },
+                                        contentAlignment = Alignment.Center
                                     ) {
-//                                    Spacer(
-//                                        modifier = Modifier
-//                                            .weight(0.05f)
-//                                    )
-                                        Row(
-                                            modifier = Modifier
-                                                .weight(0.6f)
-//                                            .border(1.dp, Color.Red)
-                                                .padding(8.dp)
-                                                .fillMaxWidth(),
-//                                        horizontalArrangement = Arrangement.Start
-                                        )
-                                        {
-                                            name.let { iconName ->
-                                                val localFile = adViewModel.getLocalFile(iconName)
-                                                if (localFile != null) {
-                                                    Image(
-                                                        painter = rememberAsyncImagePainter(
-                                                            ImageRequest.Builder(
-                                                                LocalContext.current
-                                                            ).data(data = localFile)
-                                                                .apply(block = fun ImageRequest.Builder.() {
-                                                                    crossfade(true)
-                                                                }).build()
-                                                        ),
-                                                        contentDescription = null,
-                                                        modifier = Modifier
-                                                            .padding(0.dp)
-//                                                        .size(80.dp)
-                                                            .fillMaxHeight()
-                                                    )
-                                                }
-                                            }
-                                        }
                                         Column(
                                             modifier = Modifier
-//                                            .border(1.dp, Color.Black)
-//                                        .padding(1.dp)
-//                                            .weight(1f)
-                                                .fillMaxWidth()
-                                                .aspectRatio(1f),
+                //                                              .border(1.dp, Color.Red)
+                                                .fillMaxSize()
+                                                .padding(shadowSize)
+                                                .clickable {
+                                                    adViewModel.filePath = document.ads[0]
+                                                        .getString("attachment")
+                                                        .toString()
+                                                    Log.d("test click", "click success")
+                                                    navController.navigate("pdf")
+                                                },
                                             horizontalAlignment = Alignment.CenterHorizontally,
                                             verticalArrangement = Arrangement.Center
-                                        )
-                                        {
-                                            name.let { iconName ->
-                                                val localFile = adViewModel.getLocalFile(iconName)
-                                                if (localFile != null) {
-                                                    Image(
-                                                        painter = rememberAsyncImagePainter(
-                                                            ImageRequest.Builder(
-                                                                LocalContext.current
-                                                            ).data(data = localFile)
-                                                                .apply(block = fun ImageRequest.Builder.() {
-                                                                    crossfade(true)
-                                                                }).build()
-                                                        ),
-                                                        contentDescription = null,
+                                        ) {
+                                            //                                    Spacer(
+                                            //                                        modifier = Modifier
+                                            //                                            .weight(0.05f)
+                                            //                                    )
+                                            Row(
+                                                modifier = Modifier
+                                                    .weight(1.5f)
+                                                    //                                            .border(1.dp, Color.Red)
+                                                    .padding(8.dp)
+                                                    .fillMaxWidth(),
+                                                //                                        horizontalArrangement = Arrangement.Start
+                                            )
+                                            {
+                                                name.let { iconName ->
+                                                    adViewModel.getLocalFile(iconName).let {localFile->
+                                                        if (localFile != null) {
+                                                            Image(
+                                                                painter = rememberAsyncImagePainter(
+                                                                    ImageRequest.Builder(
+                                                                        LocalContext.current
+                                                                    ).data(data = localFile)
+                                                                        .apply(block = fun ImageRequest.Builder.() {
+                                                                            crossfade(true)
+                                                                        }).build()
+                                                                ),
+                                                                contentDescription = null,
+                                                                modifier = Modifier
+                                                                    .padding(0.dp)
+                                                                    //                                                        .size(80.dp)
+                                                                    .fillMaxHeight()
+                                                            )
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            Column(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .aspectRatio(1f),
+                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                                verticalArrangement = Arrangement.Center
+                                            ) {
+                                                name.let { iconName ->
+                                                    val localFile = adViewModel.getLocalFileEnter(iconName)
+                                                    if (localFile != null) {
+                                                        Image(
+                                                            painter = rememberAsyncImagePainter(
+                                                                ImageRequest.Builder(
+                                                                    LocalContext.current
+                                                                ).data(data = localFile)
+                                                                    .apply(block = fun ImageRequest.Builder.() {
+                                                                        crossfade(true)
+                                                                    }).build()
+                                                            ),
+                                                            contentDescription = null,
+                                                            modifier = Modifier
+                                                                .padding(0.dp)
+                                                                .fillMaxWidth()
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                            Row(
+                                                modifier = Modifier
+                                                    .weight(1f)
+                                                    .fillMaxWidth(),
+                                                horizontalArrangement = Arrangement.Center,
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                document.ads[0].getString("adName")?.let { it2 ->
+                                                    Text(
+                                                        text = it2,
                                                         modifier = Modifier
-                                                            .padding(0.dp)
-//                                                        .size(80.dp)
                                                             .fillMaxWidth()
+                                                            .padding(1.dp),
+                                                        textAlign = TextAlign.Center,
+                                                        fontSize = 22.sp
+                                                    )
+                                                }
+                                            }
+                                            Row(
+                                                modifier = Modifier
+                                                    .height(2.dp)
+                                                    .fillMaxWidth(),
+                                                //                                            horizontalArrangement = Arrangement.Center
+                                            ) {
+                                                Spacer(
+                                                    modifier = Modifier
+                                                        .weight(0.5f)
+                                                )
+                                                Divider(
+                                                    color = Color.LightGray,
+                                                    thickness = 2.dp,
+                                                    modifier = Modifier
+                                                        .weight(9f),
+                                                )
+                                                Spacer(
+                                                    modifier = Modifier
+                                                        .weight(0.5f)
+                                                )
+                                            }
+                                            Row(
+                                                modifier = Modifier
+                                                    .weight(1f)
+                                                    .fillMaxWidth(),
+                                                horizontalArrangement = Arrangement.Center,
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                val timestampStart = document.ads[0].getTimestamp("periodStart")
+                                                timestampStart?.let { periodStart ->
+                                                    val date = periodStart.toDate()
+                                                    val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                                                    val formattedDate = formatter.format(date)
+                                                    Text(
+                                                        text = formattedDate,
+                                                        modifier = Modifier
+                                                            .padding(1.dp),
+                                                        textAlign = TextAlign.Center,
+                                                        fontSize = 10.sp
+                                                    )
+                                                }
+                                                Text(
+                                                    text = "~",
+                                                    modifier = Modifier
+                                                        .padding(1.dp),
+                                                    textAlign = TextAlign.Center,
+                                                    fontSize = 12.sp
+                                                )
+                                                val timestampStop = document.ads[0].getTimestamp("periodStop")
+                                                timestampStop?.let { periodStart ->
+                                                    val date = periodStart.toDate()
+                                                    val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                                                    val formattedDate = formatter.format(date)
+                                                    Text(
+                                                        text = formattedDate,
+                                                        modifier = Modifier
+                                                            .padding(1.dp),
+                                                        textAlign = TextAlign.Center,
+                                                        fontSize = 10.sp
                                                     )
                                                 }
                                             }
                                         }
-                                        Text(
-                                            text = document.id,
-                                            modifier = Modifier
-                                                .weight(1f)
-                                                .padding(1.dp),
-                                            textAlign = TextAlign.Center,
-                                            fontSize = 32.sp
-                                        )
                                     }
+                                    //                                Spacer(modifier = Modifier.height(300.dp).weight(1f).border(1.dp, Color.Green))
                                 }
-//                                Spacer(modifier = Modifier.height(300.dp).weight(1f).border(1.dp, Color.Green))
                             }
+                            Spacer(
+                                modifier = Modifier
+                                    .height(10.dp)
+                            )
                         }
-                        Spacer(
-                            modifier = Modifier
-                                .height(10.dp)
-                        )
                     }
                 }
 
@@ -678,14 +741,7 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadVi
         }
     )
 }
-//                Column(
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                        .padding(it)
-////                        .verticalScroll(rememberScrollState())
-//                        .clipToBounds(),
-//                )
-//                {
+
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SignupScreen(navController: NavController, adViewModel: AdViewModel) {
