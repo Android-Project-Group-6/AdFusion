@@ -4,13 +4,12 @@ import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
 import java.io.File
 
-class PdfLoadViewModel(): ViewModel() {
+class PdfLoadViewModel: ViewModel() {
 
     var pdfFile = mutableStateOf<File?>(null)
     var pdfLoading = mutableStateOf(true)

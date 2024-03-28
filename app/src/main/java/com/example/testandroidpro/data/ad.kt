@@ -1,4 +1,4 @@
-package com.example.testandroidpro.viewmodel
+package com.example.testandroidpro.data
 
 data class Myusub(
     val P:Boolean,
