@@ -14,6 +14,7 @@ import com.google.firebase.ktx.Firebase
 import androidx.navigation.NavController
 import com.example.testandroidpro.data.Myuser
 import com.example.testandroidpro.data.Myusub
+import com.example.testandroidpro.data.SupplierAd
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentSnapshot
@@ -39,12 +40,7 @@ class AdViewModel: ViewModel()  {
     val localFilesIcon = mutableStateListOf<File>()
     val localFilesEnter = mutableStateListOf<File>()
     var filePath = ""
-
-    data class SupplierAd(
-        val supplier: DocumentSnapshot,
-        val ads: List<DocumentSnapshot>
-    )
-
+    var market = ""
     val adList = mutableStateOf(emptyList<SupplierAd>())
     val tasks = ArrayList<Task<QuerySnapshot>>()
 
@@ -94,34 +90,29 @@ class AdViewModel: ViewModel()  {
                             data.add(SupplierAd(result.documents[index], ads))
                         }
                         adList.value = data
-                        Log.d("Read Week DataadList ", "FF:${adList.value.toString()}")
-                        adList.value.forEach { supplierAd ->
-                            Log.d("Read Week DataadList", "Data: ${supplierAd.supplier.data}")
-                            supplierAd.ads.forEach { ad ->
-                                Log.d("Read Week DataadList","Advertisement: ${ad.id}")
-                                Log.d("Read Week DataadList","Data: ${ad.getString("attachment")}")
-                                Log.d("Read Week DataadList","Data: ${ad.getString("adName")}")
-                            }
-                        }
+//                        Log.d("Read Week DataadList ", "FF:${adList.value.toString()}")
+//                        adList.value.forEach { supplierAd ->
+//                            Log.d("Read Week DataadList", "Data: ${supplierAd.supplier.data}")
+//                            supplierAd.ads.forEach { ad ->
+//                                Log.d("Read Week DataadList","Advertisement: ${ad.id}")
+//                                Log.d("Read Week DataadList","Data: ${ad.getString("attachment")}")
+//                                Log.d("Read Week DataadList","Data: ${ad.getString("adName")}")
+//                            }
+//                        }
                         readSuppliersResEnter()
                     }
-
                     readSuppliersResIcon()
-
                 }
                 .addOnFailureListener { e ->
                     Log.w("Read suppliers Data", "Error adding document", e)
                 }
-
-
-
         }
     }
+
     fun readSuppliersResEnter(){
         viewModelScope.launch {
             val storageReference = FirebaseStorage.getInstance().reference
-
-            Log.d("readSuppliersResEnter", "Init readSuppliersResEnter")
+//            Log.d("readSuppliersResEnter", "Init readSuppliersResEnter")
             for (supplierAd in adList.value) {
                 val name = supplierAd.supplier.id
                 val enterPoint = supplierAd.ads[0].getString("enterPoint")
@@ -186,8 +177,6 @@ class AdViewModel: ViewModel()  {
         }
     }
 
-
-
     fun getLocalFile(iconName: String): File? {
 
         val file = localFilesIcon.find { it.name.contains(iconName) }
@@ -201,6 +190,7 @@ class AdViewModel: ViewModel()  {
         return file
 
     }
+
     fun getLocalFileEnter(iconName: String): File? {
 
         val file = localFilesEnter.find { it.name.contains(iconName) }
@@ -229,150 +219,155 @@ class AdViewModel: ViewModel()  {
 //    }
 
     fun modifyInfo(navController: NavController) {
-        val currentUser = fAuth.currentUser
-        if (currentUser != null) {
+        viewModelScope.launch {
+            val currentUser = fAuth.currentUser
+            if (currentUser != null) {
 
-            db.collection("users")
-                .document(currentUser.uid)
-                .collection("inf")
-                .document("details")
-                .set(Myuser(userName, userAddress, userPhoneNum))
-                .addOnSuccessListener {
-                    Log.d("Signup Init Database", "DocumentSnapshot added with ID:")
-                }
-                .addOnFailureListener { e ->
-                    Log.w("Signup Init Database", "Error adding document", e)
-                }
+                db.collection("users")
+                    .document(currentUser.uid)
+                    .collection("inf")
+                    .document("details")
+                    .set(Myuser(userName, userAddress, userPhoneNum))
+                    .addOnSuccessListener {
+                        Log.d("Signup Init Database", "DocumentSnapshot added with ID:")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w("Signup Init Database", "Error adding document", e)
+                    }
 
-            Log.d("signup", currentUser.uid)
-            userState = "Signup success"
+                Log.d("signup", currentUser.uid)
+                userState = "Signup success"
 //            navController.popBackStack("signup", inclusive = true)
 //            navController.popBackStack("login", inclusive = true)
 //            navController.navigate("home")
+            }
         }
     }
 
     fun userSignup(navController: NavController) {
-        if (email.isNotEmpty() && passWord.isNotEmpty()) {
-            fAuth.createUserWithEmailAndPassword(email, passWord)
-                .addOnSuccessListener {
-                    val currentUser = fAuth.currentUser
-                    if (currentUser != null) {
-
-                        db.collection("users")
-                            .document(currentUser.uid)
-                            .collection("inf")
-                            .document("subscribe")
-                            .set(Myusub(false,false,false,false))
-                            .addOnSuccessListener {
-                                Log.d("Signup Init Database", "DocumentSnapshot added with ID: ${currentUser.uid}")
-                            }
-                            .addOnFailureListener { e ->
-                                Log.w("Signup Init Database", "Error adding document", e)
-                            }
-
-                        db.collection("users")
-                            .document(currentUser.uid)
-                            .collection("inf")
-                            .document("details")
-                            .set(Myuser(userName,userAddress,userPhoneNum))
-                            .addOnSuccessListener {
-                                Log.d("Signup Init Database", "DocumentSnapshot added with ID:")
-                            }
-                            .addOnFailureListener { e ->
-                                Log.w("Signup Init Database", "Error adding document", e)
-                            }
-
-                        Log.d("signup", currentUser.uid)
-                        userState = "Signup success"
-                        navController.popBackStack("signup", inclusive = true)
-                        navController.popBackStack("login", inclusive = true)
-                        navController.navigate("home")
+        viewModelScope.launch {
+            if (email.isNotEmpty() && passWord.isNotEmpty()) {
+                fAuth.createUserWithEmailAndPassword(email, passWord)
+                    .addOnSuccessListener {
+                        val currentUser = fAuth.currentUser
+                        if (currentUser != null) {
+//                            db.collection("users")
+//                                .document(currentUser.uid)
+//                                .collection("inf")
+//                                .document("subscribe")
+//                                .set(Myusub(false, false, false, false))
+//                                .addOnSuccessListener {
+//                                    Log.d(
+//                                        "Signup Init Database",
+//                                        "DocumentSnapshot added with ID: ${currentUser.uid}"
+//                                    )
+//                                }
+//                                .addOnFailureListener { e ->
+//                                    Log.w("Signup Init Database", "Error adding document", e)
+//                                }
+                            db.collection("users")
+                                .document(currentUser.uid)
+                                .collection("inf")
+                                .document("details")
+                                .set(Myuser(userName, userAddress, userPhoneNum))
+                                .addOnSuccessListener {
+                                    Log.d("Signup Init Database", "DocumentSnapshot added with ID:")
+                                }
+                                .addOnFailureListener { e ->
+                                    Log.w("Signup Init Database", "Error adding document", e)
+                                }
+                            Log.d("signup", currentUser.uid)
+                            userState = "Signup success"
+                            navController.popBackStack("signup", inclusive = true)
+                            navController.popBackStack("login", inclusive = true)
+                            navController.navigate("home")
+                        }
                     }
-                }
-                .addOnFailureListener {
-                    Log.d("Signup", it.message.toString())
-                    userState = it.message.toString()
-                }
-        }
-        else
-        {
-            userState = "Email or Password is empty"
-            Log.d("Signup", "Email or Password is empty")
+                    .addOnFailureListener {
+                        Log.d("Signup", it.message.toString())
+                        userState = it.message.toString()
+                    }
+            } else {
+                userState = "Email or Password is empty"
+                Log.d("Signup", "Email or Password is empty")
+            }
         }
     }
 
     fun userLogin(navController: NavController) {
-        if (email.isNotEmpty() && passWord.isNotEmpty()) {
-            fAuth.signInWithEmailAndPassword(email, passWord)
-                .addOnSuccessListener {
-                    val currentUser = fAuth.currentUser
-                    if (currentUser != null) {
-                        db.collection("users")
-                            .document(currentUser.uid)
-                            .collection("inf")
-                            .document("details")
-                            .get()
-                            .addOnSuccessListener { document ->
-                                userAddress = document.getString("address").toString()
-                                userPhoneNum = document.getString("phonenum").toString()
-                                userName = document.getString("name").toString()
+        viewModelScope.launch {
+            if (email.isNotEmpty() && passWord.isNotEmpty()) {
+                fAuth.signInWithEmailAndPassword(email, passWord)
+                    .addOnSuccessListener {
+                        val currentUser = fAuth.currentUser
+                        if (currentUser != null) {
+                            db.collection("users")
+                                .document(currentUser.uid)
+                                .collection("inf")
+                                .document("details")
+                                .get()
+                                .addOnSuccessListener { document ->
+                                    userAddress = document.getString("address").toString()
+                                    userPhoneNum = document.getString("phonenum").toString()
+                                    userName = document.getString("name").toString()
 
-                                Log.d("Signup Init Database", "DocumentSnapshot added with ID:")
-                            }
-                            .addOnFailureListener { e ->
-                                Log.w("Signup Init Database", "Error adding document", e)
-                            }
+                                    Log.d("Signup Init Database", "DocumentSnapshot added with ID:")
+                                }
+                                .addOnFailureListener { e ->
+                                    Log.w("Signup Init Database", "Error adding document", e)
+                                }
 
-
-                        Log.d("Login", currentUser.uid)
-                        userState = "Login success"
-                        navController.popBackStack("login", inclusive = true)
-                        navController.navigate("home")
+                            Log.d("Login", currentUser.uid)
+                            userState = "Login success"
+                            navController.popBackStack("login", inclusive = true)
+                            navController.navigate("home")
+                        }
                     }
-                }
-                .addOnFailureListener {
-                    Log.d("Login", it.message.toString())
-                    userState = "Email or Password is wrong"
-                }
-        }
-        else
-        {
-            userState = "Email or Password is empty"
-            Log.d("Login", "Email or Password is empty")
+                    .addOnFailureListener {
+                        Log.d("Login", it.message.toString())
+                        userState = "Email or Password is wrong"
+                    }
+            } else {
+                userState = "Email or Password is empty"
+                Log.d("Login", "Email or Password is empty")
+            }
         }
     }
 
     fun userSignOut(navController: NavController) {
-        fAuth.signOut()
-        userState = ""
-        userAddress = ""
-        userPhoneNum = ""
-        userName = ""
+        viewModelScope.launch {
+            fAuth.signOut()
+            userState = ""
+            userAddress = ""
+            userPhoneNum = ""
+            userName = ""
 
-        navController.navigate("login")
+            navController.navigate("login")
+        }
     }
 
     fun checkUserLogin(){
-        startDestination = if (currentUser != null) "home" else "login"
-        if (currentUser != null) {
-            db.collection("users")
-                .document(currentUser.uid)
-                .collection("inf")
-                .document("details")
-                .get()
-                .addOnSuccessListener { document ->
-                    userAddress = document.getString("address").toString()
-                    userPhoneNum = document.getString("phonenum").toString()
-                    userName = document.getString("name").toString()
-                    Log.d("checkUserLogin", currentUser.uid)
-                    Log.d("checkUserLogin", userAddress)
-                    Log.d("checkUserLogin", userPhoneNum)
-                    Log.d("checkUserLogin", userName)
-                }
-                .addOnFailureListener { e ->
-                    Log.w("checkUserLogin", "Error adding document", e)
-                }
+        viewModelScope.launch {
+            startDestination = if (currentUser != null) "home" else "login"
+            if (currentUser != null) {
+                db.collection("users")
+                    .document(currentUser.uid)
+                    .collection("inf")
+                    .document("details")
+                    .get()
+                    .addOnSuccessListener { document ->
+                        userAddress = document.getString("address").toString()
+                        userPhoneNum = document.getString("phonenum").toString()
+                        userName = document.getString("name").toString()
+                        Log.d("checkUserLogin", currentUser.uid)
+                        Log.d("checkUserLogin", userAddress)
+                        Log.d("checkUserLogin", userPhoneNum)
+                        Log.d("checkUserLogin", userName)
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w("checkUserLogin", "Error adding document", e)
+                    }
+            }
         }
     }
 }

@@ -45,12 +45,14 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.example.testandroidpro.R
 import com.example.testandroidpro.viewmodel.AdViewModel
 import com.example.testandroidpro.viewmodel.PdfLoadViewModel
 import java.util.Locale
@@ -60,8 +62,9 @@ import java.util.Locale
 @Composable
 fun MainTopBar(navController: NavController, adViewModel: AdViewModel) {
     var expanded by remember { mutableStateOf(false) }
+    val context = LocalContext.current
     TopAppBar(
-        title = { Text("AdFusion") },
+        title = { Text(stringResource(R.string.ComName)) },
         actions = {
             IconButton(
                 onClick = {
@@ -74,11 +77,11 @@ fun MainTopBar(navController: NavController, adViewModel: AdViewModel) {
                 expanded = expanded,
                 onDismissRequest = { expanded = false }) {
                 DropdownMenuItem(
-                    text = { Text("info") },
-                    onClick = { navController.navigate("info") }
+                    text = { Text(stringResource(R.string.drop_info)) },
+                    onClick = { navController.navigate(context.getString(R.string.infoPage)) }
                 )
                 DropdownMenuItem(
-                    text = { Text("Signout") },
+                    text = { Text(stringResource(R.string.drop_signout)) },
                     onClick = {
                         adViewModel.userSignOut(navController)
 //                        navController.navigate("Settings")
@@ -94,6 +97,7 @@ fun MainTopBar(navController: NavController, adViewModel: AdViewModel) {
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadViewModel: PdfLoadViewModel) {
+    val context = LocalContext.current
     Scaffold (
         topBar = { MainTopBar(navController,adViewModel) },
         content = {
@@ -105,7 +109,7 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadVi
                 Log.d("MainScreen",adViewModel.userName)
                 val state = adViewModel.listState
                 Text(
-                    text = "Welcome "+adViewModel.userName.toString(),
+                    text = stringResource(R.string.welcome) + stringResource(R.string.string_space) + adViewModel.userName,
                     fontSize = 24.sp,
                     color = MaterialTheme.colorScheme.primary,
                     textAlign = TextAlign.Center,
@@ -130,7 +134,7 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadVi
                                 items(chunk) { document ->
                                     val name = document.supplier.id
                                     val shadowSize = 3.dp
-                                    //                                Spacer(modifier = Modifier.weight(1f).border(1.dp, Color.Green))
+//                                Spacer(modifier = Modifier.weight(1f).border(1.dp, Color.Green))
                                     Box(
                                         modifier = Modifier
                                             .weight(1f)
@@ -141,119 +145,194 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadVi
                                                 drawContent()
                                                 drawRect(
                                                     brush = Brush.verticalGradient(
-                                                        colors = listOf(Color.Transparent, Color.LightGray),
+                                                        colors = listOf(
+                                                            Color.Transparent,
+                                                            Color.LightGray
+                                                        ),
                                                         startY = 0f,
                                                         endY = shadowSize.toPx()
                                                     ),
-                                                    size = Size(size.width-shadowSize.toPx()*2, shadowSize.toPx()),
+                                                    size = Size(
+                                                        size.width - shadowSize.toPx() * 2,
+                                                        shadowSize.toPx()
+                                                    ),
                                                     topLeft = Offset(shadowSize.toPx(), 0f)
                                                 )
                                                 drawRect(
                                                     brush = Brush.horizontalGradient(
-                                                        colors = listOf(Color.Transparent, Color.LightGray),
+                                                        colors = listOf(
+                                                            Color.Transparent,
+                                                            Color.LightGray
+                                                        ),
                                                         startX = 0f,
                                                         endX = shadowSize.toPx()
                                                     ),
-                                                    size = Size(shadowSize.toPx(), size.height-shadowSize.toPx()*2),
+                                                    size = Size(
+                                                        shadowSize.toPx(),
+                                                        size.height - shadowSize.toPx() * 2
+                                                    ),
                                                     topLeft = Offset(0f, shadowSize.toPx())
                                                 )
                                                 drawRect(
                                                     brush = Brush.verticalGradient(
-                                                        colors = listOf(Color.LightGray, Color.Transparent),
-                                                        startY = size.height-shadowSize.toPx(),
+                                                        colors = listOf(
+                                                            Color.LightGray,
+                                                            Color.Transparent
+                                                        ),
+                                                        startY = size.height - shadowSize.toPx(),
                                                         endY = size.height
                                                     ),
-                                                    size = Size(size.width-shadowSize.toPx()*2, shadowSize.toPx()),
-                                                    topLeft = Offset(shadowSize.toPx(), size.height-shadowSize.toPx())
+                                                    size = Size(
+                                                        size.width - shadowSize.toPx() * 2,
+                                                        shadowSize.toPx()
+                                                    ),
+                                                    topLeft = Offset(
+                                                        shadowSize.toPx(),
+                                                        size.height - shadowSize.toPx()
+                                                    )
                                                 )
                                                 drawRect(
                                                     brush = Brush.horizontalGradient(
-                                                        colors = listOf(Color.LightGray, Color.Transparent),
-                                                        startX = size.width-shadowSize.toPx(),
+                                                        colors = listOf(
+                                                            Color.LightGray,
+                                                            Color.Transparent
+                                                        ),
+                                                        startX = size.width - shadowSize.toPx(),
                                                         endX = size.width
                                                     ),
-                                                    size = Size(shadowSize.toPx(), size.height-shadowSize.toPx()*2),
-                                                    topLeft = Offset(size.width-shadowSize.toPx(), shadowSize.toPx())
+                                                    size = Size(
+                                                        shadowSize.toPx(),
+                                                        size.height - shadowSize.toPx() * 2
+                                                    ),
+                                                    topLeft = Offset(
+                                                        size.width - shadowSize.toPx(),
+                                                        shadowSize.toPx()
+                                                    )
                                                 )
                                                 drawArc(
                                                     brush = Brush.radialGradient(
-                                                        colors = listOf(Color.LightGray, Color.Transparent),
-                                                        center = Offset(shadowSize.toPx(),shadowSize.toPx()),
+                                                        colors = listOf(
+                                                            Color.LightGray,
+                                                            Color.Transparent
+                                                        ),
+                                                        center = Offset(
+                                                            shadowSize.toPx(),
+                                                            shadowSize.toPx()
+                                                        ),
                                                         radius = shadowSize.toPx()
                                                     ),
                                                     startAngle = -180f,
                                                     sweepAngle = 90f,
                                                     useCenter = true,
-                                                    topLeft = Offset(0.dp.toPx(),0.dp.toPx()),
-                                                    size = Size(shadowSize.toPx()*2, shadowSize.toPx()*2),
+                                                    topLeft = Offset(0.dp.toPx(), 0.dp.toPx()),
+                                                    size = Size(
+                                                        shadowSize.toPx() * 2,
+                                                        shadowSize.toPx() * 2
+                                                    ),
                                                 )
                                                 drawArc(
                                                     brush = Brush.radialGradient(
-                                                        colors = listOf(Color.LightGray, Color.Transparent),
-                                                        center = Offset(shadowSize.toPx(),size.height-shadowSize.toPx()),
+                                                        colors = listOf(
+                                                            Color.LightGray,
+                                                            Color.Transparent
+                                                        ),
+                                                        center = Offset(
+                                                            shadowSize.toPx(),
+                                                            size.height - shadowSize.toPx()
+                                                        ),
                                                         radius = shadowSize.toPx()
                                                     ),
                                                     startAngle = -270f,
                                                     sweepAngle = 90f,
                                                     useCenter = true,
-                                                    topLeft = Offset(0.dp.toPx(),size.height-shadowSize.toPx()*2),
-                                                    size = Size(shadowSize.toPx()*2, shadowSize.toPx()*2),
+                                                    topLeft = Offset(
+                                                        0.dp.toPx(),
+                                                        size.height - shadowSize.toPx() * 2
+                                                    ),
+                                                    size = Size(
+                                                        shadowSize.toPx() * 2,
+                                                        shadowSize.toPx() * 2
+                                                    ),
                                                 )
                                                 drawArc(
                                                     brush = Brush.radialGradient(
-                                                        colors = listOf(Color.LightGray, Color.Transparent),
-                                                        center = Offset(size.width-shadowSize.toPx(),size.height-shadowSize.toPx()),
+                                                        colors = listOf(
+                                                            Color.LightGray,
+                                                            Color.Transparent
+                                                        ),
+                                                        center = Offset(
+                                                            size.width - shadowSize.toPx(),
+                                                            size.height - shadowSize.toPx()
+                                                        ),
                                                         radius = shadowSize.toPx()
                                                     ),
                                                     startAngle = -0f,
                                                     sweepAngle = 90f,
                                                     useCenter = true,
-                                                    topLeft = Offset(size.width-shadowSize.toPx()*2,size.height-shadowSize.toPx()*2),
-                                                    size = Size(shadowSize.toPx()*2, shadowSize.toPx()*2),
+                                                    topLeft = Offset(
+                                                        size.width - shadowSize.toPx() * 2,
+                                                        size.height - shadowSize.toPx() * 2
+                                                    ),
+                                                    size = Size(
+                                                        shadowSize.toPx() * 2,
+                                                        shadowSize.toPx() * 2
+                                                    ),
                                                 )
                                                 drawArc(
                                                     brush = Brush.radialGradient(
-                                                        colors = listOf(Color.LightGray, Color.Transparent),
-                                                        center = Offset(size.width-shadowSize.toPx(),shadowSize.toPx()),
+                                                        colors = listOf(
+                                                            Color.LightGray,
+                                                            Color.Transparent
+                                                        ),
+                                                        center = Offset(
+                                                            size.width - shadowSize.toPx(),
+                                                            shadowSize.toPx()
+                                                        ),
                                                         radius = shadowSize.toPx()
                                                     ),
                                                     startAngle = -90f,
                                                     sweepAngle = 90f,
                                                     useCenter = true,
-                                                    topLeft = Offset(size.width-shadowSize.toPx()*2,0.dp.toPx()),
-                                                    size = Size(shadowSize.toPx()*2, shadowSize.toPx()*2),
+                                                    topLeft = Offset(
+                                                        size.width - shadowSize.toPx() * 2,
+                                                        0.dp.toPx()
+                                                    ),
+                                                    size = Size(
+                                                        shadowSize.toPx() * 2,
+                                                        shadowSize.toPx() * 2
+                                                    ),
                                                 )
                                             },
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Column(
                                             modifier = Modifier
-                                                //                                              .border(1.dp, Color.Red)
+//                                              .border(1.dp, Color.Red)
                                                 .fillMaxSize()
                                                 .padding(shadowSize)
                                                 .clickable {
                                                     adViewModel.filePath = document.ads[0]
-                                                        .getString("attachment")
+                                                        .getString(context.getString(R.string.data_attachment))
                                                         .toString()
                                                     Log.d("test click", "click success")
-                                                    navController.navigate("pdf")
+                                                    adViewModel.market = document.supplier.id
+                                                    navController.navigate(context.getString(R.string.screen_pdf))
                                                 },
                                             horizontalAlignment = Alignment.CenterHorizontally,
                                             verticalArrangement = Arrangement.Center
                                         ) {
-                                            //                                    Spacer(
-                                            //                                        modifier = Modifier
-                                            //                                            .weight(0.05f)
-                                            //                                    )
+//                                    Spacer(
+//                                        modifier = Modifier
+//                                            .weight(0.05f)
+//                                    )
                                             Row(
                                                 modifier = Modifier
                                                     .weight(1.5f)
-                                                    //                                            .border(1.dp, Color.Red)
+//                                            .border(1.dp, Color.Red)
                                                     .padding(8.dp)
                                                     .fillMaxWidth(),
-                                                //                                        horizontalArrangement = Arrangement.Start
-                                            )
-                                            {
+//                                        horizontalArrangement = Arrangement.Start
+                                            ) {
                                                 name.let { iconName ->
                                                     adViewModel.getLocalFile(iconName).let {localFile->
                                                         if (localFile != null) {
@@ -269,7 +348,6 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadVi
                                                                 contentDescription = null,
                                                                 modifier = Modifier
                                                                     .padding(0.dp)
-                                                                    //                                                        .size(80.dp)
                                                                     .fillMaxHeight()
                                                             )
                                                         }
@@ -305,19 +383,20 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadVi
                                             }
                                             Row(
                                                 modifier = Modifier
-                                                    .weight(1f)
+                                                    .weight(1.5f)
                                                     .fillMaxWidth(),
                                                 horizontalArrangement = Arrangement.Center,
                                                 verticalAlignment = Alignment.CenterVertically
                                             ) {
-                                                document.ads[0].getString("adName")?.let { it2 ->
+                                                document.ads[0].getString(context.getString(R.string.data_adname))?.let { it2 ->
                                                     Text(
                                                         text = it2,
                                                         modifier = Modifier
                                                             .fillMaxWidth()
                                                             .padding(1.dp),
                                                         textAlign = TextAlign.Center,
-                                                        fontSize = 22.sp
+                                                        fontSize = 22.sp,
+                                                        color = Color(0xFF69BD00)
                                                     )
                                                 }
                                             }
@@ -325,7 +404,7 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadVi
                                                 modifier = Modifier
                                                     .height(2.dp)
                                                     .fillMaxWidth(),
-                                                //                                            horizontalArrangement = Arrangement.Center
+//                                            horizontalArrangement = Arrangement.Center
                                             ) {
                                                 Spacer(
                                                     modifier = Modifier
@@ -349,10 +428,12 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadVi
                                                 horizontalArrangement = Arrangement.Center,
                                                 verticalAlignment = Alignment.CenterVertically
                                             ) {
-                                                val timestampStart = document.ads[0].getTimestamp("periodStart")
+                                                val timestampStart = document.ads[0].getTimestamp(context.getString(R.string.data_periodstart))
                                                 timestampStart?.let { periodStart ->
                                                     val date = periodStart.toDate()
-                                                    val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                                                    val formatter = SimpleDateFormat(context.getString(
+                                                        R.string.time_form
+                                                    ), Locale.getDefault())
                                                     val formattedDate = formatter.format(date)
                                                     Text(
                                                         text = formattedDate,
@@ -363,16 +444,22 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadVi
                                                     )
                                                 }
                                                 Text(
-                                                    text = "~",
+                                                    text = context.getString(R.string.date_separator),
                                                     modifier = Modifier
                                                         .padding(1.dp),
                                                     textAlign = TextAlign.Center,
                                                     fontSize = 12.sp
                                                 )
-                                                val timestampStop = document.ads[0].getTimestamp("periodStop")
+                                                val timestampStop = document.ads[0].getTimestamp(
+                                                    context.getString(
+                                                        R.string.data_periodstop
+                                                    ))
                                                 timestampStop?.let { periodStart ->
                                                     val date = periodStart.toDate()
-                                                    val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                                                    val formatter = SimpleDateFormat(
+                                                        context.getString(
+                                                            R.string.time_form
+                                                        ), Locale.getDefault())
                                                     val formattedDate = formatter.format(date)
                                                     Text(
                                                         text = formattedDate,

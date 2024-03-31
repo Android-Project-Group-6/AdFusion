@@ -27,12 +27,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.testandroidpro.R
 import com.example.testandroidpro.viewmodel.PdfLoadViewModel
 import com.github.barteksc.pdfviewer.PDFView
 import com.github.barteksc.pdfviewer.util.FitPolicy
@@ -44,17 +46,17 @@ fun PdfViewer(pdfFile: File, modifier: Modifier = Modifier) {
         factory = { context ->
             PDFView(context, null).apply {
                 fromFile(pdfFile)
-                    .enableSwipe(true) // 启用滑动翻页
-                    .swipeHorizontal(false) // 设置为垂直滑动
-                    .enableDoubletap(true) // 启用双击缩放
-                    .defaultPage(0) // 设置默认打开的页面
-                    .enableAnnotationRendering(false) // 渲染注释（默认为false）
-                    .password(null) // 如果PDF有密码，则输入密码
-                    .scrollHandle(null) // 设置滚动条样式（默认为null）
-                    .enableAntialiasing(true) // 改善低分辨率屏幕上的渲染
-                    .spacing(0) // 在页面之间添加间距（默认为0）
-                    .autoSpacing(false) // 在页面之间添加动态间距以适应屏幕方向
-                    .pageFitPolicy(FitPolicy.WIDTH) // 模式设置为适应屏幕宽度
+                    .enableSwipe(true) // Enable swipe to flip pages
+                    .swipeHorizontal(false) // Set to vertical swipe
+                    .enableDoubletap(true) // Enable double tap to zoom
+                    .defaultPage(0) // Set the default open page
+                    .enableAnnotationRendering(false) // Render annotations (default is false)
+                    .password(null) // If the PDF has a password, enter it here
+                    .scrollHandle(null) // Set the scrollbar style (default is null)
+                    .enableAntialiasing(true) // Improve rendering on low-resolution screens
+                    .spacing(0) // Add spacing between pages (default is 0)
+                    .autoSpacing(false) // Add dynamic spacing between pages to fit screen orientation
+                    .pageFitPolicy(FitPolicy.WIDTH) // Set the mode to fit screen width
                     .load()
             }
         },
@@ -122,23 +124,23 @@ fun PdfRendererView(pdfFile: File) {
 }
 
 @Composable
-fun PdfScreen(navController: NavController, filePath: String) {
+fun PdfScreen(navController: NavController, market:String, filePath: String) {
     val context = LocalContext.current
     val pdfLoadViewModel: PdfLoadViewModel = viewModel()
-    pdfLoadViewModel.loadPdfFile(filePath)
+    pdfLoadViewModel.LoadPdfFile(filePath)
 
     Column(
         modifier = Modifier
             .fillMaxSize(),
     ) {
         Text(
-            text = "I am Pdf",
+            text = market,
             fontSize = 24.sp,
             color = MaterialTheme.colorScheme.primary,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp, bottom = 16.dp)
+                .padding(top = 24.dp, bottom = 8.dp)
                 .weight(0.1f)
         )
         if (pdfLoadViewModel.pdfLoading.value) {//pdfLoadViewModel.
@@ -149,7 +151,7 @@ fun PdfScreen(navController: NavController, filePath: String) {
                     .align(Alignment.CenterHorizontally),
             ) {
                 Text(
-                    text = "Loading...",
+                    text = stringResource(R.string.loading),
                     fontSize = 24.sp,
                     color = MaterialTheme.colorScheme.primary,
                     textAlign = TextAlign.Center,
@@ -162,7 +164,7 @@ fun PdfScreen(navController: NavController, filePath: String) {
                     modifier = Modifier
                         .fillMaxSize()
                         .weight(1f),
-                    horizontalAlignment = Alignment.CenterHorizontally // 水平居中对齐
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     CircularProgressIndicator()
                 }

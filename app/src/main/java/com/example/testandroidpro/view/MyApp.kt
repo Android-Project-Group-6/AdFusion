@@ -17,9 +17,9 @@ fun MyApp() {
     val adViewModel: AdViewModel = viewModel()
     val pdfLoadViewModel: PdfLoadViewModel = viewModel()
     NavHost(navController = navController, startDestination = adViewModel.startDestination) {
-        composable(route = "login") {
+        composable(route = context.getString(R.string.loginPage)) {
             when (navController.currentDestination?.route) {
-                "login" -> LoginScreen(navController,adViewModel)
+                context.getString(R.string.loginPage) -> LoginScreen(navController,adViewModel)
             }
         }
         composable(route = context.getString(R.string.HomePage)) {
@@ -27,19 +27,19 @@ fun MyApp() {
                 context.getString(R.string.HomePage) -> MainScreen(navController,adViewModel,pdfLoadViewModel)
             }
         }
-        composable(route = "signup") {
+        composable(route = context.getString(R.string.signupPage)) {
             when (navController.currentDestination?.route) {
-                "signup" -> SignupScreen(navController,adViewModel)
+                context.getString(R.string.signupPage) -> SignupScreen(navController,adViewModel)
             }
         }
-        composable(route = "info") {
+        composable(route = context.getString(R.string.infoPage)) {
             when (navController.currentDestination?.route) {
-                "info" -> InfoScreen(navController,adViewModel)
+                context.getString(R.string.infoPage) -> InfoScreen(navController,adViewModel)
             }
         }
-        composable(route = "pdf") {
+        composable(route = context.getString(R.string.pdfPage)) {
             when (navController.currentDestination?.route) {
-                "pdf" -> PdfScreen(navController,adViewModel.filePath)
+                context.getString(R.string.pdfPage) -> PdfScreen(navController,adViewModel.market,adViewModel.filePath)
             }
         }
     }

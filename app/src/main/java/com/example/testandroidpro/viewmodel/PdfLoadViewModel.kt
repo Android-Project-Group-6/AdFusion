@@ -20,7 +20,7 @@ class PdfLoadViewModel: ViewModel() {
     }
 
     @Composable
-    fun loadPdfFile(filePath:String){
+    fun LoadPdfFile(filePath:String){
         Log.d("PdfLoadViewModel",filePath)
 //        val localFile = File.createTempFile("tempPdf", "pdf")
 //        val storageReference = FirebaseStorage.getInstance().reference
@@ -45,13 +45,12 @@ class PdfLoadViewModel: ViewModel() {
 
         LaunchedEffect(Unit) {
             try {
-                pathReference.getFile(localFile).await() // 等待文件下载完成
+                pathReference.getFile(localFile).await()
                 pdfFile.value = localFile
                 pdfLoading.value = false
                 Log.d("TestPdf","success")
             } catch (e: Exception) {
                 Log.e("TestPdf", "Error loading PDF", e)
-                // 处理加载PDF文件时的错误
             }
         }
     }

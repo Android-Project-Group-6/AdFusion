@@ -30,6 +30,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -39,14 +41,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.testandroidpro.R
 import com.example.testandroidpro.viewmodel.AdViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InfoTopBar(navController: NavController, adViewModel:AdViewModel) {
     var expanded by remember { mutableStateOf(false) }
+    val context = LocalContext.current
     TopAppBar(
-        title = { Text("AdFusion") },
+        title = { Text(stringResource(R.string.ComName)) },
         actions = {
             IconButton(
                 onClick = {
@@ -58,12 +62,12 @@ fun InfoTopBar(navController: NavController, adViewModel:AdViewModel) {
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false }) {
-//                DropdownMenuItem(
-//                    text = { Text("info") },
-//                    onClick = { navController.navigate("info") }
-//                )
                 DropdownMenuItem(
-                    text = { Text("Signout") },
+                    text = { Text(stringResource(R.string.ads_list)) },
+                    onClick = { navController.navigate(context.getString(R.string.HomePage)) }
+                )
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.sign_out)) },
                     onClick = {
                         adViewModel.userSignOut(navController)
 //                        navController.navigate("Settings")
@@ -84,7 +88,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                     .padding(it),
             ) {
                 Text(
-                    text = "I am Info",
+                    text = stringResource(R.string.screen_settings),
                     fontSize = 24.sp,
                     color = MaterialTheme.colorScheme.primary,
                     textAlign = TextAlign.Center,
@@ -95,7 +99,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                 OutlinedTextField(
                     value = adViewModel.userName,
                     onValueChange = {adViewModel.userName = it.replace(',','.')},
-                    label = {Text("Name")},
+                    label = {Text(stringResource(R.string.uesrname))},
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     modifier = Modifier
@@ -105,7 +109,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                 OutlinedTextField(
                     value = adViewModel.userPhoneNum,
                     onValueChange = {adViewModel.userPhoneNum = it.replace(',','.')},
-                    label = {Text("Phone Number")},
+                    label = {Text(stringResource(R.string.user_phone_number))},
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     modifier = Modifier
@@ -115,7 +119,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                 OutlinedTextField(
                     value = adViewModel.userAddress,
                     onValueChange = {adViewModel.userAddress = it.replace(',','.')},
-                    label = {Text("Address")},
+                    label = {Text(stringResource(R.string.user_address))},
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     modifier = Modifier
@@ -131,7 +135,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                         adViewModel.modifyInfo(navController)
                     },
                 ) {
-                    Text(text = "Modify")
+                    Text(text = stringResource(R.string.button_modify))
                 }
             }
         }

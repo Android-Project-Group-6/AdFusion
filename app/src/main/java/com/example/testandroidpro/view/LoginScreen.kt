@@ -24,6 +24,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -33,19 +35,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.testandroidpro.R
 import com.example.testandroidpro.viewmodel.AdViewModel
 
 @Composable
 fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
     var showKey by remember { mutableStateOf(false) }
-
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
     )
     {
         Text(
-            text = "Welcome",
+            text = stringResource(R.string.welcome),
             fontSize = 24.sp,
             color = MaterialTheme.colorScheme.primary,
             textAlign = TextAlign.Center,
@@ -54,7 +57,7 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                 .padding(top = 16.dp, bottom = 16.dp)
         )
         Text(
-            text = "Please Login",
+            text = stringResource(R.string.please_login),
             fontSize = 24.sp,
             color = MaterialTheme.colorScheme.primary,
             textAlign = TextAlign.Center,
@@ -70,17 +73,17 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Email,
-                    contentDescription = "Email Icon"
+                    contentDescription = stringResource(R.string.email_icon)
                 )
             },
             trailingIcon = {
                 Icon(
                     imageVector = Icons.Default.Person,
-                    contentDescription = "Person Icon"
+                    contentDescription = stringResource(R.string.person_icon)
                 )
             },
-            label = { Text(text = "Email") },
-            placeholder = { Text(text = "Type your email") },
+            label = { Text(text = stringResource(R.string.email)) },
+            placeholder = { Text(text = stringResource(R.string.enter_your_email)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp),
@@ -94,19 +97,21 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
             onValueChange = {
                 adViewModel.passWord = it.replace(',','.')
             },
-            label = { Text(text = "Password") },
-            placeholder = { Text(text = "Enter your password") },
+            label = { Text(text = stringResource(R.string.password)) },
+            placeholder = { Text(text = stringResource(R.string.enter_your_password)) },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Outlined.Lock,
-                    contentDescription = "Lock Icon"
+                    contentDescription = stringResource(R.string.lock_icon)
                 )
             },
             trailingIcon = {
                 IconButton(onClick = { showKey = !showKey }) {
                     Icon(
                         imageVector = if (showKey) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
-                        contentDescription = if (showKey) "Show Password" else "Hide Password"
+                        contentDescription =
+                            if (showKey) stringResource(R.string.show_password)
+                            else stringResource(R.string.hide_password)
                     )
                 }
             },
@@ -128,7 +133,7 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                 adViewModel.userLogin(navController)
             },
         ) {
-            Text(text = "Login")
+            Text(text = stringResource(R.string.button_login))
         }
         Button(
             modifier = Modifier
@@ -136,10 +141,10 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                 .height(64.dp)
                 .padding(8.dp),
             onClick = {
-                navController.navigate("signup")
+                navController.navigate(context.getString(R.string.screen_signup))
             },
         ) {
-            Text(text = "Signup")
+            Text(text = stringResource(R.string.button_signup))
         }
         Text(
             text = adViewModel.userState,
