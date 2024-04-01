@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.icu.text.SimpleDateFormat
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,7 +45,9 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -56,7 +59,8 @@ import com.example.testandroidpro.R
 import com.example.testandroidpro.viewmodel.AdViewModel
 import com.example.testandroidpro.viewmodel.PdfLoadViewModel
 import java.util.Locale
-
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.style.TextOverflow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,7 +96,21 @@ fun MainTopBar(navController: NavController, adViewModel: AdViewModel) {
     )
 }
 
+@Composable
+fun MyText() {
+    val density = LocalDensity.current
+    val fontSize = remember { mutableStateOf(0.sp) }
 
+    Box(modifier = Modifier.fillMaxSize().onGloballyPositioned { layoutCoordinates ->
+        val newFontSize = with(density) { layoutCoordinates.size.height.toDp().toPx() / density.density } * 0.05f
+        fontSize.value = newFontSize.sp
+    }) {
+        Text(
+            text = "Hello, World!",
+            fontSize = fontSize.value
+        )
+    }
+}
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
@@ -105,19 +123,49 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadVi
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(it),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
                 Log.d("MainScreen",adViewModel.userName)
                 val state = adViewModel.listState
-                Text(
-                    text = stringResource(R.string.welcome) + stringResource(R.string.string_space) + adViewModel.userName,
-                    fontSize = 24.sp,
-                    color = MaterialTheme.colorScheme.primary,
-                    textAlign = TextAlign.Center,
+                val density3 = LocalDensity.current
+                val fontSize3 = remember { mutableStateOf(0.sp) }
+                val adjusted = remember { mutableStateOf(false) }
+                val text = stringResource(R.string.welcome) + stringResource(R.string.string_space) + adViewModel.userName
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp, bottom = 16.dp)
+                        .fillMaxSize()
                         .weight(0.1f)
-                )
+                        .border(1.dp, Color.Green)
+                        .onGloballyPositioned { layoutCoordinates ->
+                            if (!adjusted.value) {
+                                val newFontSize = with(density3) { layoutCoordinates.size.height.toDp().toPx() / density3.density } * 0.8f
+                                fontSize3.value = newFontSize.sp
+                            }
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = text,
+                        fontSize = fontSize3.value,
+                        color = MaterialTheme.colorScheme.primary,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .border(1.dp, Color.Green),
+                        onTextLayout = { layoutResult: TextLayoutResult ->
+                            val lines = layoutResult.lineCount
+                            if (lines > 1 && fontSize3.value > 16.sp) {
+                                val newFontSizePx = maxOf(fontSize3.value.value - 5, 16f)
+                                fontSize3.value = newFontSizePx.sp
+                                adjusted.value = true
+//                                Log.d("text dynamic", fontSize3.value.toString())
+                            }
+                        },
+//                        maxLines = 1,
+//                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
@@ -381,10 +429,17 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadVi
                                                     }
                                                 }
                                             }
+//                                            MyText()
+                                            val density1 = LocalDensity.current
+                                            val fontSize1 = remember { mutableStateOf(0.sp) }
                                             Row(
                                                 modifier = Modifier
                                                     .weight(1.5f)
-                                                    .fillMaxWidth(),
+                                                    .fillMaxWidth()
+                                                    .onGloballyPositioned{ layoutCoordinates ->
+                                                        val newFontSize = with(density1) { layoutCoordinates.size.height.toDp().toPx() / density1.density } * 0.5f
+                                                        fontSize1.value = newFontSize.sp
+                                                    },
                                                 horizontalArrangement = Arrangement.Center,
                                                 verticalAlignment = Alignment.CenterVertically
                                             ) {
@@ -395,7 +450,7 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadVi
                                                             .fillMaxWidth()
                                                             .padding(1.dp),
                                                         textAlign = TextAlign.Center,
-                                                        fontSize = 22.sp,
+                                                        fontSize = fontSize1.value,
                                                         color = Color(0xFF69BD00)
                                                     )
                                                 }
@@ -421,10 +476,16 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadVi
                                                         .weight(0.5f)
                                                 )
                                             }
+                                            val density2 = LocalDensity.current
+                                            val fontSize2 = remember { mutableStateOf(0.sp) }
                                             Row(
                                                 modifier = Modifier
                                                     .weight(1f)
-                                                    .fillMaxWidth(),
+                                                    .fillMaxWidth()
+                                                    .onGloballyPositioned{ layoutCoordinates ->
+                                                        val newFontSize = with(density2) { layoutCoordinates.size.height.toDp().toPx() / density2.density } * 0.38f
+                                                        fontSize2.value = newFontSize.sp
+                                                    },
                                                 horizontalArrangement = Arrangement.Center,
                                                 verticalAlignment = Alignment.CenterVertically
                                             ) {
@@ -440,7 +501,7 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadVi
                                                         modifier = Modifier
                                                             .padding(1.dp),
                                                         textAlign = TextAlign.Center,
-                                                        fontSize = 10.sp
+                                                        fontSize = fontSize2.value
                                                     )
                                                 }
                                                 Text(
@@ -448,7 +509,7 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadVi
                                                     modifier = Modifier
                                                         .padding(1.dp),
                                                     textAlign = TextAlign.Center,
-                                                    fontSize = 12.sp
+                                                    fontSize = fontSize2.value
                                                 )
                                                 val timestampStop = document.ads[0].getTimestamp(
                                                     context.getString(
@@ -466,7 +527,7 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadVi
                                                         modifier = Modifier
                                                             .padding(1.dp),
                                                         textAlign = TextAlign.Center,
-                                                        fontSize = 10.sp
+                                                        fontSize = fontSize2.value
                                                     )
                                                 }
                                             }

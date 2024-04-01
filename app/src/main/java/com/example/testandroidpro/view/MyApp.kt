@@ -39,7 +39,7 @@ fun MyApp() {
         }
         composable(route = context.getString(R.string.pdfPage)) {
             when (navController.currentDestination?.route) {
-                context.getString(R.string.pdfPage) -> PdfScreen(navController,adViewModel.market,adViewModel.filePath)
+                context.getString(R.string.pdfPage) -> PdfScreen(adViewModel.market,adViewModel.filePath)
             }
         }
     }
