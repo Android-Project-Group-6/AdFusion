@@ -1,10 +1,10 @@
 package com.example.testandroidpro.view
 
 import android.annotation.SuppressLint
+import android.graphics.Paint
 import android.icu.text.SimpleDateFormat
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -57,10 +57,8 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.testandroidpro.R
 import com.example.testandroidpro.viewmodel.AdViewModel
-import com.example.testandroidpro.viewmodel.PdfLoadViewModel
 import java.util.Locale
 import androidx.compose.ui.text.TextLayoutResult
-import androidx.compose.ui.text.style.TextOverflow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -96,25 +94,25 @@ fun MainTopBar(navController: NavController, adViewModel: AdViewModel) {
     )
 }
 
-@Composable
-fun MyText() {
-    val density = LocalDensity.current
-    val fontSize = remember { mutableStateOf(0.sp) }
-
-    Box(modifier = Modifier.fillMaxSize().onGloballyPositioned { layoutCoordinates ->
-        val newFontSize = with(density) { layoutCoordinates.size.height.toDp().toPx() / density.density } * 0.05f
-        fontSize.value = newFontSize.sp
-    }) {
-        Text(
-            text = "Hello, World!",
-            fontSize = fontSize.value
-        )
-    }
-}
+//@Composable
+//fun MyText() {
+//    val density = LocalDensity.current
+//    val fontSize = remember { mutableStateOf(0.sp) }
+//
+//    Box(modifier = Modifier.fillMaxSize().onGloballyPositioned { layoutCoordinates ->
+//        val newFontSize = with(density) { layoutCoordinates.size.height.toDp().toPx() / density.density } * 0.05f
+//        fontSize.value = newFontSize.sp
+//    }) {
+//        Text(
+//            text = "Hello, World!",
+//            fontSize = fontSize.value
+//        )
+//    }
+//}
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadViewModel: PdfLoadViewModel) {
+fun MainScreen(navController: NavController, adViewModel: AdViewModel) {
     val context = LocalContext.current
     Scaffold (
         topBar = { MainTopBar(navController,adViewModel) },
@@ -131,40 +129,89 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel, pdfLoadVi
                 val density3 = LocalDensity.current
                 val fontSize3 = remember { mutableStateOf(0.sp) }
                 val adjusted = remember { mutableStateOf(false) }
-                val text = stringResource(R.string.welcome) + stringResource(R.string.string_space) + adViewModel.userName
+                val welcomeString = stringResource(R.string.welcome)
+                val spaceString = stringResource(R.string.string_space)
+                val text = remember { mutableStateOf(welcomeString + spaceString + adViewModel.userName) }
+                val text1 = welcomeString + spaceString + adViewModel.userName
+                val parentWidth = remember { mutableStateOf(0f) }
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .weight(0.1f)
-                        .border(1.dp, Color.Green)
+//                        .border(1.dp, Color.Green)
                         .onGloballyPositioned { layoutCoordinates ->
-                            if (!adjusted.value) {
-                                val newFontSize = with(density3) { layoutCoordinates.size.height.toDp().toPx() / density3.density } * 0.8f
+                            if(!adjusted.value) {
+                                parentWidth.value = with(density3) {
+                                    layoutCoordinates.size.width.toDp().toPx() / density3.density
+                                } * 0.8f
+                                Log.d("text dynamic9", layoutCoordinates.size.toString())
+                                val newFontSize = with(density3) {
+                                    layoutCoordinates.size.height.toDp().toPx() / density3.density
+                                } * 0.8f
                                 fontSize3.value = newFontSize.sp
+                                Log.d("text dynamic10", fontSize3.value.toString())
                             }
-                        },
+                        }
+                    ,
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = text,
+                        text = text1,//stringResource(R.string.welcome) + stringResource(R.string.string_space) + adViewModel.userName,
                         fontSize = fontSize3.value,
                         color = MaterialTheme.colorScheme.primary,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(1.dp, Color.Green),
+//                            .border(1.dp, Color.Green)
+                        ,
                         onTextLayout = { layoutResult: TextLayoutResult ->
                             val lines = layoutResult.lineCount
-                            if (lines > 1 && fontSize3.value > 16.sp) {
-                                val newFontSizePx = maxOf(fontSize3.value.value - 5, 16f)
-                                fontSize3.value = newFontSizePx.sp
+                            val paint = Paint().apply {
+                                textSize = fontSize3.value.value
+                            }
+                            var textWidth = paint.measureText(text1+"  ")
+                            if (lines > 1 && fontSize3.value > 16.sp || textWidth > parentWidth.value) {
                                 adjusted.value = true
-//                                Log.d("text dynamic", fontSize3.value.toString())
+
+
+                                Log.d("text dynamic4", textWidth.toString())
+                                Log.d("text dynamic5", parentWidth.toString())
+                                Log.d("text dynamic6", fontSize3.value.toString())
+                                Log.d("text dynamic7", text1)
+                                Log.d("text dynamic8", text.value)
+                                while (textWidth > parentWidth.value && fontSize3.value > 16.sp) {
+
+                                    fontSize3.value = with(density3) { fontSize3.value.toPx() / density - 1.sp.toPx() / density }.sp
+                                    paint.textSize = fontSize3.value.value
+                                    textWidth = paint.measureText(text1+"  ")
+                                    Log.d("text dynamic1", textWidth.toString())
+                                    Log.d("text dynamic2", parentWidth.toString())
+                                    Log.d("text dynamic3", fontSize3.value.toString())
+                                }
                             }
                         },
-//                        maxLines = 1,
-//                        overflow = TextOverflow.Ellipsis,
                     )
+//                    Text(
+//                        text = text,
+//                        fontSize = fontSize3.value,
+//                        color = MaterialTheme.colorScheme.primary,
+//                        textAlign = TextAlign.Center,
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .border(1.dp, Color.Green),
+//                        onTextLayout = { layoutResult: TextLayoutResult ->
+//                            val lines = layoutResult.lineCount
+//                            if (lines > 1 && fontSize3.value > 16.sp) {
+//                                val newFontSizePx = maxOf(fontSize3.value.value - 5, 16f)
+//                                fontSize3.value = newFontSizePx.sp
+//                                adjusted.value = true
+////                                Log.d("text dynamic", fontSize3.value.toString())
+//                            }
+//                        },
+////                        maxLines = 1,
+////                        overflow = TextOverflow.Ellipsis,
+//                    )
+
                 }
                 LazyColumn(
                     modifier = Modifier

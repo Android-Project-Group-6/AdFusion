@@ -8,14 +8,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.testandroidpro.R
 import com.example.testandroidpro.viewmodel.AdViewModel
-import com.example.testandroidpro.viewmodel.PdfLoadViewModel
 
 @Composable
 fun MyApp() {
     val navController = rememberNavController()
     val context = LocalContext.current
     val adViewModel: AdViewModel = viewModel()
-    val pdfLoadViewModel: PdfLoadViewModel = viewModel()
+//    val pdfLoadViewModel: PdfLoadViewModel = viewModel()
     NavHost(navController = navController, startDestination = adViewModel.startDestination) {
         composable(route = context.getString(R.string.loginPage)) {
             when (navController.currentDestination?.route) {
@@ -24,7 +23,7 @@ fun MyApp() {
         }
         composable(route = context.getString(R.string.HomePage)) {
             when (navController.currentDestination?.route) {
-                context.getString(R.string.HomePage) -> MainScreen(navController,adViewModel,pdfLoadViewModel)
+                context.getString(R.string.HomePage) -> MainScreen(navController,adViewModel)
             }
         }
         composable(route = context.getString(R.string.signupPage)) {
