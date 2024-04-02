@@ -36,7 +36,7 @@
     <string name="time_form">dd/MM/yyyy</string>
     <string name="date_separator">~</string>
     <string name="string_space">" "</string>
-    <string name="drop_info">Info</string>
+    <string name="drop_info">User Info</string>
     <string name="drop_signout">Signout</string>
     <string name="loading">Loading...</string>
     <string name="please_signup">Please Signup</string>

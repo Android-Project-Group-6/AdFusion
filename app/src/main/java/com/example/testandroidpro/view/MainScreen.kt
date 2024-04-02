@@ -5,6 +5,7 @@ import android.graphics.Paint
 import android.icu.text.SimpleDateFormat
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -60,39 +62,7 @@ import com.example.testandroidpro.viewmodel.AdViewModel
 import java.util.Locale
 import androidx.compose.ui.text.TextLayoutResult
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MainTopBar(navController: NavController, adViewModel: AdViewModel) {
-    var expanded by remember { mutableStateOf(false) }
-    val context = LocalContext.current
-    TopAppBar(
-        title = { Text(stringResource(R.string.ComName)) },
-        actions = {
-            IconButton(
-                onClick = {
-                    expanded = !expanded
-                }
-            ) {
-                Icon(Icons.Filled.MoreVert,contentDescription = null)
-            }
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }) {
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.drop_info)) },
-                    onClick = { navController.navigate(context.getString(R.string.infoPage)) }
-                )
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.drop_signout)) },
-                    onClick = {
-                        adViewModel.userSignOut(navController)
-//                        navController.navigate("Settings")
-                    }
-                )
-            }
-        }
-    )
-}
+
 
 //@Composable
 //fun MyText() {
@@ -115,7 +85,7 @@ fun MainTopBar(navController: NavController, adViewModel: AdViewModel) {
 fun MainScreen(navController: NavController, adViewModel: AdViewModel) {
     val context = LocalContext.current
     Scaffold (
-        topBar = { MainTopBar(navController,adViewModel) },
+        topBar = { TopBar(navController,adViewModel,context.getString(R.string.HomePage)) },
         content = {
             Column(
                 modifier = Modifier
@@ -131,9 +101,8 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel) {
                 val adjusted = remember { mutableStateOf(false) }
                 val welcomeString = stringResource(R.string.welcome)
                 val spaceString = stringResource(R.string.string_space)
-                val text = remember { mutableStateOf(welcomeString + spaceString + adViewModel.userName) }
                 val text1 = welcomeString + spaceString + adViewModel.userName
-                val parentWidth = remember { mutableStateOf(0f) }
+                val parentWidth = remember { mutableFloatStateOf(0f) }
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -141,15 +110,13 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel) {
 //                        .border(1.dp, Color.Green)
                         .onGloballyPositioned { layoutCoordinates ->
                             if(!adjusted.value) {
-                                parentWidth.value = with(density3) {
+                                parentWidth.floatValue = with(density3) {
                                     layoutCoordinates.size.width.toDp().toPx() / density3.density
                                 } * 0.8f
-                                Log.d("text dynamic9", layoutCoordinates.size.toString())
                                 val newFontSize = with(density3) {
                                     layoutCoordinates.size.height.toDp().toPx() / density3.density
                                 } * 0.8f
                                 fontSize3.value = newFontSize.sp
-                                Log.d("text dynamic10", fontSize3.value.toString())
                             }
                         }
                     ,
@@ -162,31 +129,20 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel) {
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .fillMaxWidth()
-//                            .border(1.dp, Color.Green)
                         ,
                         onTextLayout = { layoutResult: TextLayoutResult ->
                             val lines = layoutResult.lineCount
                             val paint = Paint().apply {
                                 textSize = fontSize3.value.value
                             }
-                            var textWidth = paint.measureText(text1+"  ")
-                            if (lines > 1 && fontSize3.value > 16.sp || textWidth > parentWidth.value) {
+                            var textWidth = paint.measureText(text1+context.getString(R.string.string_space))
+                            if (lines > 1 && fontSize3.value > 16.sp || textWidth > parentWidth.floatValue) {
                                 adjusted.value = true
-
-
-                                Log.d("text dynamic4", textWidth.toString())
-                                Log.d("text dynamic5", parentWidth.toString())
-                                Log.d("text dynamic6", fontSize3.value.toString())
-                                Log.d("text dynamic7", text1)
-                                Log.d("text dynamic8", text.value)
-                                while (textWidth > parentWidth.value && fontSize3.value > 16.sp) {
+                                while (textWidth > parentWidth.floatValue && fontSize3.value > 16.sp) {
 
                                     fontSize3.value = with(density3) { fontSize3.value.toPx() / density - 1.sp.toPx() / density }.sp
                                     paint.textSize = fontSize3.value.value
-                                    textWidth = paint.measureText(text1+"  ")
-                                    Log.d("text dynamic1", textWidth.toString())
-                                    Log.d("text dynamic2", parentWidth.toString())
-                                    Log.d("text dynamic3", fontSize3.value.toString())
+                                    textWidth = paint.measureText(text1+context.getString(R.string.string_space))
                                 }
                             }
                         },
