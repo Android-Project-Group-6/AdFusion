@@ -1,12 +1,15 @@
 package com.example.testandroidpro.view
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
@@ -29,8 +32,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -44,43 +50,11 @@ import androidx.navigation.NavController
 import com.example.testandroidpro.R
 import com.example.testandroidpro.viewmodel.AdViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun InfoTopBar(navController: NavController, adViewModel:AdViewModel) {
-    var expanded by remember { mutableStateOf(false) }
-    val context = LocalContext.current
-    TopAppBar(
-        title = { Text(stringResource(R.string.ComName)) },
-        actions = {
-            IconButton(
-                onClick = {
-                    expanded = !expanded
-                }
-            ) {
-                Icon(Icons.Filled.MoreVert,contentDescription = null)
-            }
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }) {
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.ads_list)) },
-                    onClick = { navController.navigate(context.getString(R.string.HomePage)) }
-                )
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.sign_out)) },
-                    onClick = {
-                        adViewModel.userSignOut(navController)
-//                        navController.navigate("Settings")
-                    }
-                )
-            }
-        }
-    )
-}
 @Composable
 fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
+    val context = LocalContext.current
     Scaffold (
-        topBar = { InfoTopBar(navController,adViewModel) },
+        topBar = { TopBar(navController,adViewModel,context.getString(R.string.InfoPage)) },
         content = {
             Column(
                 modifier = Modifier
