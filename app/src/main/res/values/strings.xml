@@ -43,4 +43,6 @@
     <string name="email_must">Email *</string>
     <string name="password_must">PassWord *</string>
     <string name="button_reg">Reg</string>
+    <string name="borderdebug">false</string>
+    <string name="forgot_password">Forgot Password?</string>
 </resources>
