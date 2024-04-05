@@ -18,6 +18,12 @@
     <string name="please_login">Please Login</string>
     <string name="password">Password</string>
     <string name="enter_your_password">Enter your password</string>
+    <string name="oldpassword">Old Password</string>
+    <string name="enter_your_oldpassword">Enter your old password</string>
+    <string name="newpassword1">New Password</string>
+    <string name="enter_your_newpassword1">Enter your new password</string>
+    <string name="newpassword2">New Password</string>
+    <string name="enter_your_newpassword2">Re-enter your new password</string>
     <string name="lock_icon">Lock Icon</string>
     <string name="show_password">Show Password</string>
     <string name="hide_password">Hide Password</string>
@@ -45,4 +51,5 @@
     <string name="button_reg">Reg</string>
     <string name="borderdebug">false</string>
     <string name="forgot_password">Forgot Password?</string>
+    <string name="change_your_password">Change your password?</string>
 </resources>

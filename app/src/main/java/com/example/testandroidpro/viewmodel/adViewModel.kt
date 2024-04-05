@@ -1,5 +1,6 @@
 package com.example.testandroidpro.viewmodel
 
+import android.text.TextUtils
 import android.util.Log
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.getValue
@@ -24,8 +25,11 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 class AdViewModel: ViewModel()  {
-    var email: String by  mutableStateOf("")
-    var passWord: String by  mutableStateOf("")
+    var emailDisplay: String by  mutableStateOf("")
+    var currentEmail: String by  mutableStateOf("")
+    var oldPassWord: String by  mutableStateOf("")
+    var newPassWord1: String by  mutableStateOf("")
+    var newPassWord2: String by  mutableStateOf("")
     var userAddress: String by  mutableStateOf("")
     var userPhoneNum: String by  mutableStateOf("")
     var userName: String by  mutableStateOf("")
@@ -244,7 +248,7 @@ class AdViewModel: ViewModel()  {
         }
     }
 
-    fun userSignup(navController: NavController) {
+    fun userSignup(navController: NavController, email:String, passWord:String) {
         viewModelScope.launch {
             if (email.isNotEmpty() && passWord.isNotEmpty()) {
                 fAuth.createUserWithEmailAndPassword(email, passWord)
@@ -277,7 +281,11 @@ class AdViewModel: ViewModel()  {
                                     Log.w("Signup Init Database", "Error adding document", e)
                                 }
                             Log.d("signup", currentUser.uid)
+
                             userState = "Signup success"
+
+                            currentEmail = currentUser.email.toString()
+
                             navController.popBackStack("signup", inclusive = true)
                             navController.popBackStack("login", inclusive = true)
                             navController.navigate("home")
@@ -294,7 +302,7 @@ class AdViewModel: ViewModel()  {
         }
     }
 
-    fun userLogin(navController: NavController) {
+    fun userLogin(navController: NavController, email:String, passWord:String) {
         viewModelScope.launch {
             if (email.isNotEmpty() && passWord.isNotEmpty()) {
                 fAuth.signInWithEmailAndPassword(email, passWord)
@@ -319,6 +327,7 @@ class AdViewModel: ViewModel()  {
 
                             Log.d("Login", currentUser.uid)
                             userState = "Login success"
+                            currentEmail = currentUser.email.toString()
                             navController.popBackStack("login", inclusive = true)
                             navController.navigate("home")
                         }
@@ -350,6 +359,7 @@ class AdViewModel: ViewModel()  {
         viewModelScope.launch {
             startDestination = if (currentUser != null) "home" else "login"
             if (currentUser != null) {
+                currentEmail = currentUser.email.toString()
                 db.collection("users")
                     .document(currentUser.uid)
                     .collection("inf")
@@ -367,6 +377,52 @@ class AdViewModel: ViewModel()  {
                     .addOnFailureListener { e ->
                         Log.w("checkUserLogin", "Error adding document", e)
                     }
+            }
+        }
+    }
+
+    fun forgotPassword(email:String){
+        viewModelScope.launch {
+            if (!TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                fAuth.sendPasswordResetEmail(email)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Log.d("forgotPassword", "Email sent.")
+                            Log.d("forgotPassword", email)
+                        }
+                    }
+            }
+            else {
+                userState = "Error Email"
+            }
+        }
+    }
+
+    fun resetPassword(navController: NavController){
+        viewModelScope.launch {
+            if(newPassWord1 == newPassWord2) {
+                fAuth.signInWithEmailAndPassword(currentEmail, oldPassWord)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("resetPassword", "signInWithEmail:success")
+                            val user = fAuth.currentUser
+                            // User can now enter a new password
+                            user?.updatePassword(newPassWord1)?.addOnCompleteListener { tasking ->
+                                if (tasking.isSuccessful) {
+                                    Log.d("resetPassword", "User password updated.")
+                                    userSignOut(navController)
+
+                                }
+                            }
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w("resetPassword", "signInWithEmail:failure", task.exception)
+                            // Incorrect current password, do not allow password change
+                        }
+                    }
+            } else {
+                userState = "Two passwords don't match"
             }
         }
     }
