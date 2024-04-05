@@ -216,6 +216,7 @@ class AdViewModel: ViewModel()  {
                     .document("details")
                     .set(userInfo)
                     .addOnSuccessListener {
+                        userInfoStore.value = userInfo
                         Log.d("Signup Init Database", "DocumentSnapshot added with ID:")
                     }
                     .addOnFailureListener { e ->
