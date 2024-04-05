@@ -27,12 +27,8 @@ import java.io.File
 class AdViewModel: ViewModel()  {
     var emailDisplay: String by  mutableStateOf("")
     var currentEmail: String by  mutableStateOf("")
-    var oldPassWord: String by  mutableStateOf("")
-    var newPassWord1: String by  mutableStateOf("")
-    var newPassWord2: String by  mutableStateOf("")
-    var userAddress: String by  mutableStateOf("")
-    var userPhoneNum: String by  mutableStateOf("")
-    var userName: String by  mutableStateOf("")
+
+    var userInfoStore = mutableStateOf(Myuser("", "", ""))
     var userState: String by  mutableStateOf("")
 
     val fAuth = Firebase.auth
@@ -208,21 +204,8 @@ class AdViewModel: ViewModel()  {
         return file
 
     }
-//    fun getLocalFile(iconName: String, callback: (File?) -> Unit) {
-//        viewModelScope.launch {
-//            val file = localFilesIcon.find { it.name.contains(iconName) }
-//            if (file == null) {
-//                Log.d("getLocalFile", "No local file found for $iconName")
-//            } else {
-//                Log.d("getLocalFile", "Success found for $iconName")
-////            val fileContent = file.readText()
-////            Log.d("FileContent", fileContent)
-//            }
-//            callback(file)
-//        }
-//    }
 
-    fun modifyInfo(navController: NavController) {
+    fun modifyInfo(navController: NavController,userInfo:Myuser) {
         viewModelScope.launch {
             val currentUser = fAuth.currentUser
             if (currentUser != null) {
@@ -231,7 +214,7 @@ class AdViewModel: ViewModel()  {
                     .document(currentUser.uid)
                     .collection("inf")
                     .document("details")
-                    .set(Myuser(userName, userAddress, userPhoneNum))
+                    .set(userInfo)
                     .addOnSuccessListener {
                         Log.d("Signup Init Database", "DocumentSnapshot added with ID:")
                     }
@@ -248,7 +231,7 @@ class AdViewModel: ViewModel()  {
         }
     }
 
-    fun userSignup(navController: NavController, email:String, passWord:String) {
+    fun userSignup(navController: NavController, email:String, passWord:String, userInfo:Myuser) {
         viewModelScope.launch {
             if (email.isNotEmpty() && passWord.isNotEmpty()) {
                 fAuth.createUserWithEmailAndPassword(email, passWord)
@@ -273,7 +256,7 @@ class AdViewModel: ViewModel()  {
                                 .document(currentUser.uid)
                                 .collection("inf")
                                 .document("details")
-                                .set(Myuser(userName, userAddress, userPhoneNum))
+                                .set(userInfo)
                                 .addOnSuccessListener {
                                     Log.d("Signup Init Database", "DocumentSnapshot added with ID:")
                                 }
@@ -283,6 +266,8 @@ class AdViewModel: ViewModel()  {
                             Log.d("signup", currentUser.uid)
 
                             userState = "Signup success"
+
+                            userInfoStore.value = userInfo
 
                             currentEmail = currentUser.email.toString()
 
@@ -315,9 +300,12 @@ class AdViewModel: ViewModel()  {
                                 .document("details")
                                 .get()
                                 .addOnSuccessListener { document ->
-                                    userAddress = document.getString("address").toString()
-                                    userPhoneNum = document.getString("phonenum").toString()
-                                    userName = document.getString("name").toString()
+                                    userInfoStore.value = Myuser(
+                                        name = document.getString("name").toString(),
+                                        address = document.getString("address").toString(),
+                                        phonenum = document.getString("phonenum").toString()
+                                    )
+
 
                                     Log.d("Signup Init Database", "DocumentSnapshot added with ID:")
                                 }
@@ -345,12 +333,14 @@ class AdViewModel: ViewModel()  {
 
     fun userSignOut(navController: NavController) {
         viewModelScope.launch {
-            fAuth.signOut()
-            userState = ""
-            userAddress = ""
-            userPhoneNum = ""
-            userName = ""
+            emailDisplay = ""
 
+            userState = ""
+            userInfoStore.value.name = ""
+            userInfoStore.value.phonenum = ""
+            userInfoStore.value.address = ""
+
+            fAuth.signOut()
             navController.navigate("login")
         }
     }
@@ -366,13 +356,16 @@ class AdViewModel: ViewModel()  {
                     .document("details")
                     .get()
                     .addOnSuccessListener { document ->
-                        userAddress = document.getString("address").toString()
-                        userPhoneNum = document.getString("phonenum").toString()
-                        userName = document.getString("name").toString()
+                        userInfoStore.value = Myuser(
+                            name = document.getString("name").toString(),
+                            address = document.getString("address").toString(),
+                            phonenum = document.getString("phonenum").toString()
+                        )
                         Log.d("checkUserLogin", currentUser.uid)
-                        Log.d("checkUserLogin", userAddress)
-                        Log.d("checkUserLogin", userPhoneNum)
-                        Log.d("checkUserLogin", userName)
+//                        Log.d("checkUserLogin", userInfoStore.address)
+//                        Log.d("checkUserLogin", userInfoStore.phonenum)
+//                        Log.d("checkUserLogin", userInfoStore.name)
+
                     }
                     .addOnFailureListener { e ->
                         Log.w("checkUserLogin", "Error adding document", e)
@@ -387,6 +380,7 @@ class AdViewModel: ViewModel()  {
                 fAuth.sendPasswordResetEmail(email)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
+                            userState = "Email sent"
                             Log.d("forgotPassword", "Email sent.")
                             Log.d("forgotPassword", email)
                         }
@@ -398,21 +392,22 @@ class AdViewModel: ViewModel()  {
         }
     }
 
-    fun resetPassword(navController: NavController){
+    fun resetPassword(navController: NavController, opw:String, npw1:String, npw2:String){
         viewModelScope.launch {
-            if(newPassWord1 == newPassWord2) {
-                fAuth.signInWithEmailAndPassword(currentEmail, oldPassWord)
+            if(npw1 == npw2) {
+                fAuth.signInWithEmailAndPassword(currentEmail, opw)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("resetPassword", "signInWithEmail:success")
                             val user = fAuth.currentUser
                             // User can now enter a new password
-                            user?.updatePassword(newPassWord1)?.addOnCompleteListener { tasking ->
+                            user?.updatePassword(npw1)?.addOnCompleteListener { tasking ->
                                 if (tasking.isSuccessful) {
                                     Log.d("resetPassword", "User password updated.")
-                                    userSignOut(navController)
 
+                                    userSignOut(navController)
+                                    emailDisplay = currentEmail
                                 }
                             }
                         } else {
