@@ -53,6 +53,8 @@ import com.example.testandroidpro.viewmodel.AdViewModel
 fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
     var showKey by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    var email by remember { mutableStateOf(adViewModel.emailDisplay) }
+    var pw by remember { mutableStateOf("") }
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -79,10 +81,8 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                 .padding(top = 16.dp, bottom = 16.dp)
         )
         OutlinedTextField(
-            value = adViewModel.emailDisplay,
-            onValueChange = {
-                adViewModel.emailDisplay = it.replace(',','.')
-            },
+            value = email,
+            onValueChange = { email = it },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Email,
@@ -107,10 +107,8 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
             singleLine = true
         )
         OutlinedTextField(
-            value = adViewModel.oldPassWord,
-            onValueChange = {
-                adViewModel.oldPassWord = it.replace(',','.')
-            },
+            value = pw,
+            onValueChange = {pw = it},
             label = { Text(text = stringResource(R.string.password)) },
             placeholder = { Text(text = stringResource(R.string.enter_your_password)) },
             leadingIcon = {
@@ -156,7 +154,7 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
             ClickableText(
                 text = AnnotatedString(stringResource(R.string.forgot_password)),
                 onClick = { offset ->
-                    adViewModel.forgotPassword(adViewModel.emailDisplay)
+                    adViewModel.forgotPassword(email)
                     Log.d("Clicked on offset:"," $offset")
                 }
             )
@@ -167,7 +165,7 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                 .padding(8.dp)
                 .aspectRatio(3.5f),
             onClick = {
-                adViewModel.userLogin(navController, adViewModel.emailDisplay, adViewModel.oldPassWord)
+                adViewModel.userLogin(navController, email, pw)
             },
         ) {
             Text(text = stringResource(R.string.button_login))

@@ -26,12 +26,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.testandroidpro.R
+import com.example.testandroidpro.data.Myuser
 import com.example.testandroidpro.viewmodel.AdViewModel
 
 @Composable
 fun SignupScreen(navController: NavController, adViewModel: AdViewModel) {
     var email by remember { mutableStateOf("") }
     var pw by remember { mutableStateOf("") }
+    var userInfo by remember { mutableStateOf(Myuser("", "", "")) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -67,7 +69,7 @@ fun SignupScreen(navController: NavController, adViewModel: AdViewModel) {
         )
         OutlinedTextField(
             value = pw,
-            onValueChange = {pw = it.replace(',','.')},
+            onValueChange = {pw = it},
             label = { Text(stringResource(R.string.password_must)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -75,10 +77,10 @@ fun SignupScreen(navController: NavController, adViewModel: AdViewModel) {
                 .fillMaxWidth()
                 .padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
         )
-
         OutlinedTextField(
-            value = adViewModel.userName,
-            onValueChange = {adViewModel.userName = it.replace(',','.')},
+            value = userInfo.name,
+            onValueChange = {newValue ->
+                userInfo = userInfo.copy(name = newValue)},
             label = { Text(stringResource(R.string.uesrname)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -87,8 +89,9 @@ fun SignupScreen(navController: NavController, adViewModel: AdViewModel) {
                 .padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
         )
         OutlinedTextField(
-            value = adViewModel.userPhoneNum,
-            onValueChange = {adViewModel.userPhoneNum = it.replace(',','.')},
+            value = userInfo.phonenum,
+            onValueChange = {newValue ->
+                userInfo = userInfo.copy(phonenum = newValue)},
             label = { Text(stringResource(R.string.user_phone_number)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -97,8 +100,9 @@ fun SignupScreen(navController: NavController, adViewModel: AdViewModel) {
                 .padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
         )
         OutlinedTextField(
-            value = adViewModel.userAddress,
-            onValueChange = {adViewModel.userAddress = it.replace(',','.')},
+            value = userInfo.address,
+            onValueChange = {newValue ->
+                userInfo = userInfo.copy(address = newValue)},
             label = { Text(stringResource(R.string.user_address)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -112,7 +116,7 @@ fun SignupScreen(navController: NavController, adViewModel: AdViewModel) {
                 .height(64.dp)
                 .padding(8.dp),
             onClick = {
-                adViewModel.userSignup(navController, email, pw)
+                adViewModel.userSignup(navController, email, pw, userInfo)
             },
         ) {
             Text(text = stringResource(R.string.button_reg))

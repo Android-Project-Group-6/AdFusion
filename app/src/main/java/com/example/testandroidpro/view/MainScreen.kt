@@ -34,6 +34,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -94,14 +95,13 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Log.d("MainScreen",adViewModel.userName)
                 val state = adViewModel.listState
                 val density3 = LocalDensity.current
                 val fontSize3 = remember { mutableStateOf(0.sp) }
                 val adjusted = remember { mutableStateOf(false) }
                 val welcomeString = stringResource(R.string.welcome)
                 val spaceString = stringResource(R.string.string_space)
-                val text1 = welcomeString + spaceString + adViewModel.userName
+                val text1 = welcomeString + spaceString + adViewModel.userInfoStore.value.name
                 val parentWidth = remember { mutableFloatStateOf(0f) }
                 Box(
                     modifier = Modifier

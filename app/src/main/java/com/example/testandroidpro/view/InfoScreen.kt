@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.testandroidpro.R
+import com.example.testandroidpro.data.Myuser
 import com.example.testandroidpro.viewmodel.AdViewModel
 
 @Composable
@@ -57,6 +58,10 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
     val context = LocalContext.current
     var oldShowKey by remember { mutableStateOf(false) }
     var newShowKey by remember { mutableStateOf(false) }
+    var opw by remember { mutableStateOf("") }
+    var npw1 by remember { mutableStateOf("") }
+    var npw2 by remember { mutableStateOf("") }
+    var userInfo by remember { mutableStateOf(adViewModel.userInfoStore.value) }
     Scaffold (
         topBar = {
             Column(
@@ -75,7 +80,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                 )
             }
         },
-        content = {
+        content = { it ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -92,8 +97,9 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                         .padding(top = 16.dp, bottom = 16.dp)
                 )
                 OutlinedTextField(
-                    value = adViewModel.userName,
-                    onValueChange = {adViewModel.userName = it.replace(',','.')},
+                    value = userInfo.name,
+                    onValueChange = {newValue ->
+                        userInfo = userInfo.copy(name = newValue)},
                     label = {Text(stringResource(R.string.uesrname))},
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -102,8 +108,9 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                         .padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
                 )
                 OutlinedTextField(
-                    value = adViewModel.userPhoneNum,
-                    onValueChange = {adViewModel.userPhoneNum = it.replace(',','.')},
+                    value = userInfo.phonenum,
+                    onValueChange = {newValue ->
+                        userInfo = userInfo.copy(phonenum = newValue)},
                     label = {Text(stringResource(R.string.user_phone_number))},
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -112,8 +119,9 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                         .padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
                 )
                 OutlinedTextField(
-                    value = adViewModel.userAddress,
-                    onValueChange = {adViewModel.userAddress = it.replace(',','.')},
+                    value = userInfo.address,
+                    onValueChange = {newValue ->
+                        userInfo = userInfo.copy(address = newValue)},
                     label = {Text(stringResource(R.string.user_address))},
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -127,7 +135,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                         .height(64.dp)
                         .padding(8.dp),
                     onClick = {
-                        adViewModel.modifyInfo(navController)
+                        adViewModel.modifyInfo(navController,userInfo)
                     },
                 ) {
                     Text(text = stringResource(R.string.button_modify))
@@ -142,10 +150,8 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                         .padding(top = 16.dp, bottom = 16.dp)
                 )
                 OutlinedTextField(
-                    value = adViewModel.oldPassWord,
-                    onValueChange = {
-                        adViewModel.oldPassWord = it.replace(',','.')
-                    },
+                    value = opw,
+                    onValueChange = { opw = it },
                     label = { Text(text = stringResource(R.string.oldpassword)) },
                     placeholder = { Text(text = stringResource(R.string.enter_your_oldpassword)) },
                     leadingIcon = {
@@ -175,10 +181,8 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                     singleLine = true
                 )
                 OutlinedTextField(
-                    value = adViewModel.newPassWord1,
-                    onValueChange = {
-                        adViewModel.newPassWord1 = it.replace(',','.')
-                    },
+                    value = npw1,
+                    onValueChange = {npw1 = it},
                     label = { Text(text = stringResource(R.string.newpassword1)) },
                     placeholder = { Text(text = stringResource(R.string.enter_your_newpassword1)) },
                     leadingIcon = {
@@ -208,10 +212,8 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                     singleLine = true
                 )
                 OutlinedTextField(
-                    value = adViewModel.newPassWord2,
-                    onValueChange = {
-                        adViewModel.newPassWord2 = it.replace(',','.')
-                    },
+                    value = npw2,
+                    onValueChange = {npw2 = it},
                     label = { Text(text = stringResource(R.string.newpassword2)) },
                     placeholder = { Text(text = stringResource(R.string.enter_your_newpassword2)) },
                     leadingIcon = {
@@ -246,7 +248,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                         .height(64.dp)
                         .padding(8.dp),
                     onClick = {
-                        adViewModel.resetPassword(navController)
+                        adViewModel.resetPassword(navController,opw,npw1,npw2)
                     },
                 ) {
                     Text(text = stringResource(R.string.button_modify))

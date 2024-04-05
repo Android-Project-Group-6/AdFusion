@@ -9,9 +9,9 @@ data class Myusub(
     val L:Boolean
 )
 data class Myuser(
-    val name:String,
-    val address:String,
-    val phonenum:String
+    var name:String,
+    var address:String,
+    var phonenum:String
 )
 
 
