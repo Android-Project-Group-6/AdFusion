@@ -14,6 +14,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -26,6 +30,8 @@ import com.example.testandroidpro.viewmodel.AdViewModel
 
 @Composable
 fun SignupScreen(navController: NavController, adViewModel: AdViewModel) {
+    var email by remember { mutableStateOf("") }
+    var pw by remember { mutableStateOf("") }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -50,8 +56,8 @@ fun SignupScreen(navController: NavController, adViewModel: AdViewModel) {
                 .padding(top = 16.dp, bottom = 16.dp)
         )
         OutlinedTextField(
-            value = adViewModel.email,
-            onValueChange = {adViewModel.email = it.replace(',','.')},
+            value = email,
+            onValueChange = {email = it},
             label =  { Text(stringResource(R.string.email_must)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -60,8 +66,8 @@ fun SignupScreen(navController: NavController, adViewModel: AdViewModel) {
                 .padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
         )
         OutlinedTextField(
-            value = adViewModel.passWord,
-            onValueChange = {adViewModel.passWord = it.replace(',','.')},
+            value = pw,
+            onValueChange = {pw = it.replace(',','.')},
             label = { Text(stringResource(R.string.password_must)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -106,7 +112,7 @@ fun SignupScreen(navController: NavController, adViewModel: AdViewModel) {
                 .height(64.dp)
                 .padding(8.dp),
             onClick = {
-                adViewModel.userSignup(navController)
+                adViewModel.userSignup(navController, email, pw)
             },
         ) {
             Text(text = stringResource(R.string.button_reg))

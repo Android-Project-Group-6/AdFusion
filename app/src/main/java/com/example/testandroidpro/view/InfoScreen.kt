@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
@@ -53,13 +55,32 @@ import com.example.testandroidpro.viewmodel.AdViewModel
 @Composable
 fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
     val context = LocalContext.current
+    var oldShowKey by remember { mutableStateOf(false) }
+    var newShowKey by remember { mutableStateOf(false) }
     Scaffold (
-        topBar = { TopBar(navController,adViewModel,context.getString(R.string.InfoPage)) },
+        topBar = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
+            ) {
+                TopBar(navController, adViewModel, context.getString(R.string.InfoPage))
+                Text(
+                    text = adViewModel.currentEmail,
+                    fontSize = 24.sp,
+                    color = MaterialTheme.colorScheme.primary,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp, bottom = 16.dp)
+                )
+            }
+        },
         content = {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(it),
+                    .padding(it)
+                    .verticalScroll(rememberScrollState()),
             ) {
                 Text(
                     text = stringResource(R.string.screen_settings),
@@ -107,6 +128,125 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                         .padding(8.dp),
                     onClick = {
                         adViewModel.modifyInfo(navController)
+                    },
+                ) {
+                    Text(text = stringResource(R.string.button_modify))
+                }
+                Text(
+                    text = stringResource(R.string.change_your_password),
+                    fontSize = 24.sp,
+                    color = MaterialTheme.colorScheme.primary,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp, bottom = 16.dp)
+                )
+                OutlinedTextField(
+                    value = adViewModel.oldPassWord,
+                    onValueChange = {
+                        adViewModel.oldPassWord = it.replace(',','.')
+                    },
+                    label = { Text(text = stringResource(R.string.oldpassword)) },
+                    placeholder = { Text(text = stringResource(R.string.enter_your_oldpassword)) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Outlined.Lock,
+                            contentDescription = stringResource(R.string.lock_icon)
+                        )
+                    },
+                    trailingIcon = {
+                        IconButton(onClick = { oldShowKey = !oldShowKey }) {
+                            Icon(
+                                imageVector = if (oldShowKey) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
+                                contentDescription =
+                                if (oldShowKey) stringResource(R.string.show_password)
+                                else stringResource(R.string.hide_password)
+                            )
+                        }
+                    },
+                    visualTransformation = if (oldShowKey) VisualTransformation.None else PasswordVisualTransformation(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Done
+                    ),
+                    singleLine = true
+                )
+                OutlinedTextField(
+                    value = adViewModel.newPassWord1,
+                    onValueChange = {
+                        adViewModel.newPassWord1 = it.replace(',','.')
+                    },
+                    label = { Text(text = stringResource(R.string.newpassword1)) },
+                    placeholder = { Text(text = stringResource(R.string.enter_your_newpassword1)) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Outlined.Lock,
+                            contentDescription = stringResource(R.string.lock_icon)
+                        )
+                    },
+                    trailingIcon = {
+                        IconButton(onClick = { newShowKey = !newShowKey }) {
+                            Icon(
+                                imageVector = if (newShowKey) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
+                                contentDescription =
+                                if (newShowKey) stringResource(R.string.show_password)
+                                else stringResource(R.string.hide_password)
+                            )
+                        }
+                    },
+                    visualTransformation = if (newShowKey) VisualTransformation.None else PasswordVisualTransformation(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Done
+                    ),
+                    singleLine = true
+                )
+                OutlinedTextField(
+                    value = adViewModel.newPassWord2,
+                    onValueChange = {
+                        adViewModel.newPassWord2 = it.replace(',','.')
+                    },
+                    label = { Text(text = stringResource(R.string.newpassword2)) },
+                    placeholder = { Text(text = stringResource(R.string.enter_your_newpassword2)) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Outlined.Lock,
+                            contentDescription = stringResource(R.string.lock_icon)
+                        )
+                    },
+                    trailingIcon = {
+                        IconButton(onClick = { newShowKey = !newShowKey }) {
+                            Icon(
+                                imageVector = if (newShowKey) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
+                                contentDescription =
+                                if (newShowKey) stringResource(R.string.show_password)
+                                else stringResource(R.string.hide_password)
+                            )
+                        }
+                    },
+                    visualTransformation = if (newShowKey) VisualTransformation.None else PasswordVisualTransformation(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Done
+                    ),
+                    singleLine = true
+                )
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp)
+                        .padding(8.dp),
+                    onClick = {
+                        adViewModel.resetPassword(navController)
                     },
                 ) {
                     Text(text = stringResource(R.string.button_modify))

@@ -79,9 +79,9 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                 .padding(top = 16.dp, bottom = 16.dp)
         )
         OutlinedTextField(
-            value = adViewModel.email,
+            value = adViewModel.emailDisplay,
             onValueChange = {
-                adViewModel.email = it.replace(',','.')
+                adViewModel.emailDisplay = it.replace(',','.')
             },
             leadingIcon = {
                 Icon(
@@ -107,9 +107,9 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
             singleLine = true
         )
         OutlinedTextField(
-            value = adViewModel.passWord,
+            value = adViewModel.oldPassWord,
             onValueChange = {
-                adViewModel.passWord = it.replace(',','.')
+                adViewModel.oldPassWord = it.replace(',','.')
             },
             label = { Text(text = stringResource(R.string.password)) },
             placeholder = { Text(text = stringResource(R.string.enter_your_password)) },
@@ -156,7 +156,7 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
             ClickableText(
                 text = AnnotatedString(stringResource(R.string.forgot_password)),
                 onClick = { offset ->
-                    adViewModel.forgotPassword()
+                    adViewModel.forgotPassword(adViewModel.emailDisplay)
                     Log.d("Clicked on offset:"," $offset")
                 }
             )
@@ -167,7 +167,7 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                 .padding(8.dp)
                 .aspectRatio(3.5f),
             onClick = {
-                adViewModel.userLogin(navController)
+                adViewModel.userLogin(navController, adViewModel.emailDisplay, adViewModel.oldPassWord)
             },
         ) {
             Text(text = stringResource(R.string.button_login))
