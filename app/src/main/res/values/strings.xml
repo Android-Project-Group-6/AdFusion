@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">AdFusion</string>
-    <string name="ComName">AdFusion</string>
+    <string name="ComNameHead">Ad</string>
+    <string name="ComNameBody">Fusion</string>
     <string name="HomePage">home</string>
     <string name="loginPage">login</string>
     <string name="signupPage">signup</string>

@@ -146,9 +146,7 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                     if (stringResource(R.string.borderdebug) == "true") it.border(
                         1.dp, Color.Red
                     ) else it
-                }
-                .padding(8.dp)
-                .fillMaxWidth(),
+                },
             horizontalArrangement = Arrangement.End
         ){
             ClickableText(

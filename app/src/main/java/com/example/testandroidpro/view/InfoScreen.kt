@@ -94,7 +94,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 16.dp, bottom = 16.dp)
+                        .padding(top = 6.dp, bottom = 6.dp)
                 )
                 OutlinedTextField(
                     value = userInfo.name,
@@ -105,7 +105,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+                        .padding(top = 6.dp, bottom = 6.dp, start = 16.dp, end = 16.dp)
                 )
                 OutlinedTextField(
                     value = userInfo.phonenum,
@@ -116,7 +116,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+                        .padding(top = 6.dp, bottom = 6.dp, start = 16.dp, end = 16.dp)
                 )
                 OutlinedTextField(
                     value = userInfo.address,
@@ -127,7 +127,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+                        .padding(top = 6.dp, bottom = 6.dp, start = 16.dp, end = 16.dp)
                 )
                 Button(
                     modifier = Modifier
@@ -147,7 +147,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 16.dp, bottom = 16.dp)
+                        .padding(top = 6.dp, bottom = 6.dp)
                 )
                 OutlinedTextField(
                     value = opw,
@@ -161,7 +161,9 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                         )
                     },
                     trailingIcon = {
-                        IconButton(onClick = { oldShowKey = !oldShowKey }) {
+                        IconButton(
+                            onClick = { oldShowKey = !oldShowKey }
+                        ) {
                             Icon(
                                 imageVector = if (oldShowKey) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
                                 contentDescription =
@@ -173,7 +175,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                     visualTransformation = if (oldShowKey) VisualTransformation.None else PasswordVisualTransformation(),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp),
+                        .padding(top = 6.dp, bottom = 6.dp, start = 16.dp, end = 16.dp),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Password,
                         imeAction = ImeAction.Done
@@ -192,7 +194,9 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                         )
                     },
                     trailingIcon = {
-                        IconButton(onClick = { newShowKey = !newShowKey }) {
+                        IconButton(
+                            onClick = { newShowKey = !newShowKey }
+                        ) {
                             Icon(
                                 imageVector = if (newShowKey) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
                                 contentDescription =
@@ -204,7 +208,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                     visualTransformation = if (newShowKey) VisualTransformation.None else PasswordVisualTransformation(),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp),
+                        .padding(top = 6.dp, bottom = 6.dp, start = 16.dp, end = 16.dp),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Password,
                         imeAction = ImeAction.Done
@@ -223,7 +227,9 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                         )
                     },
                     trailingIcon = {
-                        IconButton(onClick = { newShowKey = !newShowKey }) {
+                        IconButton(
+                            onClick = { newShowKey = !newShowKey }
+                        ) {
                             Icon(
                                 imageVector = if (newShowKey) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
                                 contentDescription =
@@ -235,7 +241,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                     visualTransformation = if (newShowKey) VisualTransformation.None else PasswordVisualTransformation(),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp),
+                        .padding(top = 6.dp, bottom = 6.dp, start = 16.dp, end = 16.dp),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Password,
                         imeAction = ImeAction.Done
