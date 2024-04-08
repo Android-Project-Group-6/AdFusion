@@ -13,8 +13,18 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Face2
+import androidx.compose.material.icons.filled.Face3
+import androidx.compose.material.icons.filled.Face4
+import androidx.compose.material.icons.filled.Face5
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
@@ -100,6 +110,12 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                     value = userInfo.name,
                     onValueChange = {newValue ->
                         userInfo = userInfo.copy(name = newValue)},
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Face5,
+                            contentDescription = stringResource(R.string.email_icon)
+                        )
+                    },
                     label = {Text(stringResource(R.string.uesrname))},
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -111,6 +127,12 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                     value = userInfo.phonenum,
                     onValueChange = {newValue ->
                         userInfo = userInfo.copy(phonenum = newValue)},
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Phone,
+                            contentDescription = stringResource(R.string.email_icon)
+                        )
+                    },
                     label = {Text(stringResource(R.string.user_phone_number))},
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -123,6 +145,12 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                     onValueChange = {newValue ->
                         userInfo = userInfo.copy(address = newValue)},
                     label = {Text(stringResource(R.string.user_address))},
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Place,
+                            contentDescription = stringResource(R.string.email_icon)
+                        )
+                    },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     modifier = Modifier
