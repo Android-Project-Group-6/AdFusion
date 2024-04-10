@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">AdFusion</string>
-    <string name="ComName">AdFusion</string>
+    <string name="ComNameHead">Ad</string>
+    <string name="ComNameBody">Fusion</string>
     <string name="HomePage">home</string>
     <string name="loginPage">login</string>
     <string name="signupPage">signup</string>
@@ -52,4 +53,5 @@
     <string name="borderdebug">false</string>
     <string name="forgot_password">Forgot Password?</string>
     <string name="change_your_password">Change your password?</string>
+    <string name="supportPage">support</string>
 </resources>

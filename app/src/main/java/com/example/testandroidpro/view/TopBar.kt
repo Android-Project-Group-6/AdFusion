@@ -1,8 +1,11 @@
 package com.example.testandroidpro.view
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
@@ -26,6 +29,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.testandroidpro.R
@@ -79,9 +83,19 @@ fun TopBar(navController: NavController, adViewModel: AdViewModel, screen:String
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = stringResource(R.string.ComName),
+                        text = stringResource(R.string.ComNameHead),
                         modifier = Modifier
-                            .fillMaxWidth()
+//                            .fillMaxWidth()
+//                            .padding(1.dp)
+                        ,
+                        textAlign = TextAlign.Center,
+                        fontSize = fontSize.value,
+                        color = Color.Black
+                    )
+                    Text(
+                        text = stringResource(R.string.ComNameBody),
+                        modifier = Modifier
+//                            .fillMaxWidth()
 //                            .padding(1.dp)
                         ,
                         textAlign = TextAlign.Center,
@@ -97,52 +111,48 @@ fun TopBar(navController: NavController, adViewModel: AdViewModel, screen:String
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(
-                        onClick = {
-                            expanded = !expanded
-                        }
-                    ) {
-                        Icon(Icons.Filled.MoreVert,contentDescription = null)
-                    }
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }) {
-                        if (screen == context.getString(R.string.HomePage)) {
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.drop_info)) },
-                                onClick = { navController.navigate(context.getString(R.string.infoPage)) }
-                            )
-                        }
-                        else if (screen == context.getString(R.string.InfoPage)) {
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.ads_list)) },
-                                onClick = { navController.navigate(context.getString(R.string.HomePage)) }
-                            )
-                        }
-                        else {
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.drop_info)) },
-                                onClick = { navController.navigate(context.getString(R.string.infoPage)) }
-                            )
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.ads_list)) },
-                                onClick = { navController.navigate(context.getString(R.string.HomePage)) }
-                            )
-                        }
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.drop_signout)) },
+                    if (screen != context.getString(R.string.supportPage)) {
+                        IconButton(
                             onClick = {
-                                adViewModel.userSignOut(navController)
-//                        navController.navigate("Settings")
+                                expanded = !expanded
                             }
-                        )
+                        ) {
+                            Icon(Icons.Filled.MoreVert, contentDescription = null)
+                        }
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }) {
+                            if (screen == context.getString(R.string.HomePage)) {
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.drop_info)) },
+                                    onClick = { navController.navigate(context.getString(R.string.infoPage)) }
+                                )
+                            } else if (screen == context.getString(R.string.InfoPage)) {
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.ads_list)) },
+                                    onClick = { navController.navigate(context.getString(R.string.HomePage)) }
+                                )
+                            } else {
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.drop_info)) },
+                                    onClick = { navController.navigate(context.getString(R.string.infoPage)) }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.ads_list)) },
+                                    onClick = { navController.navigate(context.getString(R.string.HomePage)) }
+                                )
+                            }
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.drop_signout)) },
+                                onClick = {
+                                    adViewModel.userSignOut(navController)
+//                        navController.navigate("Settings")
+                                }
+                            )
+                        }
                     }
                 }
-
-
             }
-
-
         }
     )
 }

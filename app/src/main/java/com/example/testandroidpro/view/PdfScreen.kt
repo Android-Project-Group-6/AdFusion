@@ -186,7 +186,7 @@ fun PdfScreen(navController: NavController, adViewModel: AdViewModel) {//, userS
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 16.dp, bottom = 16.dp)
-                                .weight(0.1f)
+                                .weight(0.15f)
                         )
                         Column(
                             modifier = Modifier
@@ -201,14 +201,18 @@ fun PdfScreen(navController: NavController, adViewModel: AdViewModel) {//, userS
                     Box(
                         modifier = Modifier
                             .background(Color.LightGray)
-                            .border(2.dp, Color.Black)
+                            .let {
+                                if (stringResource(R.string.borderdebug) == "true") it.border(
+                                    1.dp, Color.Red
+                                ) else it
+                            }
                             .weight(1f)
                     ) {
                         pdfLoadViewModel.pdfFile.value?.let {//pdfLoadViewModel.
                             PdfViewer(
                                 it, Modifier
                                     .fillMaxSize()
-                                    .padding(16.dp)
+                                    .padding(6.dp)
                                     .clipToBounds()
                             )
                         }

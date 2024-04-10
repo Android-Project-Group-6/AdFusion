@@ -13,8 +13,21 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Face2
+import androidx.compose.material.icons.filled.Face3
+import androidx.compose.material.icons.filled.Face4
+import androidx.compose.material.icons.filled.Face5
+import androidx.compose.material.icons.filled.Face6
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Person2
+import androidx.compose.material.icons.filled.Person3
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
@@ -94,40 +107,58 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 16.dp, bottom = 16.dp)
+                        .padding(top = 6.dp, bottom = 6.dp)
                 )
                 OutlinedTextField(
                     value = userInfo.name,
                     onValueChange = {newValue ->
                         userInfo = userInfo.copy(name = newValue)},
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = stringResource(R.string.email_icon)
+                        )
+                    },
                     label = {Text(stringResource(R.string.uesrname))},
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+                        .padding(top = 6.dp, bottom = 6.dp, start = 16.dp, end = 16.dp)
                 )
                 OutlinedTextField(
                     value = userInfo.phonenum,
                     onValueChange = {newValue ->
                         userInfo = userInfo.copy(phonenum = newValue)},
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Phone,
+                            contentDescription = stringResource(R.string.email_icon)
+                        )
+                    },
                     label = {Text(stringResource(R.string.user_phone_number))},
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+                        .padding(top = 6.dp, bottom = 6.dp, start = 16.dp, end = 16.dp)
                 )
                 OutlinedTextField(
                     value = userInfo.address,
                     onValueChange = {newValue ->
                         userInfo = userInfo.copy(address = newValue)},
                     label = {Text(stringResource(R.string.user_address))},
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Place,
+                            contentDescription = stringResource(R.string.email_icon)
+                        )
+                    },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+                        .padding(top = 6.dp, bottom = 6.dp, start = 16.dp, end = 16.dp)
                 )
                 Button(
                     modifier = Modifier
@@ -147,7 +178,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 16.dp, bottom = 16.dp)
+                        .padding(top = 6.dp, bottom = 6.dp)
                 )
                 OutlinedTextField(
                     value = opw,
@@ -161,7 +192,9 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                         )
                     },
                     trailingIcon = {
-                        IconButton(onClick = { oldShowKey = !oldShowKey }) {
+                        IconButton(
+                            onClick = { oldShowKey = !oldShowKey }
+                        ) {
                             Icon(
                                 imageVector = if (oldShowKey) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
                                 contentDescription =
@@ -173,7 +206,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                     visualTransformation = if (oldShowKey) VisualTransformation.None else PasswordVisualTransformation(),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp),
+                        .padding(top = 6.dp, bottom = 6.dp, start = 16.dp, end = 16.dp),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Password,
                         imeAction = ImeAction.Done
@@ -192,7 +225,9 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                         )
                     },
                     trailingIcon = {
-                        IconButton(onClick = { newShowKey = !newShowKey }) {
+                        IconButton(
+                            onClick = { newShowKey = !newShowKey }
+                        ) {
                             Icon(
                                 imageVector = if (newShowKey) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
                                 contentDescription =
@@ -204,7 +239,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                     visualTransformation = if (newShowKey) VisualTransformation.None else PasswordVisualTransformation(),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp),
+                        .padding(top = 6.dp, bottom = 6.dp, start = 16.dp, end = 16.dp),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Password,
                         imeAction = ImeAction.Done
@@ -223,7 +258,9 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                         )
                     },
                     trailingIcon = {
-                        IconButton(onClick = { newShowKey = !newShowKey }) {
+                        IconButton(
+                            onClick = { newShowKey = !newShowKey }
+                        ) {
                             Icon(
                                 imageVector = if (newShowKey) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
                                 contentDescription =
@@ -235,7 +272,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                     visualTransformation = if (newShowKey) VisualTransformation.None else PasswordVisualTransformation(),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp),
+                        .padding(top = 6.dp, bottom = 6.dp, start = 16.dp, end = 16.dp),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Password,
                         imeAction = ImeAction.Done
