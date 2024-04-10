@@ -41,6 +41,12 @@ fun MyApp() {
                 context.getString(R.string.pdfPage) -> PdfScreen(navController,adViewModel)//dViewModel.userSignOut(navController) }
             }
         }
+        composable(route = context.getString(R.string.supportPage)) {
+            when (navController.currentDestination?.route) {
+                context.getString(R.string.supportPage) -> SupportScreen(navController,adViewModel)
+            }
+        }
+
     }
 }
 

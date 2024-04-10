@@ -18,11 +18,14 @@ import androidx.compose.material.icons.filled.Face2
 import androidx.compose.material.icons.filled.Face3
 import androidx.compose.material.icons.filled.Face4
 import androidx.compose.material.icons.filled.Face5
+import androidx.compose.material.icons.filled.Face6
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Person2
+import androidx.compose.material.icons.filled.Person3
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.outlined.Lock
@@ -112,7 +115,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                         userInfo = userInfo.copy(name = newValue)},
                     leadingIcon = {
                         Icon(
-                            imageVector = Icons.Default.Face5,
+                            imageVector = Icons.Default.Person,
                             contentDescription = stringResource(R.string.email_icon)
                         )
                     },

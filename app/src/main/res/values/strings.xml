@@ -53,4 +53,5 @@
     <string name="borderdebug">false</string>
     <string name="forgot_password">Forgot Password?</string>
     <string name="change_your_password">Change your password?</string>
+    <string name="supportPage">support</string>
 </resources>
