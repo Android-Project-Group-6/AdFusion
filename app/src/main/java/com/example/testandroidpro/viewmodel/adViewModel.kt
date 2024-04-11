@@ -1,8 +1,12 @@
 package com.example.testandroidpro.viewmodel
 
+import android.app.AlertDialog
+import android.content.Context
+import android.icu.text.SimpleDateFormat
 import android.text.TextUtils
 import android.util.Log
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -16,6 +20,9 @@ import androidx.navigation.NavController
 import com.example.testandroidpro.data.Myuser
 import com.example.testandroidpro.data.Myusub
 import com.example.testandroidpro.data.SupplierAd
+import com.example.testandroidpro.data.SupportItem
+import com.example.testandroidpro.view.DialogScreenAsDialog
+import com.example.testandroidpro.view.showAlertDialog
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentSnapshot
@@ -23,6 +30,9 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
 import java.io.File
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class AdViewModel: ViewModel()  {
     var emailDisplay: String by  mutableStateOf("")
@@ -422,4 +432,42 @@ class AdViewModel: ViewModel()  {
             }
         }
     }
+
+
+    fun writeSupportMessage(navController: NavController, supportMessage: SupportItem,context: Context){
+        viewModelScope.launch {
+
+            db.collection("support")
+                .add(supportMessage)
+                .addOnSuccessListener {
+                    Log.d("writeSupportMessage", "Success")
+                    showAlertDialog(context,"Support","Success","Confirm") {
+                        navController.popBackStack()
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.w("writeSupportMessage", "Fail", e)
+                    showAlertDialog(context,"Support","Failed","Confirm") { }
+                }
+        }
+    }
+    fun writeSupportMessage2(navController: NavController, supportMessage: SupportItem, context: Context, callback: (Boolean) -> Unit) {
+        viewModelScope.launch {
+
+            val documentId = supportMessage.email
+            db.collection("support")
+//                .document(documentId).set
+                .add(supportMessage)
+                .addOnSuccessListener {
+                    Log.d("writeSupportMessage", "Success")
+                    callback(true)
+                }
+                .addOnFailureListener { e ->
+                    Log.w("writeSupportMessage", "Fail", e)
+                    callback(false)
+                }
+        }
+    }
+
+
 }
