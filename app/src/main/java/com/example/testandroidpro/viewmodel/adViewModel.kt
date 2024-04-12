@@ -453,8 +453,7 @@ class AdViewModel: ViewModel()  {
     }
     fun writeSupportMessage2(navController: NavController, supportMessage: SupportItem, context: Context, callback: (Boolean) -> Unit) {
         viewModelScope.launch {
-
-            val documentId = supportMessage.email
+//            val documentId = supportMessage.email
             db.collection("support")
 //                .document(documentId).set
                 .add(supportMessage)
@@ -468,6 +467,4 @@ class AdViewModel: ViewModel()  {
                 }
         }
     }
-
-
 }
