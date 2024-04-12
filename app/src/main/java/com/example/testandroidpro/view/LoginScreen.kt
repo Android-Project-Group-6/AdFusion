@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.testandroidpro.R
+import com.example.testandroidpro.data.DialogString
 import com.example.testandroidpro.viewmodel.AdViewModel
 
 @Composable
@@ -60,6 +61,15 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
     val context = LocalContext.current
     var email by remember { mutableStateOf(adViewModel.emailDisplay) }
     var pw by remember { mutableStateOf("") }
+    val dialogString = DialogString(
+        width = 200.dp,
+        height = 150.dp,
+        title = "Dialog Title",
+        message = "Dialog Message",
+        button = "OK",
+        show = remember { mutableStateOf(false) }
+    ){}
+    DialogScreenAsDialog(dialogString)
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -93,7 +103,7 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
             Text(
                 text = "Ad",
                 fontSize = 24.sp,
-                color = MaterialTheme.colorScheme.primary,
+                color = Color.Black,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
 //                    .fillMaxWidth()
@@ -101,7 +111,7 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
             Text(
                 text = "Fusion",
                 fontSize = 24.sp,
-                color = MaterialTheme.colorScheme.primary,
+                color = Color(0xFFFF69B4),
                 textAlign = TextAlign.Center,
                 modifier = Modifier
 //                    .fillMaxWidth()
@@ -210,7 +220,35 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                     fontSize1.value = newFontSize.sp
                 },
             onClick = {
-                adViewModel.userLogin(navController, email, pw)
+                adViewModel.userLogin(navController, email, pw){ string ->
+                    if (string == "Login success") {
+                        Log.d("Login", "Login success")
+                        dialogString.width = 400.dp
+                        dialogString.height = 200.dp
+                        dialogString.title = "Login"
+                        dialogString.message = string
+                        dialogString.button = "Ok"
+                        dialogString.show.value = false
+                        dialogString.callback = {
+                            navController.popBackStack("login", inclusive = true)
+                            navController.navigate("home")
+                        }
+                        navController.popBackStack("login", inclusive = true)
+                        navController.navigate("home")
+                    } else {
+                        Log.e("Login", string)
+                        dialogString.width = 400.dp
+                        dialogString.height = 200.dp
+                        dialogString.title = "Login"
+                        dialogString.message = string
+                        dialogString.button = "Back"
+                        dialogString.show.value = true
+                        dialogString.callback = {}
+//                                    Toast.makeText(context, "Failed to write message", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+
             },
         ) {
             Text(
@@ -231,14 +269,29 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                 fontSize = fontSize1.value,
             )
         }
+//        Text(
+//            text = adViewModel.userState,
+//            fontSize = 24.sp,
+//            color = MaterialTheme.colorScheme.primary,
+//            textAlign = TextAlign.Center,
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(top = 16.dp, bottom = 16.dp)
+//        )
         Text(
-            text = adViewModel.userState,
-            fontSize = 24.sp,
-            color = MaterialTheme.colorScheme.primary,
+            text = "Need help? Let’s connect to customer support team",
+            fontSize = 12.sp,
+            lineHeight = 14.sp,
+//                    color = MaterialTheme.colorScheme.primary,
             textAlign = TextAlign.Center,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp, bottom = 16.dp)
+                .padding(top = 6.dp, bottom = 6.dp)
+                .fillMaxWidth(0.6f)
+                .let {
+                    if (stringResource(R.string.borderdebug) == "true") it.border(
+                        1.dp, Color.Red
+                    ) else it
+                }
         )
         Button(
             modifier = Modifier

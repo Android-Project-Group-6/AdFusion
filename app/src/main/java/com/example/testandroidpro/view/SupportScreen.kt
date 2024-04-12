@@ -239,6 +239,8 @@ fun SupportScreen(navController: NavController, adViewModel: AdViewModel) {
                                     dialogString.callback = {navController.popBackStack()}
                                 } else {
                                     Log.e("Support", "Failed to write message")
+                                    dialogString.width = 400.dp
+                                    dialogString.height = 200.dp
                                     dialogString.title = "Message Failed"
                                     dialogString.message = "Failed to write message"
                                     dialogString.button = "Back"
