@@ -298,7 +298,7 @@ class AdViewModel: ViewModel()  {
         }
     }
 
-    fun userLogin(navController: NavController, email:String, passWord:String) {
+    fun userLogin(navController: NavController, email:String, passWord:String, callback: (String) -> Unit) {
         viewModelScope.launch {
             if (email.isNotEmpty() && passWord.isNotEmpty()) {
                 fAuth.signInWithEmailAndPassword(email, passWord)
@@ -316,8 +316,6 @@ class AdViewModel: ViewModel()  {
                                         address = document.getString("address").toString(),
                                         phonenum = document.getString("phonenum").toString()
                                     )
-
-
                                     Log.d("Signup Init Database", "DocumentSnapshot added with ID:")
                                 }
                                 .addOnFailureListener { e ->
@@ -327,17 +325,20 @@ class AdViewModel: ViewModel()  {
                             Log.d("Login", currentUser.uid)
                             userState = "Login success"
                             currentEmail = currentUser.email.toString()
-                            navController.popBackStack("login", inclusive = true)
-                            navController.navigate("home")
+//                            navController.popBackStack("login", inclusive = true)
+//                            navController.navigate("home")
+                            callback("Login success")
                         }
                     }
                     .addOnFailureListener {
                         Log.d("Login", it.message.toString())
                         userState = "Email or Password is wrong"
+                        callback("Email or Password is wrong")
                     }
             } else {
                 userState = "Email or Password is empty"
                 Log.d("Login", "Email or Password is empty")
+                callback("Email or Password is empty")
             }
         }
     }
@@ -453,8 +454,7 @@ class AdViewModel: ViewModel()  {
     }
     fun writeSupportMessage2(navController: NavController, supportMessage: SupportItem, context: Context, callback: (Boolean) -> Unit) {
         viewModelScope.launch {
-
-            val documentId = supportMessage.email
+//            val documentId = supportMessage.email
             db.collection("support")
 //                .document(documentId).set
                 .add(supportMessage)
@@ -468,6 +468,4 @@ class AdViewModel: ViewModel()  {
                 }
         }
     }
-
-
 }

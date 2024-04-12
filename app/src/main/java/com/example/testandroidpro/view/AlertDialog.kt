@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -25,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.example.testandroidpro.R
+import com.example.testandroidpro.data.DialogString
 import com.example.testandroidpro.viewmodel.AdViewModel
 
 fun showAlertDialog(context: Context, title: String, message: String, buttonText: String, onClick: () -> Unit) {
@@ -38,38 +40,39 @@ fun showAlertDialog(context: Context, title: String, message: String, buttonText
     alertDialog.show()
 }
 @Composable
-fun DialogScreenAsDialog(showDialog: MutableState<Boolean>, onClick: () -> Unit) {
-    if (showDialog.value) {
+fun DialogScreenAsDialog(dialogString: DialogString) {
+    if (dialogString.show.value) {
         Dialog(onDismissRequest = {  }) {
-
             Column(
                 modifier = Modifier
-                    .width(300.dp)
-                    .height(200.dp)
+                    .width(dialogString.width)
+                    .height(dialogString.height)
                     .background(Color.White),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 Text(
-                    "Title",
+                    text = dialogString.title,
                     color = MaterialTheme.colorScheme.primary,
                     fontSize = 24.sp,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 Text(
-                    "Message",
+                    text = dialogString.message,
                     fontSize = 16.sp,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
                 )
                 Button(
                     onClick = {
-                        showDialog.value = false
-                        onClick()
+                        dialogString.show.value = false
+                        dialogString.callback?.let { it() }
                     },
                     modifier = Modifier.padding(top = 16.dp)
                 ) {
-                    Text("OK")
+                    Text(dialogString.button)
                 }
             }
         }

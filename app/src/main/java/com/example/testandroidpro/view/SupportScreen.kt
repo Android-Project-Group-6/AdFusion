@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.testandroidpro.R
+import com.example.testandroidpro.data.DialogString
 import com.example.testandroidpro.data.SupportItem
 import com.example.testandroidpro.viewmodel.AdViewModel
 import java.util.Calendar
@@ -56,8 +57,15 @@ fun SupportScreen(navController: NavController, adViewModel: AdViewModel) {
     var email by remember { mutableStateOf(adViewModel.emailDisplay) }
     var name by remember { mutableStateOf(adViewModel.userInfoStore.value.name) }
     var message by remember { mutableStateOf("") }
-    val showDialog = mutableStateOf(false)
-    DialogScreenAsDialog(showDialog){navController.popBackStack()}
+    val dialogString = DialogString(
+        width = 200.dp,
+        height = 150.dp,
+        title = "Dialog Title",
+        message = "Dialog Message",
+        button = "OK",
+        show = remember { mutableStateOf(false) }
+    ){}
+    DialogScreenAsDialog(dialogString)
     Scaffold (
         topBar = { TopBar(navController, adViewModel, "support") },
         content = { it ->
@@ -222,13 +230,25 @@ fun SupportScreen(navController: NavController, adViewModel: AdViewModel) {
                             adViewModel.writeSupportMessage2(navController, supportItem, context) { success ->
                                 if (success) {
                                     Log.d("Support", "Message written successfully")
-                                    showDialog.value = true
+                                    dialogString.width = 400.dp
+                                    dialogString.height = 200.dp
+                                    dialogString.title = "Message Success"
+                                    dialogString.message = "We'll get back to you as soon as we can."
+                                    dialogString.button = "Ok"
+                                    dialogString.show.value = true
+                                    dialogString.callback = {navController.popBackStack()}
                                 } else {
                                     Log.e("Support", "Failed to write message")
+                                    dialogString.width = 400.dp
+                                    dialogString.height = 200.dp
+                                    dialogString.title = "Message Failed"
+                                    dialogString.message = "Failed to write message"
+                                    dialogString.button = "Back"
+                                    dialogString.show.value = true
+                                    dialogString.callback = {}
 //                                    Toast.makeText(context, "Failed to write message", Toast.LENGTH_SHORT).show()
                                 }
                             }
-
                         },
                     ) {
                         Text(
