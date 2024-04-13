@@ -59,7 +59,7 @@ class AdViewModel: ViewModel()  {
     init {
         viewModelScope.launch {
             Log.d("MVVM", "Init")
-            readSuppliersData()
+//            readSuppliersData()
             checkUserLogin()
         }
     }
@@ -93,24 +93,40 @@ class AdViewModel: ViewModel()  {
 //                            }
                         tasks.add(task)
                     }
+//                    Tasks.whenAllSuccess<QuerySnapshot>(tasks).addOnSuccessListener { results ->
+//                        results.forEachIndexed { index, querySnapshot ->
+//                            val ads = querySnapshot.documents
+//                            Log.d("Read Week DataadList", ads.toString())
+//                            data.add(SupplierAd(result.documents[index], ads))
+//                        }
+//                        adList.value = data
+////                        Log.d("Read Week DataadList ", "FF:${adList.value.toString()}")
+////                        adList.value.forEach { supplierAd ->
+////                            Log.d("Read Week DataadList", "Data: ${supplierAd.supplier.data}")
+////                            supplierAd.ads.forEach { ad ->
+////                                Log.d("Read Week DataadList","Advertisement: ${ad.id}")
+////                                Log.d("Read Week DataadList","Data: ${ad.getString("attachment")}")
+////                                Log.d("Read Week DataadList","Data: ${ad.getString("adName")}")
+////                            }
+////                        }
+//                        readSuppliersResEnter()
+//                    }
                     Tasks.whenAllSuccess<QuerySnapshot>(tasks).addOnSuccessListener { results ->
                         results.forEachIndexed { index, querySnapshot ->
                             val ads = querySnapshot.documents
                             Log.d("Read Week DataadList", ads.toString())
-                            data.add(SupplierAd(result.documents[index], ads))
+                            if (index < result.documents.size) {
+                                // It's safe to access the element
+                                data.add(SupplierAd(result.documents[index], ads))
+                            } else {
+                                // Handle the case where the index is out of bounds
+                                Log.d("Read Week DataadList", "Index out of bounds")
+                            }
                         }
                         adList.value = data
-//                        Log.d("Read Week DataadList ", "FF:${adList.value.toString()}")
-//                        adList.value.forEach { supplierAd ->
-//                            Log.d("Read Week DataadList", "Data: ${supplierAd.supplier.data}")
-//                            supplierAd.ads.forEach { ad ->
-//                                Log.d("Read Week DataadList","Advertisement: ${ad.id}")
-//                                Log.d("Read Week DataadList","Data: ${ad.getString("attachment")}")
-//                                Log.d("Read Week DataadList","Data: ${ad.getString("adName")}")
-//                            }
-//                        }
                         readSuppliersResEnter()
                     }
+
                     readSuppliersResIcon()
                 }
                 .addOnFailureListener { e ->
@@ -282,9 +298,12 @@ class AdViewModel: ViewModel()  {
 
                             currentEmail = currentUser.email.toString()
 
+                            readSuppliersData()
+
                             navController.popBackStack("signup", inclusive = true)
                             navController.popBackStack("login", inclusive = true)
                             navController.navigate("home")
+
                         }
                     }
                     .addOnFailureListener {
@@ -316,22 +335,23 @@ class AdViewModel: ViewModel()  {
                                         address = document.getString("address").toString(),
                                         phonenum = document.getString("phonenum").toString()
                                     )
-                                    Log.d("Signup Init Database", "DocumentSnapshot added with ID:")
+                                    Log.d("userLogin", "DocumentSnapshot added with ID:")
                                 }
                                 .addOnFailureListener { e ->
-                                    Log.w("Signup Init Database", "Error adding document", e)
+                                    Log.w("userLogin", "Error adding document", e)
                                 }
 
-                            Log.d("Login", currentUser.uid)
+                            Log.d("userLogin", currentUser.uid)
                             userState = "Login success"
                             currentEmail = currentUser.email.toString()
 //                            navController.popBackStack("login", inclusive = true)
 //                            navController.navigate("home")
+                            readSuppliersData()
                             callback("Login success")
                         }
                     }
                     .addOnFailureListener {
-                        Log.d("Login", it.message.toString())
+                        Log.d("userLogin", it.message.toString())
                         userState = "Email or Password is wrong"
                         callback("Email or Password is wrong")
                     }
@@ -377,11 +397,12 @@ class AdViewModel: ViewModel()  {
 //                        Log.d("checkUserLogin", userInfoStore.address)
 //                        Log.d("checkUserLogin", userInfoStore.phonenum)
 //                        Log.d("checkUserLogin", userInfoStore.name)
-
                     }
                     .addOnFailureListener { e ->
                         Log.w("checkUserLogin", "Error adding document", e)
+
                     }
+                readSuppliersData()
             }
         }
     }

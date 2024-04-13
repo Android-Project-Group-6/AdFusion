@@ -233,7 +233,7 @@ fun SupportScreen(navController: NavController, adViewModel: AdViewModel) {
                                     dialogString.width = 400.dp
                                     dialogString.height = 200.dp
                                     dialogString.title = "Message Success"
-                                    dialogString.message = "We'll get back to you as soon as we can."
+                                    dialogString.message = "We will contact you via email within 3 working days."
                                     dialogString.button = "Ok"
                                     dialogString.show.value = true
                                     dialogString.callback = {navController.popBackStack()}
