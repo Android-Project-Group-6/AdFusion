@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -70,6 +71,10 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
         show = remember { mutableStateOf(false) }
     ){}
     DialogScreenAsDialog(dialogString)
+
+    val density = LocalDensity.current
+    val fontSizeItem = remember { mutableStateOf(0.sp) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -81,12 +86,21 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp, bottom = 16.dp),
+                .padding(top = 16.dp, bottom = 16.dp)
+//                    .weight(1f)
+                .onGloballyPositioned { layoutCoordinates ->
+                    val newFontSize = with(density) {
+                        layoutCoordinates.size.height
+                            .toDp()
+                            .toPx() / density.density
+                    } * 0.8f
+                    fontSizeItem.value = 32.sp//newFontSize.sp
+                },
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
                 text = stringResource(R.string.welcome),
-                fontSize = 24.sp,
+                fontSize = fontSizeItem.value,
                 color = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -94,7 +108,7 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
             )
             Text(
                 text = " to ",
-                fontSize = 24.sp,
+                fontSize = fontSizeItem.value,
                 color = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -102,7 +116,7 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
             )
             Text(
                 text = "Ad",
-                fontSize = 24.sp,
+                fontSize = fontSizeItem.value,
                 color = Color.Black,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -110,27 +124,38 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
             )
             Text(
                 text = "Fusion",
-                fontSize = 24.sp,
+                fontSize = fontSizeItem.value,
                 color = Color(0xFFFF69B4),
                 textAlign = TextAlign.Center,
                 modifier = Modifier
 //                    .fillMaxWidth()
             )
         }
-        Text(
-            text = stringResource(R.string.please_login),
-            fontSize = 24.sp,
-            color = MaterialTheme.colorScheme.primary,
-            textAlign = TextAlign.Center,
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp, bottom = 16.dp)
-        )
+//                    .weight(0.8f)
+            ,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = stringResource(R.string.please_login),
+                fontSize = fontSizeItem.value*0.8,
+                color = MaterialTheme.colorScheme.primary,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(0.8f)
+                    .padding(top = 16.dp, bottom = 16.dp)
+            )
+        }
         OutlinedTextField(
             value = email,
             onValueChange = {
                 email = it
-                adViewModel.userState = ""},
+                adViewModel.userState = ""
+            },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Email,
@@ -147,6 +172,7 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
             placeholder = { Text(text = stringResource(R.string.enter_your_email)) },
             modifier = Modifier
                 .fillMaxWidth()
+//                    .weight(1f)
                 .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp),
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Email,
@@ -173,14 +199,15 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                     Icon(
                         imageVector = if (showKey) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
                         contentDescription =
-                            if (showKey) stringResource(R.string.show_password)
-                            else stringResource(R.string.hide_password)
+                        if (showKey) stringResource(R.string.show_password)
+                        else stringResource(R.string.hide_password)
                     )
                 }
             },
             visualTransformation = if (showKey) VisualTransformation.None else PasswordVisualTransformation(),
             modifier = Modifier
                 .fillMaxWidth()
+//                    .weight(1f)
                 .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp),
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Password,
@@ -190,7 +217,7 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
         )
         Row(
             modifier = Modifier
-//                .weight(1.5f)
+//                    .weight(0.8f)
                 .fillMaxWidth()
                 .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
                 .let {
@@ -199,12 +226,12 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                     ) else it
                 },
             horizontalArrangement = Arrangement.End
-        ){
+        ) {
             ClickableText(
                 text = AnnotatedString(stringResource(R.string.forgot_password)),
                 onClick = { offset ->
                     adViewModel.forgotPassword(email)
-                    Log.d("Clicked on offset:"," $offset")
+                    Log.d("Clicked on offset:", " $offset")
                 }
             )
         }
@@ -215,12 +242,16 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                 .fillMaxWidth(0.5f)
                 .padding(8.dp)
                 .aspectRatio(3.5f)
-                .onGloballyPositioned{ layoutCoordinates ->
-                    val newFontSize = with(density1) { layoutCoordinates.size.height.toDp().toPx() / density1.density } * 0.3f
+                .onGloballyPositioned { layoutCoordinates ->
+                    val newFontSize = with(density1) {
+                        layoutCoordinates.size.height
+                            .toDp()
+                            .toPx() / density1.density
+                    } * 0.3f
                     fontSize1.value = newFontSize.sp
                 },
             onClick = {
-                adViewModel.userLogin(navController, email, pw){ string ->
+                adViewModel.userLogin(navController, email, pw) { string ->
                     if (string == "Login success") {
                         Log.d("Login", "Login success")
                         dialogString.width = 400.dp
@@ -265,7 +296,8 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                 navController.navigate(context.getString(R.string.screen_signup))
             },
         ) {
-            Text(text = stringResource(R.string.button_signup),
+            Text(
+                text = stringResource(R.string.button_signup),
                 fontSize = fontSize1.value,
             )
         }
@@ -278,10 +310,15 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
 //                .fillMaxWidth()
 //                .padding(top = 16.dp, bottom = 16.dp)
 //        )
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(3.5f),
+            )
         Text(
             text = "Need help? Let’s connect to customer support team",
-            fontSize = 12.sp,
-            lineHeight = 14.sp,
+            fontSize = fontSize1.value*0.9,
+            lineHeight = fontSize1.value,
 //                    color = MaterialTheme.colorScheme.primary,
             textAlign = TextAlign.Center,
             modifier = Modifier
