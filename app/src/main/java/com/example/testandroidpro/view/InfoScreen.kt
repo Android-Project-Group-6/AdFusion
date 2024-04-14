@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Face5
 import androidx.compose.material.icons.filled.Face6
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
@@ -28,9 +29,8 @@ import androidx.compose.material.icons.filled.Person2
 import androidx.compose.material.icons.filled.Person3
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Place
-import androidx.compose.material.icons.outlined.Lock
-import androidx.compose.material.icons.outlined.Visibility
-import androidx.compose.material.icons.outlined.VisibilityOff
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -81,7 +81,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                 modifier = Modifier
                     .fillMaxWidth(),
             ) {
-                TopBar(navController, adViewModel, context.getString(R.string.InfoPage))
+                TopBar(navController, adViewModel, context.getString(R.string.infoPage))
                 Text(
                     text = adViewModel.currentEmail,
                     fontSize = 24.sp,
@@ -187,7 +187,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                     placeholder = { Text(text = stringResource(R.string.enter_your_oldpassword)) },
                     leadingIcon = {
                         Icon(
-                            imageVector = Icons.Outlined.Lock,
+                            imageVector = Icons.Default.Lock,
                             contentDescription = stringResource(R.string.lock_icon)
                         )
                     },
@@ -196,7 +196,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                             onClick = { oldShowKey = !oldShowKey }
                         ) {
                             Icon(
-                                imageVector = if (oldShowKey) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
+                                imageVector = if (oldShowKey) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                                 contentDescription =
                                 if (oldShowKey) stringResource(R.string.show_password)
                                 else stringResource(R.string.hide_password)
@@ -220,7 +220,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                     placeholder = { Text(text = stringResource(R.string.enter_your_newpassword1)) },
                     leadingIcon = {
                         Icon(
-                            imageVector = Icons.Outlined.Lock,
+                            imageVector = Icons.Default.Lock,
                             contentDescription = stringResource(R.string.lock_icon)
                         )
                     },
@@ -229,7 +229,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                             onClick = { newShowKey = !newShowKey }
                         ) {
                             Icon(
-                                imageVector = if (newShowKey) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
+                                imageVector = if (newShowKey) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                                 contentDescription =
                                 if (newShowKey) stringResource(R.string.show_password)
                                 else stringResource(R.string.hide_password)
@@ -253,7 +253,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                     placeholder = { Text(text = stringResource(R.string.enter_your_newpassword2)) },
                     leadingIcon = {
                         Icon(
-                            imageVector = Icons.Outlined.Lock,
+                            imageVector = Icons.Default.Lock,
                             contentDescription = stringResource(R.string.lock_icon)
                         )
                     },
@@ -262,7 +262,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                             onClick = { newShowKey = !newShowKey }
                         ) {
                             Icon(
-                                imageVector = if (newShowKey) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
+                                imageVector = if (newShowKey) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                                 contentDescription =
                                 if (newShowKey) stringResource(R.string.show_password)
                                 else stringResource(R.string.hide_password)

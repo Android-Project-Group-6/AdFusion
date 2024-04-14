@@ -18,7 +18,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
@@ -190,14 +193,14 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
             placeholder = { Text(text = stringResource(R.string.enter_your_password)) },
             leadingIcon = {
                 Icon(
-                    imageVector = Icons.Outlined.Lock,
+                    imageVector = Icons.Default.Lock,
                     contentDescription = stringResource(R.string.lock_icon)
                 )
             },
             trailingIcon = {
                 IconButton(onClick = { showKey = !showKey }) {
                     Icon(
-                        imageVector = if (showKey) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
+                        imageVector = if (showKey) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                         contentDescription =
                         if (showKey) stringResource(R.string.show_password)
                         else stringResource(R.string.hide_password)
@@ -230,7 +233,18 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
             ClickableText(
                 text = AnnotatedString(stringResource(R.string.forgot_password)),
                 onClick = { offset ->
-                    adViewModel.forgotPassword(email)
+
+                    adViewModel.forgotPassword(email){
+
+                        dialogString.width = 400.dp
+                        dialogString.height = 200.dp
+                        dialogString.title = "Forgot Password"
+                        dialogString.message = it
+                        dialogString.button = "Ok"
+                        dialogString.show.value = true
+                        dialogString.callback = {}
+
+                    }
                     Log.d("Clicked on offset:", " $offset")
                 }
             )
@@ -278,8 +292,6 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
 //                                    Toast.makeText(context, "Failed to write message", Toast.LENGTH_SHORT).show()
                     }
                 }
-
-
             },
         ) {
             Text(
@@ -301,15 +313,6 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                 fontSize = fontSize1.value,
             )
         }
-//        Text(
-//            text = adViewModel.userState,
-//            fontSize = 24.sp,
-//            color = MaterialTheme.colorScheme.primary,
-//            textAlign = TextAlign.Center,
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(top = 16.dp, bottom = 16.dp)
-//        )
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
