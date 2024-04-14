@@ -25,6 +25,7 @@ import com.example.testandroidpro.view.DialogScreenAsDialog
 import com.example.testandroidpro.view.showAlertDialog
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.FirebaseStorage
@@ -407,7 +408,7 @@ class AdViewModel: ViewModel()  {
         }
     }
 
-    fun forgotPassword(email:String){
+    fun forgotPassword(email:String, callback: (String) -> Unit){
         viewModelScope.launch {
             if (!TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 fAuth.sendPasswordResetEmail(email)
@@ -416,11 +417,14 @@ class AdViewModel: ViewModel()  {
                             userState = "Email sent"
                             Log.d("forgotPassword", "Email sent.")
                             Log.d("forgotPassword", email)
+
+                            callback("Email sent")
                         }
                     }
             }
             else {
                 userState = "Error Email"
+                callback("Error Email")
             }
         }
     }

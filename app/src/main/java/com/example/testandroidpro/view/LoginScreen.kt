@@ -230,7 +230,18 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
             ClickableText(
                 text = AnnotatedString(stringResource(R.string.forgot_password)),
                 onClick = { offset ->
-                    adViewModel.forgotPassword(email)
+
+                    adViewModel.forgotPassword(email){
+
+                        dialogString.width = 400.dp
+                        dialogString.height = 200.dp
+                        dialogString.title = "Forgot Password"
+                        dialogString.message = it
+                        dialogString.button = "Ok"
+                        dialogString.show.value = true
+                        dialogString.callback = {}
+
+                    }
                     Log.d("Clicked on offset:", " $offset")
                 }
             )

@@ -81,7 +81,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                 modifier = Modifier
                     .fillMaxWidth(),
             ) {
-                TopBar(navController, adViewModel, context.getString(R.string.InfoPage))
+                TopBar(navController, adViewModel, context.getString(R.string.infoPage))
                 Text(
                     text = adViewModel.currentEmail,
                     fontSize = 24.sp,

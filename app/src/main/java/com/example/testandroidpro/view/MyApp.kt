@@ -21,9 +21,9 @@ fun MyApp() {
                 context.getString(R.string.loginPage) -> LoginScreen(navController,adViewModel)
             }
         }
-        composable(route = context.getString(R.string.HomePage)) {
+        composable(route = context.getString(R.string.homePage)) {
             when (navController.currentDestination?.route) {
-                context.getString(R.string.HomePage) -> MainScreen(navController,adViewModel)
+                context.getString(R.string.homePage) -> MainScreen(navController,adViewModel)
             }
         }
         composable(route = context.getString(R.string.signupPage)) {

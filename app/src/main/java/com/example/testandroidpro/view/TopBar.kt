@@ -65,7 +65,7 @@ fun TopBar(navController: NavController, adViewModel: AdViewModel, screen:String
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    if(screen != context.getString(R.string.HomePage)) {
+                    if(screen != context.getString(R.string.homePage)) {
                         IconButton(
                             onClick = { navController.popBackStack() }
                         ) {
@@ -122,15 +122,15 @@ fun TopBar(navController: NavController, adViewModel: AdViewModel, screen:String
                         DropdownMenu(
                             expanded = expanded,
                             onDismissRequest = { expanded = false }) {
-                            if (screen == context.getString(R.string.HomePage)) {
+                            if (screen == context.getString(R.string.homePage)) {
                                 DropdownMenuItem(
                                     text = { Text(stringResource(R.string.drop_info)) },
                                     onClick = { navController.navigate(context.getString(R.string.infoPage)) }
                                 )
-                            } else if (screen == context.getString(R.string.InfoPage)) {
+                            } else if (screen == context.getString(R.string.infoPage)) {
                                 DropdownMenuItem(
                                     text = { Text(stringResource(R.string.ads_list)) },
-                                    onClick = { navController.navigate(context.getString(R.string.HomePage)) }
+                                    onClick = { navController.navigate(context.getString(R.string.homePage)) }
                                 )
                             } else {
                                 DropdownMenuItem(
@@ -139,7 +139,7 @@ fun TopBar(navController: NavController, adViewModel: AdViewModel, screen:String
                                 )
                                 DropdownMenuItem(
                                     text = { Text(stringResource(R.string.ads_list)) },
-                                    onClick = { navController.navigate(context.getString(R.string.HomePage)) }
+                                    onClick = { navController.navigate(context.getString(R.string.homePage)) }
                                 )
                             }
                             DropdownMenuItem(

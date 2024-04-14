@@ -86,7 +86,7 @@ import androidx.compose.ui.text.TextLayoutResult
 fun MainScreen(navController: NavController, adViewModel: AdViewModel) {
     val context = LocalContext.current
     Scaffold (
-        topBar = { TopBar(navController,adViewModel,context.getString(R.string.HomePage)) },
+        topBar = { TopBar(navController,adViewModel,context.getString(R.string.homePage)) },
         content = {
             Column(
                 modifier = Modifier
