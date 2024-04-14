@@ -111,7 +111,7 @@ fun TopBar(navController: NavController, adViewModel: AdViewModel, screen:String
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    if (screen != context.getString(R.string.supportPage)) {
+                    if ((screen != context.getString(R.string.supportPage))&&(screen != context.getString(R.string.signupPage))) {
                         IconButton(
                             onClick = {
                                 expanded = !expanded
