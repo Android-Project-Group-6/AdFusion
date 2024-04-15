@@ -1,12 +1,8 @@
 package com.example.testandroidpro.viewmodel
 
-import android.app.AlertDialog
-import android.content.Context
-import android.icu.text.SimpleDateFormat
 import android.text.TextUtils
 import android.util.Log
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -18,22 +14,15 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import androidx.navigation.NavController
 import com.example.testandroidpro.data.Myuser
-import com.example.testandroidpro.data.Myusub
 import com.example.testandroidpro.data.SupplierAd
 import com.example.testandroidpro.data.SupportItem
-import com.example.testandroidpro.view.DialogScreenAsDialog
-import com.example.testandroidpro.view.showAlertDialog
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
-import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
 import java.io.File
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
 
 class AdViewModel: ViewModel()  {
     var emailDisplay: String by  mutableStateOf("")
@@ -42,18 +31,18 @@ class AdViewModel: ViewModel()  {
     var userInfoStore = mutableStateOf(Myuser("", "", ""))
     var userState: String by  mutableStateOf("")
 
-    val fAuth = Firebase.auth
-    val currentUser = fAuth.currentUser
+    private val fAuth = Firebase.auth
+    private val currentUser = fAuth.currentUser
     var startDestination = "login"
-    val db = Firebase.firestore
-    val dataState = mutableStateOf<List<DocumentSnapshot>>(emptyList())
+    private val db = Firebase.firestore
+    private val dataState = mutableStateOf<List<DocumentSnapshot>>(emptyList())
 
-    val localFilesIcon = mutableStateListOf<File>()
-    val localFilesEnter = mutableStateListOf<File>()
+    private val localFilesIcon = mutableStateListOf<File>()
+    private val localFilesEnter = mutableStateListOf<File>()
     var filePath = ""
     var market = ""
     val adList = mutableStateOf(emptyList<SupplierAd>())
-    val tasks = ArrayList<Task<QuerySnapshot>>()
+    private val tasks = ArrayList<Task<QuerySnapshot>>()
 
     var listState: LazyListState = LazyListState()
 
@@ -65,7 +54,7 @@ class AdViewModel: ViewModel()  {
         }
     }
 
-    fun readSuppliersData(){
+    private fun readSuppliersData(){
         viewModelScope.launch {
             Log.d("MVVM", "Init readSuppliersData")
             db.collection("suppliers")
@@ -84,44 +73,18 @@ class AdViewModel: ViewModel()  {
                             .collection("advertisement")
                             .whereEqualTo("status", true)
                             .get()
-//                            .addOnSuccessListener { adDocuments ->
-//                                val ads = adDocuments.documents
-//                                Log.d("Read Week DataadList", ads.toString())
-//                                data.add(SupplierAd(document, ads))
-//                            }
-//                            .addOnFailureListener { exception ->
-//                                Log.d("Read Week DataadList", "Error getting documents: $exception")
-//                            }
                         tasks.add(task)
                     }
-//                    Tasks.whenAllSuccess<QuerySnapshot>(tasks).addOnSuccessListener { results ->
-//                        results.forEachIndexed { index, querySnapshot ->
-//                            val ads = querySnapshot.documents
-//                            Log.d("Read Week DataadList", ads.toString())
-//                            data.add(SupplierAd(result.documents[index], ads))
-//                        }
-//                        adList.value = data
-////                        Log.d("Read Week DataadList ", "FF:${adList.value.toString()}")
-////                        adList.value.forEach { supplierAd ->
-////                            Log.d("Read Week DataadList", "Data: ${supplierAd.supplier.data}")
-////                            supplierAd.ads.forEach { ad ->
-////                                Log.d("Read Week DataadList","Advertisement: ${ad.id}")
-////                                Log.d("Read Week DataadList","Data: ${ad.getString("attachment")}")
-////                                Log.d("Read Week DataadList","Data: ${ad.getString("adName")}")
-////                            }
-////                        }
-//                        readSuppliersResEnter()
-//                    }
                     Tasks.whenAllSuccess<QuerySnapshot>(tasks).addOnSuccessListener { results ->
                         results.forEachIndexed { index, querySnapshot ->
                             val ads = querySnapshot.documents
-                            Log.d("Read Week DataadList", ads.toString())
+                            Log.d("Read Week DataList", ads.toString())
                             if (index < result.documents.size) {
                                 // It's safe to access the element
                                 data.add(SupplierAd(result.documents[index], ads))
                             } else {
                                 // Handle the case where the index is out of bounds
-                                Log.d("Read Week DataadList", "Index out of bounds")
+                                Log.d("Read Week DataList", "Index out of bounds")
                             }
                         }
                         adList.value = data
@@ -136,7 +99,7 @@ class AdViewModel: ViewModel()  {
         }
     }
 
-    fun readSuppliersResEnter(){
+    private fun readSuppliersResEnter(){
         viewModelScope.launch {
             val storageReference = FirebaseStorage.getInstance().reference
 //            Log.d("readSuppliersResEnter", "Init readSuppliersResEnter")
@@ -169,7 +132,7 @@ class AdViewModel: ViewModel()  {
         }
     }
 
-    fun readSuppliersResIcon(){
+    private fun readSuppliersResIcon(){
         viewModelScope.launch {
             val storageReference = FirebaseStorage.getInstance().reference
 
@@ -232,7 +195,7 @@ class AdViewModel: ViewModel()  {
 
     }
 
-    fun modifyInfo(navController: NavController,userInfo:Myuser) {
+    fun modifyInfo(userInfo:Myuser, callback: (String) -> Unit) {
         viewModelScope.launch {
             val currentUser = fAuth.currentUser
             if (currentUser != null) {
@@ -251,7 +214,8 @@ class AdViewModel: ViewModel()  {
                     }
 
                 Log.d("signup", currentUser.uid)
-                userState = "Signup success"
+                userState = "Modify success"
+                callback("Modify success")
 //            navController.popBackStack("signup", inclusive = true)
 //            navController.popBackStack("login", inclusive = true)
 //            navController.navigate("home")
@@ -259,7 +223,7 @@ class AdViewModel: ViewModel()  {
         }
     }
 
-    fun userSignup(navController: NavController, email:String, passWord1:String, passWord2:String, userInfo:Myuser,callback: (String) -> Unit) {
+    fun userSignup(email:String, passWord1:String, passWord2:String, userInfo:Myuser,callback: (String) -> Unit) {
         viewModelScope.launch {
             if(passWord1 == passWord2) {
                 if (email.isNotEmpty() && passWord1.isNotEmpty()) {
@@ -267,20 +231,6 @@ class AdViewModel: ViewModel()  {
                         .addOnSuccessListener {
                             val currentUser = fAuth.currentUser
                             if (currentUser != null) {
-//                            db.collection("users")
-//                                .document(currentUser.uid)
-//                                .collection("inf")
-//                                .document("subscribe")
-//                                .set(Myusub(false, false, false, false))
-//                                .addOnSuccessListener {
-//                                    Log.d(
-//                                        "Signup Init Database",
-//                                        "DocumentSnapshot added with ID: ${currentUser.uid}"
-//                                    )
-//                                }
-//                                .addOnFailureListener { e ->
-//                                    Log.w("Signup Init Database", "Error adding document", e)
-//                                }
                                 db.collection("users")
                                     .document(currentUser.uid)
                                     .collection("inf")
@@ -302,12 +252,8 @@ class AdViewModel: ViewModel()  {
                                 userInfoStore.value = userInfo
 
                                 currentEmail = currentUser.email.toString()
-
+                                emailDisplay = currentEmail
                                 readSuppliersData()
-
-//                                navController.popBackStack("signup", inclusive = true)
-//                                navController.popBackStack("login", inclusive = true)
-//                                navController.navigate("home")
 
                                 callback("Signup success")
 
@@ -329,7 +275,7 @@ class AdViewModel: ViewModel()  {
         }
     }
 
-    fun userLogin(navController: NavController, email:String, passWord:String, callback: (String) -> Unit) {
+    fun userLogin(email:String, passWord:String, callback: (String) -> Unit) {
         viewModelScope.launch {
             if (email.isNotEmpty() && passWord.isNotEmpty()) {
                 fAuth.signInWithEmailAndPassword(email, passWord)
@@ -356,6 +302,7 @@ class AdViewModel: ViewModel()  {
                             Log.d("userLogin", currentUser.uid)
                             userState = "Login success"
                             currentEmail = currentUser.email.toString()
+                            emailDisplay = currentEmail
 //                            navController.popBackStack("login", inclusive = true)
 //                            navController.navigate("home")
                             readSuppliersData()
@@ -385,15 +332,17 @@ class AdViewModel: ViewModel()  {
             userInfoStore.value.address = ""
 
             fAuth.signOut()
+            navController.popBackStack()
             navController.navigate("login")
         }
     }
 
-    fun checkUserLogin(){
+    private fun checkUserLogin(){
         viewModelScope.launch {
             startDestination = if (currentUser != null) "home" else "login"
             if (currentUser != null) {
                 currentEmail = currentUser.email.toString()
+                emailDisplay = currentEmail
                 db.collection("users")
                     .document(currentUser.uid)
                     .collection("inf")
@@ -440,7 +389,7 @@ class AdViewModel: ViewModel()  {
         }
     }
 
-    fun resetPassword(navController: NavController, opw:String, npw1:String, npw2:String){
+    fun resetPassword(opw:String, npw1:String, npw2:String, callback: (String) -> Unit){
         viewModelScope.launch {
             if(npw1 == npw2) {
                 fAuth.signInWithEmailAndPassword(currentEmail, opw)
@@ -452,43 +401,48 @@ class AdViewModel: ViewModel()  {
                             // User can now enter a new password
                             user?.updatePassword(npw1)?.addOnCompleteListener { tasking ->
                                 if (tasking.isSuccessful) {
-                                    Log.d("resetPassword", "User password updated.")
-
-                                    userSignOut(navController)
+                                    Log.d("resetPassword", tasking.exception?.message.toString())
+                                    callback("Modify success, Please reload")
+//                                    userSignOut(navController)
                                     emailDisplay = currentEmail
+                                } else {
+                                    Log.d("resetPassword", tasking.exception?.localizedMessage.toString())
+                                    callback(tasking.exception?.localizedMessage.toString())
                                 }
                             }
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("resetPassword", "signInWithEmail:failure", task.exception)
                             // Incorrect current password, do not allow password change
+                            callback("Password is incorrect")
                         }
                     }
             } else {
                 userState = "Two passwords don't match"
+                callback("Two passwords don't match")
             }
         }
     }
 
 
-    fun writeSupportMessage(navController: NavController, supportMessage: SupportItem,context: Context){
-        viewModelScope.launch {
-
-            db.collection("support")
-                .add(supportMessage)
-                .addOnSuccessListener {
-                    Log.d("writeSupportMessage", "Success")
-                    showAlertDialog(context,"Support","Success","Confirm") {
-                        navController.popBackStack()
-                    }
-                }
-                .addOnFailureListener { e ->
-                    Log.w("writeSupportMessage", "Fail", e)
-                    showAlertDialog(context,"Support","Failed","Confirm") { }
-                }
-        }
-    }
-    fun writeSupportMessage2(navController: NavController, supportMessage: SupportItem, context: Context, callback: (Boolean) -> Unit) {
+//    fun writeSupportMessage(navController: NavController, supportMessage: SupportItem,context: Context){
+//        viewModelScope.launch {
+//
+//            db.collection("support")
+//                .add(supportMessage)
+//                .addOnSuccessListener {
+//                    Log.d("writeSupportMessage", "Success")
+//                    showAlertDialog(context,"Support","Success","Confirm") {
+//                        navController.popBackStack()
+//                    }
+//                }
+//                .addOnFailureListener { e ->
+//                    Log.w("writeSupportMessage", "Fail", e)
+//                    showAlertDialog(context,"Support","Failed","Confirm") { }
+//                }
+//        }
+//    }
+    fun writeSupportMessage2(supportMessage: SupportItem, callback: (Boolean) -> Unit) {
         viewModelScope.launch {
 //            val documentId = supportMessage.email
             db.collection("support")

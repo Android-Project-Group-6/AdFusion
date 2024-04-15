@@ -9,9 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
@@ -22,9 +20,6 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material.icons.outlined.Lock
-import androidx.compose.material.icons.outlined.Visibility
-import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,7 +33,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
@@ -51,7 +45,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -65,15 +58,19 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
     val context = LocalContext.current
     var email by remember { mutableStateOf(adViewModel.emailDisplay) }
     var pw by remember { mutableStateOf("") }
-    val dialogString = DialogString(
-        width = 200.dp,
-        height = 150.dp,
-        title = "Dialog Title",
-        message = "Dialog Message",
-        button = "OK",
-        show = remember { mutableStateOf(false) }
-    ){}
-    DialogScreenAsDialog(dialogString)
+    val dialogString = remember { mutableStateOf(
+        DialogString(
+            width = 200.dp,
+            height = 150.dp,
+            title = "Dialog Title",
+            message = "Dialog Message",
+            button = "OK",
+            show = mutableStateOf(false),
+            callback = null
+        )
+    )
+    }
+    DialogScreenAsDialog(dialogString.value)
 
     val density = LocalDensity.current
     val fontSizeItem = remember { mutableStateOf(0.sp) }
@@ -97,6 +94,7 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                             .toDp()
                             .toPx() / density.density
                     } * 0.8f
+                    fontSizeItem.value = newFontSize.sp
                     fontSizeItem.value = 32.sp//newFontSize.sp
                 },
             horizontalArrangement = Arrangement.Center
@@ -236,14 +234,13 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
 
                     adViewModel.forgotPassword(email){
 
-                        dialogString.width = 400.dp
-                        dialogString.height = 200.dp
-                        dialogString.title = "Forgot Password"
-                        dialogString.message = it
-                        dialogString.button = "Ok"
-                        dialogString.show.value = true
-                        dialogString.callback = {}
-
+                        dialogString.value.width = 400.dp
+                        dialogString.value.height = 200.dp
+                        dialogString.value.title = "Forgot Password"
+                        dialogString.value.message = it
+                        dialogString.value.button = "Ok"
+                        dialogString.value.callback = {}
+                        dialogString.value.show.value = true
                     }
                     Log.d("Clicked on offset:", " $offset")
                 }
@@ -265,31 +262,30 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                     fontSize1.value = newFontSize.sp
                 },
             onClick = {
-                adViewModel.userLogin(navController, email, pw) { string ->
+                adViewModel.userLogin(email, pw) { string ->
                     if (string == "Login success") {
                         Log.d("Login", "Login success")
-                        dialogString.width = 400.dp
-                        dialogString.height = 200.dp
-                        dialogString.title = "Login"
-                        dialogString.message = string
-                        dialogString.button = "Ok"
-                        dialogString.show.value = false
-                        dialogString.callback = {
+                        dialogString.value.width = 400.dp
+                        dialogString.value.height = 200.dp
+                        dialogString.value.title = "Login"
+                        dialogString.value.message = string
+                        dialogString.value.button = "Ok"
+                        dialogString.value.callback = {
                             navController.popBackStack("login", inclusive = true)
                             navController.navigate("home")
                         }
+                        dialogString.value.show.value = false
                         navController.popBackStack("login", inclusive = true)
                         navController.navigate("home")
                     } else {
                         Log.e("Login", string)
-                        dialogString.width = 400.dp
-                        dialogString.height = 200.dp
-                        dialogString.title = "Login"
-                        dialogString.message = string
-                        dialogString.button = "Back"
-                        dialogString.show.value = true
-                        dialogString.callback = {}
-//                                    Toast.makeText(context, "Failed to write message", Toast.LENGTH_SHORT).show()
+                        dialogString.value.width = 400.dp
+                        dialogString.value.height = 200.dp
+                        dialogString.value.title = "Login"
+                        dialogString.value.message = string
+                        dialogString.value.button = "Back"
+                        dialogString.value.callback = {}
+                        dialogString.value.show.value = true
                     }
                 }
             },

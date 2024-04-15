@@ -5,12 +5,12 @@ import androidx.compose.ui.unit.Dp
 import com.google.firebase.firestore.DocumentSnapshot
 import java.util.Date
 
-data class Myusub(
-    val P:Boolean,
-    val S:Boolean,
-    val K:Boolean,
-    val L:Boolean
-)
+//data class Myusub(
+//    val P:Boolean,
+//    val S:Boolean,
+//    val K:Boolean,
+//    val L:Boolean
+//)
 
 data class Myuser(
     var name:String,
@@ -37,5 +37,5 @@ data class DialogString(
     var message: String,
     var button: String,
     var show: MutableState<Boolean>,
-    var callback: (() -> Unit)? = null // 添加一个回调函数的属性，默认为 null
+    var callback: (() -> Unit)? = null
 )
