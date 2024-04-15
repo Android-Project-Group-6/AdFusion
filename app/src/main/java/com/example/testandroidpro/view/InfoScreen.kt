@@ -51,15 +51,19 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
     var npw1 by remember { mutableStateOf("") }
     var npw2 by remember { mutableStateOf("") }
     var userInfo by remember { mutableStateOf(adViewModel.userInfoStore.value) }
-    val dialogString = DialogString(
-        width = 200.dp,
-        height = 150.dp,
-        title = "Dialog Title",
-        message = "Dialog Message",
-        button = "OK",
-        show = remember { mutableStateOf(false) }
-    ){}
-    DialogScreenAsDialog(dialogString)
+    val dialogString = remember { mutableStateOf(
+        DialogString(
+            width = 200.dp,
+            height = 150.dp,
+            title = "Dialog Title",
+            message = "Dialog Message",
+            button = "OK",
+            show = mutableStateOf(false),
+            callback = null
+        )
+    )
+    }
+    DialogScreenAsDialog(dialogString.value)
     Scaffold (
         topBar = {
             Column(
@@ -152,13 +156,13 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                         .padding(8.dp),
                     onClick = {
                         adViewModel.modifyInfo(userInfo){
-                            dialogString.width = 400.dp
-                            dialogString.height = 200.dp
-                            dialogString.title = "Information"
-                            dialogString.message = it
-                            dialogString.button = "Ok"
-                            dialogString.show.value = true
-                            dialogString.callback = {}
+                            dialogString.value.width = 400.dp
+                            dialogString.value.height = 200.dp
+                            dialogString.value.title = context.getString(R.string.dialogInformation)
+                            dialogString.value.message = it
+                            dialogString.value.button = context.getString(R.string.dialogOk)
+                            dialogString.value.callback = {}
+                            dialogString.value.show.value = true
                         }
                     },
                 ) {
@@ -281,27 +285,24 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                         adViewModel.resetPassword(opw,npw1,npw2){
                             if(it == "Modify success, Please reload")
                             {
-                                dialogString.width = 400.dp
-                                dialogString.height = 200.dp
-                                dialogString.title = "Change password"
-                                dialogString.message = it
-                                dialogString.button = "Ok"
-                                dialogString.show.value = true
-                                dialogString.callback = {
+                                dialogString.value.width = 400.dp
+                                dialogString.value.height = 200.dp
+                                dialogString.value.title = "Change password"
+                                dialogString.value.message = it
+                                dialogString.value.button = "Ok"
+                                dialogString.value.callback = {
                                     adViewModel.userSignOut(navController)
                                 }
+                                dialogString.value.show.value = true
                             } else {
-                                dialogString.width = 400.dp
-                                dialogString.height = 200.dp
-                                dialogString.title = "Change password"
-                                dialogString.message = it
-                                dialogString.button = "Ok"
-                                dialogString.show.value = true
-                                dialogString.callback = {
-
-                                }
+                                dialogString.value.width = 400.dp
+                                dialogString.value.height = 200.dp
+                                dialogString.value.title = "Change password"
+                                dialogString.value.message = it
+                                dialogString.value.button = "Ok"
+                                dialogString.value.callback = { }
+                                dialogString.value.show.value = true
                             }
-
                         }
                     },
                 ) {

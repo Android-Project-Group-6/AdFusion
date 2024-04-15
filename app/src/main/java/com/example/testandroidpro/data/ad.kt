@@ -37,5 +37,5 @@ data class DialogString(
     var message: String,
     var button: String,
     var show: MutableState<Boolean>,
-    var callback: (() -> Unit)? = null // 添加一个回调函数的属性，默认为 null
+    var callback: (() -> Unit)? = null
 )

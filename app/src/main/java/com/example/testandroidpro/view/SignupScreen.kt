@@ -1,5 +1,6 @@
 package com.example.testandroidpro.view
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -58,15 +59,19 @@ fun SignupScreen(navController: NavController, adViewModel: AdViewModel) {
     var showKey by remember { mutableStateOf(false) }
     var pw1 by remember { mutableStateOf("") }
     var pw2 by remember { mutableStateOf("") }
-    val dialogString = DialogString(
-        width = 200.dp,
-        height = 150.dp,
-        title = "Dialog Title",
-        message = "Dialog Message",
-        button = "OK",
-        show = remember { mutableStateOf(false) }
-    ){}
-    DialogScreenAsDialog(dialogString)
+    val dialogString = remember { mutableStateOf(
+            DialogString(
+                width = 200.dp,
+                height = 150.dp,
+                title = "Dialog Title",
+                message = "Dialog Message",
+                button = "OK",
+                show = mutableStateOf(false),
+                callback = null
+            )
+        )
+    }
+    DialogScreenAsDialog(dialogString.value)
     Scaffold (
         topBar = { TopBar(navController,adViewModel,context.getString(R.string.signupPage)) },
         content = { it ->
@@ -273,31 +278,32 @@ fun SignupScreen(navController: NavController, adViewModel: AdViewModel) {
                     onClick = {
                         adViewModel.userSignup(email, pw1, pw2, userInfo){
                             if (it == "Signup success"){
-                                dialogString.width = 400.dp
-                                dialogString.height = 200.dp
-                                dialogString.title = "Sign up"
-                                dialogString.message = it
-                                dialogString.button = "Ok"
-                                dialogString.show.value = true
-                                dialogString.callback = {
+                                Log.d("SignupScreen","Signup success")
+                                dialogString.value.width = 400.dp
+                                dialogString.value.height = 200.dp
+                                dialogString.value.title = "Sign up"
+                                dialogString.value.message = it
+                                dialogString.value.button = "Ok"
+                                dialogString.value.callback = {
                                     navController.popBackStack("signup", inclusive = true)
                                     navController.popBackStack("login", inclusive = true)
                                     navController.navigate("home")
                                 }
+                                dialogString.value.show.value = true
                             } else {
-                                dialogString.width = 400.dp
-                                dialogString.height = 200.dp
-                                dialogString.title = "Sign up"
-                                dialogString.message = it
-                                dialogString.button = "Ok"
-                                dialogString.show.value = true
-                                dialogString.callback = {
+                                Log.d("SignupScreen","Others")
+                                dialogString.value.width = 400.dp
+                                dialogString.value.height = 200.dp
+                                dialogString.value.title = "Sign up"
+                                dialogString.value.message = it
+                                dialogString.value.button = "Ok"
+                                dialogString.value.callback = {
 //                                    navController.popBackStack("signup", inclusive = true)
 //                                    navController.popBackStack("login", inclusive = true)
 //                                    navController.navigate("home")
                                 }
+                                dialogString.value.show.value = true
                             }
-
                         }
                     },
                 ) {

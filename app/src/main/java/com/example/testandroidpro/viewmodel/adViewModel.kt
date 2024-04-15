@@ -252,12 +252,8 @@ class AdViewModel: ViewModel()  {
                                 userInfoStore.value = userInfo
 
                                 currentEmail = currentUser.email.toString()
-
+                                emailDisplay = currentEmail
                                 readSuppliersData()
-
-//                                navController.popBackStack("signup", inclusive = true)
-//                                navController.popBackStack("login", inclusive = true)
-//                                navController.navigate("home")
 
                                 callback("Signup success")
 
@@ -306,6 +302,7 @@ class AdViewModel: ViewModel()  {
                             Log.d("userLogin", currentUser.uid)
                             userState = "Login success"
                             currentEmail = currentUser.email.toString()
+                            emailDisplay = currentEmail
 //                            navController.popBackStack("login", inclusive = true)
 //                            navController.navigate("home")
                             readSuppliersData()
@@ -335,6 +332,7 @@ class AdViewModel: ViewModel()  {
             userInfoStore.value.address = ""
 
             fAuth.signOut()
+            navController.popBackStack()
             navController.navigate("login")
         }
     }
@@ -344,6 +342,7 @@ class AdViewModel: ViewModel()  {
             startDestination = if (currentUser != null) "home" else "login"
             if (currentUser != null) {
                 currentEmail = currentUser.email.toString()
+                emailDisplay = currentEmail
                 db.collection("users")
                     .document(currentUser.uid)
                     .collection("inf")
@@ -402,7 +401,7 @@ class AdViewModel: ViewModel()  {
                             // User can now enter a new password
                             user?.updatePassword(npw1)?.addOnCompleteListener { tasking ->
                                 if (tasking.isSuccessful) {
-                                    Log.d("resetPassword", "User password updated.")
+                                    Log.d("resetPassword", tasking.exception?.message.toString())
                                     callback("Modify success, Please reload")
 //                                    userSignOut(navController)
                                     emailDisplay = currentEmail

@@ -51,15 +51,19 @@ fun SupportScreen(navController: NavController, adViewModel: AdViewModel) {
     var email by remember { mutableStateOf(adViewModel.emailDisplay) }
     var name by remember { mutableStateOf(adViewModel.userInfoStore.value.name) }
     var message by remember { mutableStateOf("") }
-    val dialogString = DialogString(
-        width = 200.dp,
-        height = 150.dp,
-        title = "Dialog Title",
-        message = "Dialog Message",
-        button = "OK",
-        show = remember { mutableStateOf(false) }
-    ){}
-    DialogScreenAsDialog(dialogString)
+    val dialogString = remember { mutableStateOf(
+        DialogString(
+            width = 200.dp,
+            height = 150.dp,
+            title = "Dialog Title",
+            message = "Dialog Message",
+            button = "OK",
+            show = mutableStateOf(false),
+            callback = null
+        )
+    )
+    }
+    DialogScreenAsDialog(dialogString.value)
     Scaffold (
         topBar = { TopBar(navController, adViewModel, "support") },
         content = { it ->
@@ -224,22 +228,22 @@ fun SupportScreen(navController: NavController, adViewModel: AdViewModel) {
                             adViewModel.writeSupportMessage2(supportItem) { success ->
                                 if (success) {
                                     Log.d("Support", "Message written successfully")
-                                    dialogString.width = 400.dp
-                                    dialogString.height = 200.dp
-                                    dialogString.title = "Message Success"
-                                    dialogString.message = "We will contact you via email within 3 working days."
-                                    dialogString.button = "Ok"
-                                    dialogString.show.value = true
-                                    dialogString.callback = {navController.popBackStack()}
+                                    dialogString.value.width = 400.dp
+                                    dialogString.value.height = 200.dp
+                                    dialogString.value.title = "Message Success"
+                                    dialogString.value.message = "We will contact you via email within 3 working days."
+                                    dialogString.value.button = "Ok"
+                                    dialogString.value.callback = {navController.popBackStack()}
+                                    dialogString.value.show.value = true
                                 } else {
                                     Log.e("Support", "Failed to write message")
-                                    dialogString.width = 400.dp
-                                    dialogString.height = 200.dp
-                                    dialogString.title = "Message Failed"
-                                    dialogString.message = "Failed to write message"
-                                    dialogString.button = "Back"
-                                    dialogString.show.value = true
-                                    dialogString.callback = {}
+                                    dialogString.value.width = 400.dp
+                                    dialogString.value.height = 200.dp
+                                    dialogString.value.title = "Message Failed"
+                                    dialogString.value.message = "Failed to write message"
+                                    dialogString.value.button = "Back"
+                                    dialogString.value.callback = {}
+                                    dialogString.value.show.value = true
 //                                    Toast.makeText(context, "Failed to write message", Toast.LENGTH_SHORT).show()
                                 }
                             }

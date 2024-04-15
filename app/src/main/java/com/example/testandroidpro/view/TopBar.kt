@@ -41,8 +41,12 @@ fun TopBar(navController: NavController, adViewModel: AdViewModel, screen:String
     TopAppBar(
         modifier = Modifier
             .fillMaxWidth()
-            .onGloballyPositioned{ layoutCoordinates ->
-                val newFontSize = with(density) { layoutCoordinates.size.height.toDp().toPx() / density.density } * 0.7f
+            .onGloballyPositioned { layoutCoordinates ->
+                val newFontSize = with(density) {
+                    layoutCoordinates.size.height
+                        .toDp()
+                        .toPx() / density.density
+                } * 0.7f
                 fontSize.value = newFontSize.sp
             },
         title = { },
@@ -143,10 +147,15 @@ fun TopBar(navController: NavController, adViewModel: AdViewModel, screen:String
                                 }
                             }
                             DropdownMenuItem(
+                                text = { Text(stringResource(R.string.drop_support)) },
+                                onClick = {
+                                    navController.navigate(context.getString(R.string.supportPage))
+                                }
+                            )
+                            DropdownMenuItem(
                                 text = { Text(stringResource(R.string.drop_signout)) },
                                 onClick = {
                                     adViewModel.userSignOut(navController)
-//                        navController.navigate("Settings")
                                 }
                             )
                         }
