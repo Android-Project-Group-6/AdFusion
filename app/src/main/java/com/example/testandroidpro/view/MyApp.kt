@@ -21,9 +21,9 @@ fun MyApp() {
                 context.getString(R.string.loginPage) -> LoginScreen(navController,adViewModel)
             }
         }
-        composable(route = context.getString(R.string.HomePage)) {
+        composable(route = context.getString(R.string.homePage)) {
             when (navController.currentDestination?.route) {
-                context.getString(R.string.HomePage) -> MainScreen(navController,adViewModel)
+                context.getString(R.string.homePage) -> MainScreen(navController,adViewModel)
             }
         }
         composable(route = context.getString(R.string.signupPage)) {
@@ -38,9 +38,15 @@ fun MyApp() {
         }
         composable(route = context.getString(R.string.pdfPage)) {
             when (navController.currentDestination?.route) {
-                context.getString(R.string.pdfPage) -> PdfScreen(adViewModel.market,adViewModel.filePath)
+                context.getString(R.string.pdfPage) -> PdfScreen(navController,adViewModel)//dViewModel.userSignOut(navController) }
             }
         }
+        composable(route = context.getString(R.string.supportPage)) {
+            when (navController.currentDestination?.route) {
+                context.getString(R.string.supportPage) -> SupportScreen(navController,adViewModel)
+            }
+        }
+
     }
 }
 

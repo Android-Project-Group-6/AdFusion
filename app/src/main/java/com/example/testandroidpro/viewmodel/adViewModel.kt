@@ -1,7 +1,12 @@
 package com.example.testandroidpro.viewmodel
 
+import android.app.AlertDialog
+import android.content.Context
+import android.icu.text.SimpleDateFormat
+import android.text.TextUtils
 import android.util.Log
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -15,20 +20,26 @@ import androidx.navigation.NavController
 import com.example.testandroidpro.data.Myuser
 import com.example.testandroidpro.data.Myusub
 import com.example.testandroidpro.data.SupplierAd
+import com.example.testandroidpro.data.SupportItem
+import com.example.testandroidpro.view.DialogScreenAsDialog
+import com.example.testandroidpro.view.showAlertDialog
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
 import java.io.File
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class AdViewModel: ViewModel()  {
-    var email: String by  mutableStateOf("")
-    var passWord: String by  mutableStateOf("")
-    var userAddress: String by  mutableStateOf("")
-    var userPhoneNum: String by  mutableStateOf("")
-    var userName: String by  mutableStateOf("")
+    var emailDisplay: String by  mutableStateOf("")
+    var currentEmail: String by  mutableStateOf("")
+
+    var userInfoStore = mutableStateOf(Myuser("", "", ""))
     var userState: String by  mutableStateOf("")
 
     val fAuth = Firebase.auth
@@ -49,7 +60,7 @@ class AdViewModel: ViewModel()  {
     init {
         viewModelScope.launch {
             Log.d("MVVM", "Init")
-            readSuppliersData()
+//            readSuppliersData()
             checkUserLogin()
         }
     }
@@ -83,24 +94,40 @@ class AdViewModel: ViewModel()  {
 //                            }
                         tasks.add(task)
                     }
+//                    Tasks.whenAllSuccess<QuerySnapshot>(tasks).addOnSuccessListener { results ->
+//                        results.forEachIndexed { index, querySnapshot ->
+//                            val ads = querySnapshot.documents
+//                            Log.d("Read Week DataadList", ads.toString())
+//                            data.add(SupplierAd(result.documents[index], ads))
+//                        }
+//                        adList.value = data
+////                        Log.d("Read Week DataadList ", "FF:${adList.value.toString()}")
+////                        adList.value.forEach { supplierAd ->
+////                            Log.d("Read Week DataadList", "Data: ${supplierAd.supplier.data}")
+////                            supplierAd.ads.forEach { ad ->
+////                                Log.d("Read Week DataadList","Advertisement: ${ad.id}")
+////                                Log.d("Read Week DataadList","Data: ${ad.getString("attachment")}")
+////                                Log.d("Read Week DataadList","Data: ${ad.getString("adName")}")
+////                            }
+////                        }
+//                        readSuppliersResEnter()
+//                    }
                     Tasks.whenAllSuccess<QuerySnapshot>(tasks).addOnSuccessListener { results ->
                         results.forEachIndexed { index, querySnapshot ->
                             val ads = querySnapshot.documents
                             Log.d("Read Week DataadList", ads.toString())
-                            data.add(SupplierAd(result.documents[index], ads))
+                            if (index < result.documents.size) {
+                                // It's safe to access the element
+                                data.add(SupplierAd(result.documents[index], ads))
+                            } else {
+                                // Handle the case where the index is out of bounds
+                                Log.d("Read Week DataadList", "Index out of bounds")
+                            }
                         }
                         adList.value = data
-//                        Log.d("Read Week DataadList ", "FF:${adList.value.toString()}")
-//                        adList.value.forEach { supplierAd ->
-//                            Log.d("Read Week DataadList", "Data: ${supplierAd.supplier.data}")
-//                            supplierAd.ads.forEach { ad ->
-//                                Log.d("Read Week DataadList","Advertisement: ${ad.id}")
-//                                Log.d("Read Week DataadList","Data: ${ad.getString("attachment")}")
-//                                Log.d("Read Week DataadList","Data: ${ad.getString("adName")}")
-//                            }
-//                        }
                         readSuppliersResEnter()
                     }
+
                     readSuppliersResIcon()
                 }
                 .addOnFailureListener { e ->
@@ -204,21 +231,8 @@ class AdViewModel: ViewModel()  {
         return file
 
     }
-//    fun getLocalFile(iconName: String, callback: (File?) -> Unit) {
-//        viewModelScope.launch {
-//            val file = localFilesIcon.find { it.name.contains(iconName) }
-//            if (file == null) {
-//                Log.d("getLocalFile", "No local file found for $iconName")
-//            } else {
-//                Log.d("getLocalFile", "Success found for $iconName")
-////            val fileContent = file.readText()
-////            Log.d("FileContent", fileContent)
-//            }
-//            callback(file)
-//        }
-//    }
 
-    fun modifyInfo(navController: NavController) {
+    fun modifyInfo(navController: NavController,userInfo:Myuser) {
         viewModelScope.launch {
             val currentUser = fAuth.currentUser
             if (currentUser != null) {
@@ -227,8 +241,9 @@ class AdViewModel: ViewModel()  {
                     .document(currentUser.uid)
                     .collection("inf")
                     .document("details")
-                    .set(Myuser(userName, userAddress, userPhoneNum))
+                    .set(userInfo)
                     .addOnSuccessListener {
+                        userInfoStore.value = userInfo
                         Log.d("Signup Init Database", "DocumentSnapshot added with ID:")
                     }
                     .addOnFailureListener { e ->
@@ -244,7 +259,7 @@ class AdViewModel: ViewModel()  {
         }
     }
 
-    fun userSignup(navController: NavController) {
+    fun userSignup(navController: NavController, email:String, passWord:String, userInfo:Myuser) {
         viewModelScope.launch {
             if (email.isNotEmpty() && passWord.isNotEmpty()) {
                 fAuth.createUserWithEmailAndPassword(email, passWord)
@@ -269,7 +284,7 @@ class AdViewModel: ViewModel()  {
                                 .document(currentUser.uid)
                                 .collection("inf")
                                 .document("details")
-                                .set(Myuser(userName, userAddress, userPhoneNum))
+                                .set(userInfo)
                                 .addOnSuccessListener {
                                     Log.d("Signup Init Database", "DocumentSnapshot added with ID:")
                                 }
@@ -277,10 +292,19 @@ class AdViewModel: ViewModel()  {
                                     Log.w("Signup Init Database", "Error adding document", e)
                                 }
                             Log.d("signup", currentUser.uid)
+
                             userState = "Signup success"
+
+                            userInfoStore.value = userInfo
+
+                            currentEmail = currentUser.email.toString()
+
+                            readSuppliersData()
+
                             navController.popBackStack("signup", inclusive = true)
                             navController.popBackStack("login", inclusive = true)
                             navController.navigate("home")
+
                         }
                     }
                     .addOnFailureListener {
@@ -294,7 +318,7 @@ class AdViewModel: ViewModel()  {
         }
     }
 
-    fun userLogin(navController: NavController) {
+    fun userLogin(navController: NavController, email:String, passWord:String, callback: (String) -> Unit) {
         viewModelScope.launch {
             if (email.isNotEmpty() && passWord.isNotEmpty()) {
                 fAuth.signInWithEmailAndPassword(email, passWord)
@@ -307,41 +331,49 @@ class AdViewModel: ViewModel()  {
                                 .document("details")
                                 .get()
                                 .addOnSuccessListener { document ->
-                                    userAddress = document.getString("address").toString()
-                                    userPhoneNum = document.getString("phonenum").toString()
-                                    userName = document.getString("name").toString()
-
-                                    Log.d("Signup Init Database", "DocumentSnapshot added with ID:")
+                                    userInfoStore.value = Myuser(
+                                        name = document.getString("name").toString(),
+                                        address = document.getString("address").toString(),
+                                        phonenum = document.getString("phonenum").toString()
+                                    )
+                                    Log.d("userLogin", "DocumentSnapshot added with ID:")
                                 }
                                 .addOnFailureListener { e ->
-                                    Log.w("Signup Init Database", "Error adding document", e)
+                                    Log.w("userLogin", "Error adding document", e)
                                 }
 
-                            Log.d("Login", currentUser.uid)
+                            Log.d("userLogin", currentUser.uid)
                             userState = "Login success"
-                            navController.popBackStack("login", inclusive = true)
-                            navController.navigate("home")
+                            currentEmail = currentUser.email.toString()
+//                            navController.popBackStack("login", inclusive = true)
+//                            navController.navigate("home")
+                            readSuppliersData()
+                            callback("Login success")
                         }
                     }
                     .addOnFailureListener {
-                        Log.d("Login", it.message.toString())
+                        Log.d("userLogin", it.message.toString())
                         userState = "Email or Password is wrong"
+                        callback("Email or Password is wrong")
                     }
             } else {
                 userState = "Email or Password is empty"
                 Log.d("Login", "Email or Password is empty")
+                callback("Email or Password is empty")
             }
         }
     }
 
     fun userSignOut(navController: NavController) {
         viewModelScope.launch {
-            fAuth.signOut()
-            userState = ""
-            userAddress = ""
-            userPhoneNum = ""
-            userName = ""
+            emailDisplay = ""
 
+            userState = ""
+            userInfoStore.value.name = ""
+            userInfoStore.value.phonenum = ""
+            userInfoStore.value.address = ""
+
+            fAuth.signOut()
             navController.navigate("login")
         }
     }
@@ -350,24 +382,115 @@ class AdViewModel: ViewModel()  {
         viewModelScope.launch {
             startDestination = if (currentUser != null) "home" else "login"
             if (currentUser != null) {
+                currentEmail = currentUser.email.toString()
                 db.collection("users")
                     .document(currentUser.uid)
                     .collection("inf")
                     .document("details")
                     .get()
                     .addOnSuccessListener { document ->
-                        userAddress = document.getString("address").toString()
-                        userPhoneNum = document.getString("phonenum").toString()
-                        userName = document.getString("name").toString()
+                        userInfoStore.value = Myuser(
+                            name = document.getString("name").toString(),
+                            address = document.getString("address").toString(),
+                            phonenum = document.getString("phonenum").toString()
+                        )
                         Log.d("checkUserLogin", currentUser.uid)
-                        Log.d("checkUserLogin", userAddress)
-                        Log.d("checkUserLogin", userPhoneNum)
-                        Log.d("checkUserLogin", userName)
+//                        Log.d("checkUserLogin", userInfoStore.address)
+//                        Log.d("checkUserLogin", userInfoStore.phonenum)
+//                        Log.d("checkUserLogin", userInfoStore.name)
                     }
                     .addOnFailureListener { e ->
                         Log.w("checkUserLogin", "Error adding document", e)
+
+                    }
+                readSuppliersData()
+            }
+        }
+    }
+
+    fun forgotPassword(email:String, callback: (String) -> Unit){
+        viewModelScope.launch {
+            if (!TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                fAuth.sendPasswordResetEmail(email)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            userState = "Email sent"
+                            Log.d("forgotPassword", "Email sent.")
+                            Log.d("forgotPassword", email)
+
+                            callback("Email sent")
+                        }
                     }
             }
+            else {
+                userState = "Error Email"
+                callback("Error Email")
+            }
+        }
+    }
+
+    fun resetPassword(navController: NavController, opw:String, npw1:String, npw2:String){
+        viewModelScope.launch {
+            if(npw1 == npw2) {
+                fAuth.signInWithEmailAndPassword(currentEmail, opw)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("resetPassword", "signInWithEmail:success")
+                            val user = fAuth.currentUser
+                            // User can now enter a new password
+                            user?.updatePassword(npw1)?.addOnCompleteListener { tasking ->
+                                if (tasking.isSuccessful) {
+                                    Log.d("resetPassword", "User password updated.")
+
+                                    userSignOut(navController)
+                                    emailDisplay = currentEmail
+                                }
+                            }
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w("resetPassword", "signInWithEmail:failure", task.exception)
+                            // Incorrect current password, do not allow password change
+                        }
+                    }
+            } else {
+                userState = "Two passwords don't match"
+            }
+        }
+    }
+
+
+    fun writeSupportMessage(navController: NavController, supportMessage: SupportItem,context: Context){
+        viewModelScope.launch {
+
+            db.collection("support")
+                .add(supportMessage)
+                .addOnSuccessListener {
+                    Log.d("writeSupportMessage", "Success")
+                    showAlertDialog(context,"Support","Success","Confirm") {
+                        navController.popBackStack()
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.w("writeSupportMessage", "Fail", e)
+                    showAlertDialog(context,"Support","Failed","Confirm") { }
+                }
+        }
+    }
+    fun writeSupportMessage2(navController: NavController, supportMessage: SupportItem, context: Context, callback: (Boolean) -> Unit) {
+        viewModelScope.launch {
+//            val documentId = supportMessage.email
+            db.collection("support")
+//                .document(documentId).set
+                .add(supportMessage)
+                .addOnSuccessListener {
+                    Log.d("writeSupportMessage", "Success")
+                    callback(true)
+                }
+                .addOnFailureListener { e ->
+                    Log.w("writeSupportMessage", "Fail", e)
+                    callback(false)
+                }
         }
     }
 }
