@@ -54,7 +54,6 @@ import com.example.testandroidpro.viewmodel.AdViewModel
 fun SignupScreen(navController: NavController, adViewModel: AdViewModel) {
     val context = LocalContext.current
     var email by remember { mutableStateOf("") }
-    var pw by remember { mutableStateOf("") }
     var userInfo by remember { mutableStateOf(Myuser("", "", "")) }
     var showKey by remember { mutableStateOf(false) }
     var pw1 by remember { mutableStateOf("") }
@@ -70,7 +69,7 @@ fun SignupScreen(navController: NavController, adViewModel: AdViewModel) {
     DialogScreenAsDialog(dialogString)
     Scaffold (
         topBar = { TopBar(navController,adViewModel,context.getString(R.string.signupPage)) },
-        content = {
+        content = { it ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -272,7 +271,7 @@ fun SignupScreen(navController: NavController, adViewModel: AdViewModel) {
                         .height(64.dp)
                         .padding(8.dp),
                     onClick = {
-                        adViewModel.userSignup(navController, email, pw1,pw2, userInfo){
+                        adViewModel.userSignup(email, pw1, pw2, userInfo){
                             if (it == "Signup success"){
                                 dialogString.width = 400.dp
                                 dialogString.height = 200.dp

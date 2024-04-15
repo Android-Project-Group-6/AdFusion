@@ -1,8 +1,6 @@
 package com.example.testandroidpro.view
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -11,50 +9,28 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Face2
-import androidx.compose.material.icons.filled.Face3
-import androidx.compose.material.icons.filled.Face4
-import androidx.compose.material.icons.filled.Face5
-import androidx.compose.material.icons.filled.Face6
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.MailOutline
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Person2
-import androidx.compose.material.icons.filled.Person3
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -64,7 +40,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.testandroidpro.R
 import com.example.testandroidpro.data.DialogString
-import com.example.testandroidpro.data.Myuser
 import com.example.testandroidpro.viewmodel.AdViewModel
 
 @Composable
@@ -176,7 +151,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                         .height(64.dp)
                         .padding(8.dp),
                     onClick = {
-                        adViewModel.modifyInfo(navController,userInfo){
+                        adViewModel.modifyInfo(userInfo){
                             dialogString.width = 400.dp
                             dialogString.height = 200.dp
                             dialogString.title = "Information"
@@ -303,7 +278,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                         .height(64.dp)
                         .padding(8.dp),
                     onClick = {
-                        adViewModel.resetPassword(navController,opw,npw1,npw2){
+                        adViewModel.resetPassword(opw,npw1,npw2){
                             if(it == "Modify success, Please reload")
                             {
                                 dialogString.width = 400.dp
