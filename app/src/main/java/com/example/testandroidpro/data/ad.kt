@@ -5,12 +5,12 @@ import androidx.compose.ui.unit.Dp
 import com.google.firebase.firestore.DocumentSnapshot
 import java.util.Date
 
-data class Myusub(
-    val P:Boolean,
-    val S:Boolean,
-    val K:Boolean,
-    val L:Boolean
-)
+//data class Myusub(
+//    val P:Boolean,
+//    val S:Boolean,
+//    val K:Boolean,
+//    val L:Boolean
+//)
 
 data class Myuser(
     var name:String,

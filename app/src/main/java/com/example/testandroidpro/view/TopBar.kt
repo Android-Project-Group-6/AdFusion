@@ -1,11 +1,8 @@
 package com.example.testandroidpro.view
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
@@ -29,7 +26,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.testandroidpro.R
@@ -122,25 +118,29 @@ fun TopBar(navController: NavController, adViewModel: AdViewModel, screen:String
                         DropdownMenu(
                             expanded = expanded,
                             onDismissRequest = { expanded = false }) {
-                            if (screen == context.getString(R.string.homePage)) {
-                                DropdownMenuItem(
-                                    text = { Text(stringResource(R.string.drop_info)) },
-                                    onClick = { navController.navigate(context.getString(R.string.infoPage)) }
-                                )
-                            } else if (screen == context.getString(R.string.infoPage)) {
-                                DropdownMenuItem(
-                                    text = { Text(stringResource(R.string.ads_list)) },
-                                    onClick = { navController.navigate(context.getString(R.string.homePage)) }
-                                )
-                            } else {
-                                DropdownMenuItem(
-                                    text = { Text(stringResource(R.string.drop_info)) },
-                                    onClick = { navController.navigate(context.getString(R.string.infoPage)) }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text(stringResource(R.string.ads_list)) },
-                                    onClick = { navController.navigate(context.getString(R.string.homePage)) }
-                                )
+                            when (screen) {
+                                context.getString(R.string.homePage) -> {
+                                    DropdownMenuItem(
+                                        text = { Text(stringResource(R.string.drop_info)) },
+                                        onClick = { navController.navigate(context.getString(R.string.infoPage)) }
+                                    )
+                                }
+                                context.getString(R.string.infoPage) -> {
+                                    DropdownMenuItem(
+                                        text = { Text(stringResource(R.string.ads_list)) },
+                                        onClick = { navController.navigate(context.getString(R.string.homePage)) }
+                                    )
+                                }
+                                else -> {
+                                    DropdownMenuItem(
+                                        text = { Text(stringResource(R.string.drop_info)) },
+                                        onClick = { navController.navigate(context.getString(R.string.infoPage)) }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text(stringResource(R.string.ads_list)) },
+                                        onClick = { navController.navigate(context.getString(R.string.homePage)) }
+                                    )
+                                }
                             }
                             DropdownMenuItem(
                                 text = { Text(stringResource(R.string.drop_signout)) },
