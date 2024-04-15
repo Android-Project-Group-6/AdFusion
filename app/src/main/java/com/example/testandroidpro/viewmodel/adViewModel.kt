@@ -259,13 +259,14 @@ class AdViewModel: ViewModel()  {
         }
     }
 
-    fun userSignup(navController: NavController, email:String, passWord:String, userInfo:Myuser) {
+    fun userSignup(navController: NavController, email:String, passWord1:String, passWord2:String, userInfo:Myuser,callback: (String) -> Unit) {
         viewModelScope.launch {
-            if (email.isNotEmpty() && passWord.isNotEmpty()) {
-                fAuth.createUserWithEmailAndPassword(email, passWord)
-                    .addOnSuccessListener {
-                        val currentUser = fAuth.currentUser
-                        if (currentUser != null) {
+            if(passWord1 == passWord2) {
+                if (email.isNotEmpty() && passWord1.isNotEmpty()) {
+                    fAuth.createUserWithEmailAndPassword(email, passWord1)
+                        .addOnSuccessListener {
+                            val currentUser = fAuth.currentUser
+                            if (currentUser != null) {
 //                            db.collection("users")
 //                                .document(currentUser.uid)
 //                                .collection("inf")
@@ -280,40 +281,50 @@ class AdViewModel: ViewModel()  {
 //                                .addOnFailureListener { e ->
 //                                    Log.w("Signup Init Database", "Error adding document", e)
 //                                }
-                            db.collection("users")
-                                .document(currentUser.uid)
-                                .collection("inf")
-                                .document("details")
-                                .set(userInfo)
-                                .addOnSuccessListener {
-                                    Log.d("Signup Init Database", "DocumentSnapshot added with ID:")
-                                }
-                                .addOnFailureListener { e ->
-                                    Log.w("Signup Init Database", "Error adding document", e)
-                                }
-                            Log.d("signup", currentUser.uid)
+                                db.collection("users")
+                                    .document(currentUser.uid)
+                                    .collection("inf")
+                                    .document("details")
+                                    .set(userInfo)
+                                    .addOnSuccessListener {
+                                        Log.d(
+                                            "Signup Init Database",
+                                            "DocumentSnapshot added with ID:"
+                                        )
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Log.w("Signup Init Database", "Error adding document", e)
+                                    }
+                                Log.d("signup", currentUser.uid)
 
-                            userState = "Signup success"
+                                userState = "Signup success"
 
-                            userInfoStore.value = userInfo
+                                userInfoStore.value = userInfo
 
-                            currentEmail = currentUser.email.toString()
+                                currentEmail = currentUser.email.toString()
 
-                            readSuppliersData()
+                                readSuppliersData()
 
-                            navController.popBackStack("signup", inclusive = true)
-                            navController.popBackStack("login", inclusive = true)
-                            navController.navigate("home")
+//                                navController.popBackStack("signup", inclusive = true)
+//                                navController.popBackStack("login", inclusive = true)
+//                                navController.navigate("home")
 
+                                callback("Signup success")
+
+                            }
                         }
-                    }
-                    .addOnFailureListener {
-                        Log.d("Signup", it.message.toString())
-                        userState = it.message.toString()
-                    }
+                        .addOnFailureListener {
+                            Log.d("Signup", it.message.toString())
+                            userState = it.message.toString()
+                            callback(it.message.toString())
+                        }
+                } else {
+                    userState = "Email or Password is empty"
+                    Log.d("Signup", "Email or Password is empty")
+                    callback("Email or Password is empty")
+                }
             } else {
-                userState = "Email or Password is empty"
-                Log.d("Signup", "Email or Password is empty")
+                callback("Two passwords don't match")
             }
         }
     }
