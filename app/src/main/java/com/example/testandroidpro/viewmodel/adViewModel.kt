@@ -232,7 +232,7 @@ class AdViewModel: ViewModel()  {
 
     }
 
-    fun modifyInfo(navController: NavController,userInfo:Myuser) {
+    fun modifyInfo(navController: NavController,userInfo:Myuser, callback: (String) -> Unit) {
         viewModelScope.launch {
             val currentUser = fAuth.currentUser
             if (currentUser != null) {
@@ -251,7 +251,8 @@ class AdViewModel: ViewModel()  {
                     }
 
                 Log.d("signup", currentUser.uid)
-                userState = "Signup success"
+                userState = "Modify success"
+                callback("Modify success")
 //            navController.popBackStack("signup", inclusive = true)
 //            navController.popBackStack("login", inclusive = true)
 //            navController.navigate("home")
@@ -440,7 +441,7 @@ class AdViewModel: ViewModel()  {
         }
     }
 
-    fun resetPassword(navController: NavController, opw:String, npw1:String, npw2:String){
+    fun resetPassword(navController: NavController, opw:String, npw1:String, npw2:String, callback: (String) -> Unit){
         viewModelScope.launch {
             if(npw1 == npw2) {
                 fAuth.signInWithEmailAndPassword(currentEmail, opw)
@@ -453,19 +454,24 @@ class AdViewModel: ViewModel()  {
                             user?.updatePassword(npw1)?.addOnCompleteListener { tasking ->
                                 if (tasking.isSuccessful) {
                                     Log.d("resetPassword", "User password updated.")
-
-                                    userSignOut(navController)
+                                    callback("Modify success, Please reload")
+//                                    userSignOut(navController)
                                     emailDisplay = currentEmail
+                                } else {
+                                    Log.d("resetPassword", tasking.exception?.localizedMessage.toString())
+                                    callback(tasking.exception?.localizedMessage.toString())
                                 }
                             }
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("resetPassword", "signInWithEmail:failure", task.exception)
                             // Incorrect current password, do not allow password change
+                            callback("Password is incorrect")
                         }
                     }
             } else {
                 userState = "Two passwords don't match"
+                callback("Two passwords don't match")
             }
         }
     }

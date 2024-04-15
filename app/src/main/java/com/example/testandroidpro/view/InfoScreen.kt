@@ -63,6 +63,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.testandroidpro.R
+import com.example.testandroidpro.data.DialogString
 import com.example.testandroidpro.data.Myuser
 import com.example.testandroidpro.viewmodel.AdViewModel
 
@@ -75,6 +76,15 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
     var npw1 by remember { mutableStateOf("") }
     var npw2 by remember { mutableStateOf("") }
     var userInfo by remember { mutableStateOf(adViewModel.userInfoStore.value) }
+    val dialogString = DialogString(
+        width = 200.dp,
+        height = 150.dp,
+        title = "Dialog Title",
+        message = "Dialog Message",
+        button = "OK",
+        show = remember { mutableStateOf(false) }
+    ){}
+    DialogScreenAsDialog(dialogString)
     Scaffold (
         topBar = {
             Column(
@@ -166,7 +176,15 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                         .height(64.dp)
                         .padding(8.dp),
                     onClick = {
-                        adViewModel.modifyInfo(navController,userInfo)
+                        adViewModel.modifyInfo(navController,userInfo){
+                            dialogString.width = 400.dp
+                            dialogString.height = 200.dp
+                            dialogString.title = "Information"
+                            dialogString.message = it
+                            dialogString.button = "Ok"
+                            dialogString.show.value = true
+                            dialogString.callback = {}
+                        }
                     },
                 ) {
                     Text(text = stringResource(R.string.button_modify))
@@ -285,7 +303,31 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                         .height(64.dp)
                         .padding(8.dp),
                     onClick = {
-                        adViewModel.resetPassword(navController,opw,npw1,npw2)
+                        adViewModel.resetPassword(navController,opw,npw1,npw2){
+                            if(it == "Modify success, Please reload")
+                            {
+                                dialogString.width = 400.dp
+                                dialogString.height = 200.dp
+                                dialogString.title = "Change password"
+                                dialogString.message = it
+                                dialogString.button = "Ok"
+                                dialogString.show.value = true
+                                dialogString.callback = {
+                                    adViewModel.userSignOut(navController)
+                                }
+                            } else {
+                                dialogString.width = 400.dp
+                                dialogString.height = 200.dp
+                                dialogString.title = "Change password"
+                                dialogString.message = it
+                                dialogString.button = "Ok"
+                                dialogString.show.value = true
+                                dialogString.callback = {
+
+                                }
+                            }
+
+                        }
                     },
                 ) {
                     Text(text = stringResource(R.string.button_modify))
