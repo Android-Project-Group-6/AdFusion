@@ -57,4 +57,5 @@
     <string name="dialogOk">OK</string>
     <string name="resetPassword_success">Modify success, Please reload</string>
     <string name="drop_support">Support</string>
+    <string name="to">" to "</string>
 </resources>
