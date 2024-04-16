@@ -108,7 +108,7 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
 //                    .fillMaxWidth()
             )
             Text(
-                text = " to ",
+                text = stringResource(R.string.to),
                 fontSize = fontSizeItem.value,
                 color = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Center,
@@ -116,7 +116,7 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
 //                    .fillMaxWidth()
             )
             Text(
-                text = "Ad",
+                text = stringResource(R.string.ComNameHead),
                 fontSize = fontSizeItem.value,
                 color = Color.Black,
                 textAlign = TextAlign.Center,
@@ -124,7 +124,7 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
 //                    .fillMaxWidth()
             )
             Text(
-                text = "Fusion",
+                text = stringResource(R.string.ComNameBody),
                 fontSize = fontSizeItem.value,
                 color = Color(0xFFFF69B4),
                 textAlign = TextAlign.Center,
