@@ -126,7 +126,6 @@ fun SignupScreen(navController: NavController, adViewModel: AdViewModel) {
                         placeholder = { Text(text = stringResource(R.string.enter_your_email)) },
                         modifier = Modifier
                             .fillMaxWidth()
-    //                    .weight(1f)
                             .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp),
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Email,
@@ -298,10 +297,7 @@ fun SignupScreen(navController: NavController, adViewModel: AdViewModel) {
                                 dialogString.value.message = it
                                 dialogString.value.button = "Ok"
                                 dialogString.value.callback = {
-//                                    navController.popBackStack("signup", inclusive = true)
-//                                    navController.popBackStack("login", inclusive = true)
-//                                    navController.navigate("home")
-                                }
+}
                                 dialogString.value.show.value = true
                             }
                         }
