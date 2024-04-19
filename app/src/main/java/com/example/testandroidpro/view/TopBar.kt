@@ -54,13 +54,13 @@ fun TopBar(navController: NavController, adViewModel: AdViewModel, screen:String
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
-//                horizontalArrangement = Arrangement.SpaceEvenly,
+
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(
                     modifier = Modifier
                         .weight(1f)
-//                        .border(width = 1.dp, color = Color.Black)
+
                     ,
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
@@ -75,9 +75,9 @@ fun TopBar(navController: NavController, adViewModel: AdViewModel, screen:String
                 }
                 Row(
                     modifier = Modifier
-//                        .fillMaxHeight()
+
                         .weight(8f)
-//                        .border(width = 1.dp, color = Color.Red)
+
                     ,
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
@@ -85,8 +85,7 @@ fun TopBar(navController: NavController, adViewModel: AdViewModel, screen:String
                     Text(
                         text = stringResource(R.string.ComNameHead),
                         modifier = Modifier
-//                            .fillMaxWidth()
-//                            .padding(1.dp)
+
                         ,
                         textAlign = TextAlign.Center,
                         fontSize = fontSize.value,
@@ -95,8 +94,7 @@ fun TopBar(navController: NavController, adViewModel: AdViewModel, screen:String
                     Text(
                         text = stringResource(R.string.ComNameBody),
                         modifier = Modifier
-//                            .fillMaxWidth()
-//                            .padding(1.dp)
+
                         ,
                         textAlign = TextAlign.Center,
                         fontSize = fontSize.value,
@@ -106,7 +104,7 @@ fun TopBar(navController: NavController, adViewModel: AdViewModel, screen:String
                 Row(
                     modifier = Modifier
                         .weight(1f)
-//                        .border(width = 1.dp, color = Color.Black)
+
                     ,
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically
