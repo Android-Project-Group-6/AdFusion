@@ -47,7 +47,6 @@ import java.util.Calendar
 
 @Composable
 fun SupportScreen(navController: NavController, adViewModel: AdViewModel) {
-//    val context = LocalContext.current
     var email by remember { mutableStateOf(adViewModel.emailDisplay) }
     var name by remember { mutableStateOf(adViewModel.userInfoStore.value.name) }
     var message by remember { mutableStateOf("") }
@@ -87,7 +86,7 @@ fun SupportScreen(navController: NavController, adViewModel: AdViewModel) {
                     text = "Need help? Let’s connect to customer support team",
                     fontSize = 12.sp,
                     lineHeight = 14.sp,
-//                    color = MaterialTheme.colorScheme.primary,
+
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .padding(top = 6.dp, bottom = 6.dp)
@@ -139,9 +138,7 @@ fun SupportScreen(navController: NavController, adViewModel: AdViewModel) {
                         modifier = Modifier
                             .fillMaxWidth(0.9f)
                             .aspectRatio(3.5f)
-//                            .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
-//                            .weight(1f)
-                        ,
+           ,
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Email,
                             capitalization = KeyboardCapitalization.None
@@ -169,9 +166,7 @@ fun SupportScreen(navController: NavController, adViewModel: AdViewModel) {
                         modifier = Modifier
                             .fillMaxWidth(0.9f)
                             .aspectRatio(3.5f)
-//                            .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
-//                            .weight(1f)
-                        ,
+                ,
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Email,
                             capitalization = KeyboardCapitalization.None
@@ -191,8 +186,7 @@ fun SupportScreen(navController: NavController, adViewModel: AdViewModel) {
                                     imageVector = Icons.Default.Chat,
                                     contentDescription = "message"
                                 )
-//                                Spacer(modifier = Modifier.weight(1f))
-                            }
+}
                         },
                         label = { Text(text = "Message",
                             color = MaterialTheme.colorScheme.primary) },
@@ -201,9 +195,7 @@ fun SupportScreen(navController: NavController, adViewModel: AdViewModel) {
                         modifier = Modifier
                             .fillMaxWidth(0.9f)
                             .aspectRatio(0.85f)
-//                            .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
-//                            .weight(3f)
-                        ,
+               ,
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Email,
                             capitalization = KeyboardCapitalization.None
@@ -224,7 +216,7 @@ fun SupportScreen(navController: NavController, adViewModel: AdViewModel) {
                                 time = currentTime
                             )
 
-//                            adViewModel.writeSupportMessage(navController,supportItem,context)
+
                             adViewModel.writeSupportMessage2(supportItem) { success ->
                                 if (success) {
                                     Log.d("Support", "Message written successfully")
@@ -244,15 +236,13 @@ fun SupportScreen(navController: NavController, adViewModel: AdViewModel) {
                                     dialogString.value.button = "Back"
                                     dialogString.value.callback = {}
                                     dialogString.value.show.value = true
-//                                    Toast.makeText(context, "Failed to write message", Toast.LENGTH_SHORT).show()
-                                }
+}
                             }
                         },
                     ) {
                         Text(
                             text = "Submit",
-//                            color = MaterialTheme.colorScheme.primary
-                        )
+)
                     }
                 }
 
