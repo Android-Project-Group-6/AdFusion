@@ -1,12 +1,12 @@
 <resources>
     <string name="app_name">AdFusion</string>
-    <string name="ComName">AdFusion</string>
-    <string name="HomePage">home</string>
+    <string name="ComNameHead">Ad</string>
+    <string name="ComNameBody">Fusion</string>
+    <string name="homePage">home</string>
     <string name="loginPage">login</string>
     <string name="signupPage">signup</string>
     <string name="infoPage">info</string>
     <string name="pdfPage">pdf</string>
-    <string name="InfoPage">info</string>
     <string name="ads_list">Ads List</string>
     <string name="sign_out">Sign out</string>
     <string name="uesrname">Name</string>
@@ -18,6 +18,12 @@
     <string name="please_login">Please Login</string>
     <string name="password">Password</string>
     <string name="enter_your_password">Enter your password</string>
+    <string name="oldpassword">Old Password</string>
+    <string name="enter_your_oldpassword">Enter your old password</string>
+    <string name="newpassword1">New Password</string>
+    <string name="enter_your_newpassword1">Enter your new password</string>
+    <string name="newpassword2">New Password</string>
+    <string name="enter_your_newpassword2">Re-enter your new password</string>
     <string name="lock_icon">Lock Icon</string>
     <string name="show_password">Show Password</string>
     <string name="hide_password">Hide Password</string>
@@ -36,11 +42,20 @@
     <string name="time_form">dd/MM/yyyy</string>
     <string name="date_separator">~</string>
     <string name="string_space">" "</string>
-    <string name="drop_info">Info</string>
-    <string name="drop_signout">Signout</string>
-    <string name="loading">Loading...</string>
+    <string name="drop_info">User Info</string>
+    <string name="drop_signout">Sign Out</string>
+    <string name="loading">Loading…</string>
     <string name="please_signup">Please Signup</string>
     <string name="email_must">Email *</string>
     <string name="password_must">PassWord *</string>
     <string name="button_reg">Reg</string>
+    <string name="borderdebug">false</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="change_your_password">Change your password?</string>
+    <string name="supportPage">support</string>
+    <string name="dialogInformation">Information</string>
+    <string name="dialogOk">OK</string>
+    <string name="resetPassword_success">Modify success, Please reload</string>
+    <string name="drop_support">Support</string>
+    <string name="to">" to "</string>
 </resources>

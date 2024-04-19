@@ -20,23 +20,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Divider
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -60,62 +51,14 @@ import com.example.testandroidpro.viewmodel.AdViewModel
 import java.util.Locale
 import androidx.compose.ui.text.TextLayoutResult
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MainTopBar(navController: NavController, adViewModel: AdViewModel) {
-    var expanded by remember { mutableStateOf(false) }
-    val context = LocalContext.current
-    TopAppBar(
-        title = { Text(stringResource(R.string.ComName)) },
-        actions = {
-            IconButton(
-                onClick = {
-                    expanded = !expanded
-                }
-            ) {
-                Icon(Icons.Filled.MoreVert,contentDescription = null)
-            }
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }) {
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.drop_info)) },
-                    onClick = { navController.navigate(context.getString(R.string.infoPage)) }
-                )
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.drop_signout)) },
-                    onClick = {
-                        adViewModel.userSignOut(navController)
-//                        navController.navigate("Settings")
-                    }
-                )
-            }
-        }
-    )
-}
 
-//@Composable
-//fun MyText() {
-//    val density = LocalDensity.current
-//    val fontSize = remember { mutableStateOf(0.sp) }
-//
-//    Box(modifier = Modifier.fillMaxSize().onGloballyPositioned { layoutCoordinates ->
-//        val newFontSize = with(density) { layoutCoordinates.size.height.toDp().toPx() / density.density } * 0.05f
-//        fontSize.value = newFontSize.sp
-//    }) {
-//        Text(
-//            text = "Hello, World!",
-//            fontSize = fontSize.value
-//        )
-//    }
-//}
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun MainScreen(navController: NavController, adViewModel: AdViewModel) {
     val context = LocalContext.current
     Scaffold (
-        topBar = { MainTopBar(navController,adViewModel) },
+        topBar = { TopBar(navController,adViewModel,context.getString(R.string.homePage)) },
         content = {
             Column(
                 modifier = Modifier
@@ -124,32 +67,27 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Log.d("MainScreen",adViewModel.userName)
                 val state = adViewModel.listState
                 val density3 = LocalDensity.current
                 val fontSize3 = remember { mutableStateOf(0.sp) }
                 val adjusted = remember { mutableStateOf(false) }
                 val welcomeString = stringResource(R.string.welcome)
                 val spaceString = stringResource(R.string.string_space)
-                val text = remember { mutableStateOf(welcomeString + spaceString + adViewModel.userName) }
-                val text1 = welcomeString + spaceString + adViewModel.userName
-                val parentWidth = remember { mutableStateOf(0f) }
+                val text1 = welcomeString + spaceString + adViewModel.userInfoStore.value.name
+                val parentWidth = remember { mutableFloatStateOf(0f) }
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .weight(0.1f)
-//                        .border(1.dp, Color.Green)
                         .onGloballyPositioned { layoutCoordinates ->
                             if(!adjusted.value) {
-                                parentWidth.value = with(density3) {
+                                parentWidth.floatValue = with(density3) {
                                     layoutCoordinates.size.width.toDp().toPx() / density3.density
                                 } * 0.8f
-                                Log.d("text dynamic9", layoutCoordinates.size.toString())
                                 val newFontSize = with(density3) {
                                     layoutCoordinates.size.height.toDp().toPx() / density3.density
                                 } * 0.8f
                                 fontSize3.value = newFontSize.sp
-                                Log.d("text dynamic10", fontSize3.value.toString())
                             }
                         }
                     ,
@@ -162,55 +100,24 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel) {
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .fillMaxWidth()
-//                            .border(1.dp, Color.Green)
                         ,
                         onTextLayout = { layoutResult: TextLayoutResult ->
                             val lines = layoutResult.lineCount
                             val paint = Paint().apply {
                                 textSize = fontSize3.value.value
                             }
-                            var textWidth = paint.measureText(text1+"  ")
-                            if (lines > 1 && fontSize3.value > 16.sp || textWidth > parentWidth.value) {
+                            var textWidth = paint.measureText(text1+context.getString(R.string.string_space))
+                            if (lines > 1 && fontSize3.value > 16.sp || textWidth > parentWidth.floatValue) {
                                 adjusted.value = true
-
-
-                                Log.d("text dynamic4", textWidth.toString())
-                                Log.d("text dynamic5", parentWidth.toString())
-                                Log.d("text dynamic6", fontSize3.value.toString())
-                                Log.d("text dynamic7", text1)
-                                Log.d("text dynamic8", text.value)
-                                while (textWidth > parentWidth.value && fontSize3.value > 16.sp) {
+                                while (textWidth > parentWidth.floatValue && fontSize3.value > 16.sp) {
 
                                     fontSize3.value = with(density3) { fontSize3.value.toPx() / density - 1.sp.toPx() / density }.sp
                                     paint.textSize = fontSize3.value.value
-                                    textWidth = paint.measureText(text1+"  ")
-                                    Log.d("text dynamic1", textWidth.toString())
-                                    Log.d("text dynamic2", parentWidth.toString())
-                                    Log.d("text dynamic3", fontSize3.value.toString())
+                                    textWidth = paint.measureText(text1+context.getString(R.string.string_space))
                                 }
                             }
                         },
                     )
-//                    Text(
-//                        text = text,
-//                        fontSize = fontSize3.value,
-//                        color = MaterialTheme.colorScheme.primary,
-//                        textAlign = TextAlign.Center,
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .border(1.dp, Color.Green),
-//                        onTextLayout = { layoutResult: TextLayoutResult ->
-//                            val lines = layoutResult.lineCount
-//                            if (lines > 1 && fontSize3.value > 16.sp) {
-//                                val newFontSizePx = maxOf(fontSize3.value.value - 5, 16f)
-//                                fontSize3.value = newFontSizePx.sp
-//                                adjusted.value = true
-////                                Log.d("text dynamic", fontSize3.value.toString())
-//                            }
-//                        },
-////                        maxLines = 1,
-////                        overflow = TextOverflow.Ellipsis,
-//                    )
 
                 }
                 LazyColumn(
@@ -229,7 +136,7 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel) {
                                 items(chunk) { document ->
                                     val name = document.supplier.id
                                     val shadowSize = 3.dp
-//                                Spacer(modifier = Modifier.weight(1f).border(1.dp, Color.Green))
+
                                     Box(
                                         modifier = Modifier
                                             .weight(1f)
@@ -402,7 +309,7 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel) {
                                     ) {
                                         Column(
                                             modifier = Modifier
-//                                              .border(1.dp, Color.Red)
+
                                                 .fillMaxSize()
                                                 .padding(shadowSize)
                                                 .clickable {
@@ -416,17 +323,12 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel) {
                                             horizontalAlignment = Alignment.CenterHorizontally,
                                             verticalArrangement = Arrangement.Center
                                         ) {
-//                                    Spacer(
-//                                        modifier = Modifier
-//                                            .weight(0.05f)
-//                                    )
+
                                             Row(
                                                 modifier = Modifier
                                                     .weight(1.5f)
-//                                            .border(1.dp, Color.Red)
                                                     .padding(8.dp)
                                                     .fillMaxWidth(),
-//                                        horizontalArrangement = Arrangement.Start
                                             ) {
                                                 name.let { iconName ->
                                                     adViewModel.getLocalFile(iconName).let {localFile->
@@ -476,7 +378,6 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel) {
                                                     }
                                                 }
                                             }
-//                                            MyText()
                                             val density1 = LocalDensity.current
                                             val fontSize1 = remember { mutableStateOf(0.sp) }
                                             Row(
@@ -506,8 +407,7 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel) {
                                                 modifier = Modifier
                                                     .height(2.dp)
                                                     .fillMaxWidth(),
-//                                            horizontalArrangement = Arrangement.Center
-                                            ) {
+                                                ) {
                                                 Spacer(
                                                     modifier = Modifier
                                                         .weight(0.5f)
