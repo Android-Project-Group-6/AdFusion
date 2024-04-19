@@ -14,7 +14,6 @@ fun MyApp() {
     val navController = rememberNavController()
     val context = LocalContext.current
     val adViewModel: AdViewModel = viewModel()
-//    val pdfLoadViewModel: PdfLoadViewModel = viewModel()
     NavHost(navController = navController, startDestination = adViewModel.startDestination) {
         composable(route = context.getString(R.string.loginPage)) {
             when (navController.currentDestination?.route) {
@@ -49,31 +48,3 @@ fun MyApp() {
 
     }
 }
-
-//@Composable
-//fun MyApp() {
-//    val navController = rememberNavController()
-//    val context = LocalContext.current
-//    val adViewModel: AdViewModel = viewModel()
-//    val pdfLoadViewModel:PdfLoadViewModel = viewModel()
-//    NavHost(navController = navController, startDestination = "login"
-//    )
-//    {
-//        composable(route = "login"){
-//            LoginScreen(navController,adViewModel)
-//        }
-//        composable(route = context.getString(R.string.HomePage)){
-//            MainScreen(navController,adViewModel,pdfLoadViewModel)
-//        }
-//        composable(route = "signup"){
-//            SignupScreen(navController,adViewModel)
-//        }
-//        composable(route = "info"){
-//            InfoScreen(navController,adViewModel)
-//        }
-//        composable(route = "pdf"){
-//            PdfScreen(navController,adViewModel,pdfLoadViewModel)
-//        }
-//
-//    }
-//}
