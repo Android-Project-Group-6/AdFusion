@@ -87,7 +87,6 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp, bottom = 16.dp)
-//                    .weight(1f)
                 .onGloballyPositioned { layoutCoordinates ->
                     val newFontSize = with(density) {
                         layoutCoordinates.size.height
@@ -105,7 +104,6 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                 color = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-//                    .fillMaxWidth()
             )
             Text(
                 text = stringResource(R.string.to),
@@ -113,7 +111,6 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                 color = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-//                    .fillMaxWidth()
             )
             Text(
                 text = stringResource(R.string.ComNameHead),
@@ -121,7 +118,6 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                 color = Color.Black,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-//                    .fillMaxWidth()
             )
             Text(
                 text = stringResource(R.string.ComNameBody),
@@ -129,14 +125,12 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                 color = Color(0xFFFF69B4),
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-//                    .fillMaxWidth()
             )
         }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp, bottom = 16.dp)
-//                    .weight(0.8f)
             ,
             horizontalArrangement = Arrangement.Center
         ) {
@@ -173,7 +167,6 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
             placeholder = { Text(text = stringResource(R.string.enter_your_email)) },
             modifier = Modifier
                 .fillMaxWidth()
-//                    .weight(1f)
                 .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp),
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Email,
@@ -208,7 +201,6 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
             visualTransformation = if (showKey) VisualTransformation.None else PasswordVisualTransformation(),
             modifier = Modifier
                 .fillMaxWidth()
-//                    .weight(1f)
                 .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp),
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Password,
@@ -218,7 +210,6 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
         )
         Row(
             modifier = Modifier
-//                    .weight(0.8f)
                 .fillMaxWidth()
                 .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
                 .let {
@@ -318,7 +309,6 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
             text = "Need help? Let’s connect to customer support team",
             fontSize = fontSize1.value*0.9,
             lineHeight = fontSize1.value,
-//                    color = MaterialTheme.colorScheme.primary,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(top = 6.dp, bottom = 6.dp)
