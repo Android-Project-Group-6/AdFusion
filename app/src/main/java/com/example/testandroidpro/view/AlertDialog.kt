@@ -22,16 +22,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.testandroidpro.data.DialogString
 
-//fun showAlertDialog(context: Context, title: String, message: String, buttonText: String, onClick: () -> Unit) {
-//    val alertDialogBuilder = AlertDialog.Builder(context)
-//    alertDialogBuilder.setTitle(title)
-//    alertDialogBuilder.setMessage(message)
-//    alertDialogBuilder.setPositiveButton(buttonText) { dialog, which ->
-//        onClick.invoke()
-//    }
-//    val alertDialog = alertDialogBuilder.create()
-//    alertDialog.show()
-//}
 @Composable
 fun DialogScreenAsDialog(dialogString: DialogString) {
     if (dialogString.show.value) {

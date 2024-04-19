@@ -51,21 +51,7 @@ import com.example.testandroidpro.viewmodel.AdViewModel
 import java.util.Locale
 import androidx.compose.ui.text.TextLayoutResult
 
-//@Composable
-//fun MyText() {
-//    val density = LocalDensity.current
-//    val fontSize = remember { mutableStateOf(0.sp) }
-//
-//    Box(modifier = Modifier.fillMaxSize().onGloballyPositioned { layoutCoordinates ->
-//        val newFontSize = with(density) { layoutCoordinates.size.height.toDp().toPx() / density.density } * 0.05f
-//        fontSize.value = newFontSize.sp
-//    }) {
-//        Text(
-//            text = "Hello, World!",
-//            fontSize = fontSize.value
-//        )
-//    }
-//}
+
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
@@ -93,7 +79,6 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel) {
                     modifier = Modifier
                         .fillMaxSize()
                         .weight(0.1f)
-//                        .border(1.dp, Color.Green)
                         .onGloballyPositioned { layoutCoordinates ->
                             if(!adjusted.value) {
                                 parentWidth.floatValue = with(density3) {
@@ -133,26 +118,6 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel) {
                             }
                         },
                     )
-//                    Text(
-//                        text = text,
-//                        fontSize = fontSize3.value,
-//                        color = MaterialTheme.colorScheme.primary,
-//                        textAlign = TextAlign.Center,
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .border(1.dp, Color.Green),
-//                        onTextLayout = { layoutResult: TextLayoutResult ->
-//                            val lines = layoutResult.lineCount
-//                            if (lines > 1 && fontSize3.value > 16.sp) {
-//                                val newFontSizePx = maxOf(fontSize3.value.value - 5, 16f)
-//                                fontSize3.value = newFontSizePx.sp
-//                                adjusted.value = true
-////                                Log.d("text dynamic", fontSize3.value.toString())
-//                            }
-//                        },
-////                        maxLines = 1,
-////                        overflow = TextOverflow.Ellipsis,
-//                    )
 
                 }
                 LazyColumn(
@@ -171,7 +136,7 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel) {
                                 items(chunk) { document ->
                                     val name = document.supplier.id
                                     val shadowSize = 3.dp
-//                                Spacer(modifier = Modifier.weight(1f).border(1.dp, Color.Green))
+
                                     Box(
                                         modifier = Modifier
                                             .weight(1f)
@@ -344,7 +309,7 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel) {
                                     ) {
                                         Column(
                                             modifier = Modifier
-//                                              .border(1.dp, Color.Red)
+
                                                 .fillMaxSize()
                                                 .padding(shadowSize)
                                                 .clickable {
@@ -358,17 +323,12 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel) {
                                             horizontalAlignment = Alignment.CenterHorizontally,
                                             verticalArrangement = Arrangement.Center
                                         ) {
-//                                    Spacer(
-//                                        modifier = Modifier
-//                                            .weight(0.05f)
-//                                    )
+
                                             Row(
                                                 modifier = Modifier
                                                     .weight(1.5f)
-//                                            .border(1.dp, Color.Red)
                                                     .padding(8.dp)
                                                     .fillMaxWidth(),
-//                                        horizontalArrangement = Arrangement.Start
                                             ) {
                                                 name.let { iconName ->
                                                     adViewModel.getLocalFile(iconName).let {localFile->
@@ -418,7 +378,6 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel) {
                                                     }
                                                 }
                                             }
-//                                            MyText()
                                             val density1 = LocalDensity.current
                                             val fontSize1 = remember { mutableStateOf(0.sp) }
                                             Row(
@@ -448,8 +407,7 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel) {
                                                 modifier = Modifier
                                                     .height(2.dp)
                                                     .fillMaxWidth(),
-//                                            horizontalArrangement = Arrangement.Center
-                                            ) {
+                                                ) {
                                                 Spacer(
                                                     modifier = Modifier
                                                         .weight(0.5f)
