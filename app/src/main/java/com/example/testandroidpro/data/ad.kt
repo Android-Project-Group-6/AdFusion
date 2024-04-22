@@ -33,3 +33,9 @@ data class DialogString(
     var show: MutableState<Boolean>,
     var callback: (() -> Unit)? = null
 )
+
+data class FeedBack(
+    val state:Boolean,
+    val message:String
+)
+

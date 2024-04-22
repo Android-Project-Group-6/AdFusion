@@ -159,7 +159,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                             dialogString.value.width = 400.dp
                             dialogString.value.height = 200.dp
                             dialogString.value.title = context.getString(R.string.dialogInformation)
-                            dialogString.value.message = it
+                            dialogString.value.message = it.message
                             dialogString.value.button = context.getString(R.string.dialogOk)
                             dialogString.value.callback = {}
                             dialogString.value.show.value = true
@@ -283,12 +283,12 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                         .padding(8.dp),
                     onClick = {
                         adViewModel.resetPassword(opw,npw1,npw2){
-                            if(it == "Modify success, Please reload")
+                            if(it.state)
                             {
                                 dialogString.value.width = 400.dp
                                 dialogString.value.height = 200.dp
                                 dialogString.value.title = "Change password"
-                                dialogString.value.message = it
+                                dialogString.value.message = it.message
                                 dialogString.value.button = "Ok"
                                 dialogString.value.callback = {
                                     adViewModel.userSignOut(navController)
@@ -298,7 +298,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                                 dialogString.value.width = 400.dp
                                 dialogString.value.height = 200.dp
                                 dialogString.value.title = "Change password"
-                                dialogString.value.message = it
+                                dialogString.value.message = it.message
                                 dialogString.value.button = "Ok"
                                 dialogString.value.callback = { }
                                 dialogString.value.show.value = true

@@ -228,7 +228,7 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                         dialogString.value.width = 400.dp
                         dialogString.value.height = 200.dp
                         dialogString.value.title = "Forgot Password"
-                        dialogString.value.message = it
+                        dialogString.value.message = it.message
                         dialogString.value.button = "Ok"
                         dialogString.value.callback = {}
                         dialogString.value.show.value = true
@@ -253,13 +253,13 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                     fontSize1.value = newFontSize.sp
                 },
             onClick = {
-                adViewModel.userLogin(email, pw) { string ->
-                    if (string == "Login success") {
-                        Log.d("Login", "Login success")
+                adViewModel.userLogin(email, pw) { it ->
+                    if (it.state) {
+                        Log.d("Login", it.message)
                         dialogString.value.width = 400.dp
                         dialogString.value.height = 200.dp
                         dialogString.value.title = "Login"
-                        dialogString.value.message = string
+                        dialogString.value.message = it.message
                         dialogString.value.button = "Ok"
                         dialogString.value.callback = {
                             navController.popBackStack("login", inclusive = true)
@@ -269,11 +269,11 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                         navController.popBackStack("login", inclusive = true)
                         navController.navigate("home")
                     } else {
-                        Log.e("Login", string)
+                        Log.e("Login", it.message)
                         dialogString.value.width = 400.dp
                         dialogString.value.height = 200.dp
                         dialogString.value.title = "Login"
-                        dialogString.value.message = string
+                        dialogString.value.message = it.message
                         dialogString.value.button = "Back"
                         dialogString.value.callback = {}
                         dialogString.value.show.value = true
