@@ -276,12 +276,12 @@ fun SignupScreen(navController: NavController, adViewModel: AdViewModel) {
                         .padding(8.dp),
                     onClick = {
                         adViewModel.userSignup(email, pw1, pw2, userInfo){
-                            if (it == "Signup success"){
+                            if (it.state){
                                 Log.d("SignupScreen","Signup success")
                                 dialogString.value.width = 400.dp
                                 dialogString.value.height = 200.dp
                                 dialogString.value.title = "Sign up"
-                                dialogString.value.message = it
+                                dialogString.value.message = it.message
                                 dialogString.value.button = "Ok"
                                 dialogString.value.callback = {
                                     navController.popBackStack("signup", inclusive = true)
@@ -294,10 +294,9 @@ fun SignupScreen(navController: NavController, adViewModel: AdViewModel) {
                                 dialogString.value.width = 400.dp
                                 dialogString.value.height = 200.dp
                                 dialogString.value.title = "Sign up"
-                                dialogString.value.message = it
+                                dialogString.value.message = it.message
                                 dialogString.value.button = "Ok"
-                                dialogString.value.callback = {
-}
+                                dialogString.value.callback = {}
                                 dialogString.value.show.value = true
                             }
                         }

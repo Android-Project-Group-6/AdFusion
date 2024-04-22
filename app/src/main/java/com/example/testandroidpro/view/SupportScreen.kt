@@ -217,13 +217,13 @@ fun SupportScreen(navController: NavController, adViewModel: AdViewModel) {
                             )
 
 
-                            adViewModel.writeSupportMessage2(supportItem) { success ->
-                                if (success) {
+                            adViewModel.writeSupportMessage2(supportItem) { it ->
+                                if (it.state) {
                                     Log.d("Support", "Message written successfully")
                                     dialogString.value.width = 400.dp
                                     dialogString.value.height = 200.dp
                                     dialogString.value.title = "Message Success"
-                                    dialogString.value.message = "We will contact you via email within 3 working days."
+                                    dialogString.value.message = it.message
                                     dialogString.value.button = "Ok"
                                     dialogString.value.callback = {navController.popBackStack()}
                                     dialogString.value.show.value = true
@@ -232,7 +232,7 @@ fun SupportScreen(navController: NavController, adViewModel: AdViewModel) {
                                     dialogString.value.width = 400.dp
                                     dialogString.value.height = 200.dp
                                     dialogString.value.title = "Message Failed"
-                                    dialogString.value.message = "Failed to write message"
+                                    dialogString.value.message = it.message
                                     dialogString.value.button = "Back"
                                     dialogString.value.callback = {}
                                     dialogString.value.show.value = true
