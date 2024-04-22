@@ -16,29 +16,11 @@ class PdfLoadViewModel: ViewModel() {
 
     init {
         pdfLoading.value = true
-//        loadPdfFile(filePath)
     }
 
     @Composable
     fun LoadPdfFile(filePath:String){
         Log.d("PdfLoadViewModel",filePath)
-//        val localFile = File.createTempFile("tempPdf", "pdf")
-//        val storageReference = FirebaseStorage.getInstance().reference
-//        val pathReference = storageReference.child(filePath)
-//        pdfLoading.value = true
-//        pathReference
-//            .getFile(localFile)
-//            .addOnSuccessListener {
-//                pdfFile.value = localFile
-//                pdfLoading.value = false
-//                Log.d("Read suppliers Pdf Data", "success $filePath")
-//                Log.d("Read suppliers Pdf Data", "success ${pdfLoading.value}")
-////                val fileContent = localFile.readText()
-////                Log.d("FileContent", fileContent)
-//            }
-//            .addOnFailureListener { e ->
-//                Log.e("Read suppliers Pdf Data", "Error loading PDF", e)
-//            }
         val storageReference = FirebaseStorage.getInstance().reference
         val pathReference = storageReference.child(filePath)
         val localFile = File.createTempFile("tempPdf", "pdf")
