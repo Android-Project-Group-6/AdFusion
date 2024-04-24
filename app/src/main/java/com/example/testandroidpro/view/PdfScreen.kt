@@ -115,7 +115,7 @@ fun PdfScreen(navController: NavController, adViewModel: AdViewModel) {
                         modifier = Modifier
                             .background(Color.LightGray)
                             .let {
-                                if (stringResource(R.string.borderdebug) == "true") it.border(
+                                if (stringResource(R.string.borderDebug) == "true") it.border(
                                     1.dp, Color.Red
                                 ) else it
                             }

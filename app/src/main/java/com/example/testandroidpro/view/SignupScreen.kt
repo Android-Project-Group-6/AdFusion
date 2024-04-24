@@ -1,6 +1,5 @@
 package com.example.testandroidpro.view
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -47,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.testandroidpro.R
+import com.example.testandroidpro.data.CallBackUserSignup
 import com.example.testandroidpro.data.DialogString
 import com.example.testandroidpro.data.Myuser
 import com.example.testandroidpro.viewmodel.AdViewModel
@@ -96,7 +96,7 @@ fun SignupScreen(navController: NavController, adViewModel: AdViewModel) {
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
-                        text = "Required items",
+                        text = stringResource(R.string.required_items),
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.primary,
                         textAlign = TextAlign.Start,
@@ -206,7 +206,7 @@ fun SignupScreen(navController: NavController, adViewModel: AdViewModel) {
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp)
                 ) {
                     Text(
-                        text = "Optional items",
+                        text = stringResource(R.string.optional_items),
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.primary,
                         textAlign = TextAlign.Start,
@@ -225,7 +225,7 @@ fun SignupScreen(navController: NavController, adViewModel: AdViewModel) {
                                 contentDescription = stringResource(R.string.email_icon)
                             )
                         },
-                        label = { Text(stringResource(R.string.uesrname)) },
+                        label = { Text(stringResource(R.string.userName)) },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         modifier = Modifier
@@ -275,31 +275,41 @@ fun SignupScreen(navController: NavController, adViewModel: AdViewModel) {
                         .height(64.dp)
                         .padding(8.dp),
                     onClick = {
-                        adViewModel.userSignup(email, pw1, pw2, userInfo){
-                            if (it.state){
-                                Log.d("SignupScreen","Signup success")
-                                dialogString.value.width = 400.dp
-                                dialogString.value.height = 200.dp
-                                dialogString.value.title = "Sign up"
-                                dialogString.value.message = it.message
-                                dialogString.value.button = "Ok"
-                                dialogString.value.callback = {
-                                    navController.popBackStack("signup", inclusive = true)
-                                    navController.popBackStack("login", inclusive = true)
-                                    navController.navigate("home")
+                        dialogString.value.width = 400.dp
+                        dialogString.value.height = 200.dp
+                        dialogString.value.title = context.getString(R.string.button_signup)
+                        dialogString.value.button = context.getString(R.string.dialogOk)
+
+                        adViewModel.userSignup(
+                            email, pw1, pw2, userInfo,
+                            CallBackUserSignup(
+                                onSuccess = {
+                                    dialogString.value.message =
+                                        context.getString(R.string.dialogSignupSuccessfully)
+                                    dialogString.value.callback = {
+                                        navController.popBackStack(context.getString(R.string.signupPage), inclusive = true)
+                                        navController.popBackStack(context.getString(R.string.loginPage), inclusive = true)
+                                        navController.navigate(context.getString(R.string.homePage))
+                                    }
+                                    dialogString.value.show.value = true
+                                },
+                                onSystemError = {
+                                    dialogString.value.message = it
+                                    dialogString.value.callback = {}
+                                    dialogString.value.show.value = true
+                                },
+                                onEmailPwEmpty = {
+                                    dialogString.value.message = context.getString(R.string.dialogEmailPasswordEmpty)
+                                    dialogString.value.callback = {}
+                                    dialogString.value.show.value = true
+                                },
+                                onPwMismatch = {
+                                    dialogString.value.message = context.getString(R.string.dialogPasswordMismatch)
+                                    dialogString.value.callback = {}
+                                    dialogString.value.show.value = true
                                 }
-                                dialogString.value.show.value = true
-                            } else {
-                                Log.d("SignupScreen","Others")
-                                dialogString.value.width = 400.dp
-                                dialogString.value.height = 200.dp
-                                dialogString.value.title = "Sign up"
-                                dialogString.value.message = it.message
-                                dialogString.value.button = "Ok"
-                                dialogString.value.callback = {}
-                                dialogString.value.show.value = true
-                            }
-                        }
+                            )
+                        )
                     },
                 ) {
                     Text(text = stringResource(R.string.button_reg))

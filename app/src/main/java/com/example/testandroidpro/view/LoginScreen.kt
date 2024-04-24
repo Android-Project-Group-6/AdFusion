@@ -49,7 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.testandroidpro.R
-import com.example.testandroidpro.data.DialogString
+import com.example.testandroidpro.data.*
 import com.example.testandroidpro.viewmodel.AdViewModel
 
 @Composable
@@ -213,7 +213,7 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                 .fillMaxWidth()
                 .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
                 .let {
-                    if (stringResource(R.string.borderdebug) == "true") it.border(
+                    if (stringResource(R.string.borderDebug) == "true") it.border(
                         1.dp, Color.Red
                     ) else it
                 },
@@ -223,16 +223,32 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                 text = AnnotatedString(stringResource(R.string.forgot_password)),
                 onClick = { offset ->
 
-                    adViewModel.forgotPassword(email){
-
-                        dialogString.value.width = 400.dp
-                        dialogString.value.height = 200.dp
-                        dialogString.value.title = "Forgot Password"
-                        dialogString.value.message = it.message
-                        dialogString.value.button = "Ok"
-                        dialogString.value.callback = {}
-                        dialogString.value.show.value = true
-                    }
+                    adViewModel.forgotPassword(
+                        email,
+                        CallBackForgot(
+                            onSuccess = {
+                                dialogString.value.width = 400.dp
+                                dialogString.value.height = 200.dp
+                                dialogString.value.title =
+                                    context.getString(R.string.dialogForgotPassword)
+                                dialogString.value.message =
+                                    context.getString(R.string.dialogResetSuccess)
+                                dialogString.value.button = context.getString(R.string.dialogOk)
+                                dialogString.value.callback = {}
+                                dialogString.value.show.value = true
+                            },
+                            onFailure = {
+                                dialogString.value.width = 400.dp
+                                dialogString.value.height = 200.dp
+                                dialogString.value.title = context.getString(R.string.dialogForgotPassword)
+                                dialogString.value.message =
+                                    context.getString(R.string.dialogResetFailed)
+                                dialogString.value.button = context.getString(R.string.dialogOk)
+                                dialogString.value.callback = {}
+                                dialogString.value.show.value = true
+                            }
+                        )
+                    )
                     Log.d("Clicked on offset:", " $offset")
                 }
             )
@@ -253,32 +269,46 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                     fontSize1.value = newFontSize.sp
                 },
             onClick = {
-                adViewModel.userLogin(email, pw) { it ->
-                    if (it.state) {
-                        Log.d("Login", it.message)
-                        dialogString.value.width = 400.dp
-                        dialogString.value.height = 200.dp
-                        dialogString.value.title = "Login"
-                        dialogString.value.message = it.message
-                        dialogString.value.button = "Ok"
-                        dialogString.value.callback = {
-                            navController.popBackStack("login", inclusive = true)
-                            navController.navigate("home")
+                adViewModel.userLogin(
+                    email, pw,
+                    CallBackUserLogin(
+                        onSuccess = {
+                            dialogString.value.width = 400.dp
+                            dialogString.value.height = 200.dp
+                            dialogString.value.title = context.getString(R.string.dialogLogin)
+                            dialogString.value.message =
+                                context.getString(R.string.DialogLoginSuccessful)
+                            dialogString.value.button = context.getString(R.string.dialogOk)
+                            dialogString.value.callback = {
+                                navController.popBackStack(context.getString(R.string.loginPage), inclusive = true)
+                                navController.navigate(context.getString(R.string.homePage))
+                            }
+                            dialogString.value.show.value = false
+                            navController.popBackStack(context.getString(R.string.loginPage), inclusive = true)
+                            navController.navigate(context.getString(R.string.homePage))
+                        },
+                        onEmailPwError = {
+                            dialogString.value.width = 400.dp
+                            dialogString.value.height = 200.dp
+                            dialogString.value.title = context.getString(R.string.dialogLogin)
+                            dialogString.value.message =
+                                context.getString(R.string.dialogEmailPasswordWrong)
+                            dialogString.value.button = context.getString(R.string.dialogBack)
+                            dialogString.value.callback = {}
+                            dialogString.value.show.value = true
+                        },
+                        onEmailPwEmpty = {
+                            dialogString.value.width = 400.dp
+                            dialogString.value.height = 200.dp
+                            dialogString.value.title = context.getString(R.string.dialogLogin)
+                            dialogString.value.message =
+                                context.getString(R.string.dialogEmailPasswordEmpty)
+                            dialogString.value.button = context.getString(R.string.dialogBack)
+                            dialogString.value.callback = {}
+                            dialogString.value.show.value = true
                         }
-                        dialogString.value.show.value = false
-                        navController.popBackStack("login", inclusive = true)
-                        navController.navigate("home")
-                    } else {
-                        Log.e("Login", it.message)
-                        dialogString.value.width = 400.dp
-                        dialogString.value.height = 200.dp
-                        dialogString.value.title = "Login"
-                        dialogString.value.message = it.message
-                        dialogString.value.button = "Back"
-                        dialogString.value.callback = {}
-                        dialogString.value.show.value = true
-                    }
-                }
+                    )
+                )
             },
         ) {
             Text(
@@ -306,7 +336,7 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                 .aspectRatio(3.5f),
             )
         Text(
-            text = "Need help? Let’s connect to customer support team",
+            text = stringResource(R.string.supportMessage),
             fontSize = fontSize1.value*0.9,
             lineHeight = fontSize1.value,
             textAlign = TextAlign.Center,
@@ -314,7 +344,7 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
                 .padding(top = 6.dp, bottom = 6.dp)
                 .fillMaxWidth(0.6f)
                 .let {
-                    if (stringResource(R.string.borderdebug) == "true") it.border(
+                    if (stringResource(R.string.borderDebug) == "true") it.border(
                         1.dp, Color.Red
                     ) else it
                 }
@@ -329,7 +359,7 @@ fun LoginScreen(navController: NavController, adViewModel: AdViewModel) {
             },
         ) {
             Text(
-                text = "Support",
+                text = stringResource(R.string.buttonSupport),
                 fontSize = fontSize1.value,
             )
         }

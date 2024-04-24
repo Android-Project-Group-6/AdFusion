@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.testandroidpro.R
-import com.example.testandroidpro.data.DialogString
+import com.example.testandroidpro.data.*
 import com.example.testandroidpro.viewmodel.AdViewModel
 
 @Composable
@@ -55,9 +55,9 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
         DialogString(
             width = 200.dp,
             height = 150.dp,
-            title = "Dialog Title",
-            message = "Dialog Message",
-            button = "OK",
+            title = "",
+            message = "",
+            button = "",
             show = mutableStateOf(false),
             callback = null
         )
@@ -108,7 +108,7 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                             contentDescription = stringResource(R.string.email_icon)
                         )
                     },
-                    label = {Text(stringResource(R.string.uesrname))},
+                    label = {Text(stringResource(R.string.userName))},
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     modifier = Modifier
@@ -155,15 +155,21 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                         .height(64.dp)
                         .padding(8.dp),
                     onClick = {
-                        adViewModel.modifyInfo(userInfo){
-                            dialogString.value.width = 400.dp
-                            dialogString.value.height = 200.dp
-                            dialogString.value.title = context.getString(R.string.dialogInformation)
-                            dialogString.value.message = it.message
-                            dialogString.value.button = context.getString(R.string.dialogOk)
-                            dialogString.value.callback = {}
-                            dialogString.value.show.value = true
-                        }
+                        adViewModel.modifyInfo(
+                            userInfo,
+                            CallBackModifyInfo(
+                                onSuccess = {
+                                    dialogString.value.width = 400.dp
+                                    dialogString.value.height = 200.dp
+                                    dialogString.value.title = context.getString(R.string.dialogInformation)
+                                    dialogString.value.message =
+                                        context.getString(R.string.dialogInfoModifySuccessfully)
+                                    dialogString.value.button = context.getString(R.string.dialogOk)
+                                    dialogString.value.callback = {}
+                                    dialogString.value.show.value = true
+                                }
+                            )
+                        )
                     },
                 ) {
                     Text(text = stringResource(R.string.button_modify))
@@ -180,8 +186,8 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                 OutlinedTextField(
                     value = opw,
                     onValueChange = { opw = it },
-                    label = { Text(text = stringResource(R.string.oldpassword)) },
-                    placeholder = { Text(text = stringResource(R.string.enter_your_oldpassword)) },
+                    label = { Text(text = stringResource(R.string.oldPassword)) },
+                    placeholder = { Text(text = stringResource(R.string.enterYourOldPassword)) },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Lock,
@@ -213,8 +219,8 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                 OutlinedTextField(
                     value = npw1,
                     onValueChange = {npw1 = it},
-                    label = { Text(text = stringResource(R.string.newpassword1)) },
-                    placeholder = { Text(text = stringResource(R.string.enter_your_newpassword1)) },
+                    label = { Text(text = stringResource(R.string.newPassword1)) },
+                    placeholder = { Text(text = stringResource(R.string.enterYourNewPassword1)) },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Lock,
@@ -246,8 +252,8 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                 OutlinedTextField(
                     value = npw2,
                     onValueChange = {npw2 = it},
-                    label = { Text(text = stringResource(R.string.newpassword2)) },
-                    placeholder = { Text(text = stringResource(R.string.enter_your_newpassword2)) },
+                    label = { Text(text = stringResource(R.string.newPassword2)) },
+                    placeholder = { Text(text = stringResource(R.string.enterYourNewPassword2)) },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Lock,
@@ -282,28 +288,52 @@ fun InfoScreen(navController: NavController, adViewModel: AdViewModel) {
                         .height(64.dp)
                         .padding(8.dp),
                     onClick = {
-                        adViewModel.resetPassword(opw,npw1,npw2){
-                            if(it.state)
-                            {
-                                dialogString.value.width = 400.dp
-                                dialogString.value.height = 200.dp
-                                dialogString.value.title = "Change password"
-                                dialogString.value.message = it.message
-                                dialogString.value.button = "Ok"
-                                dialogString.value.callback = {
-                                    adViewModel.userSignOut(navController)
+                        adViewModel.resetPassword(
+                            opw,npw1,npw2,
+                            CallBackReset(
+                                onSuccess = {
+                                    dialogString.value.width = 400.dp
+                                    dialogString.value.height = 200.dp
+                                    dialogString.value.title = context.getString(R.string.dialogChangePassword)
+                                    dialogString.value.message =
+                                        context.getString(R.string.dialogModifySuccessfully)
+                                    dialogString.value.button = context.getString(R.string.dialogOk)
+                                    dialogString.value.callback = {
+                                        adViewModel.userSignOut(navController)
+                                    }
+                                    dialogString.value.show.value = true
+                                },
+                                onSystemError = {string->
+                                    dialogString.value.width = 400.dp
+                                    dialogString.value.height = 200.dp
+                                    dialogString.value.title = context.getString(R.string.dialogChangePassword)
+                                    dialogString.value.message = string
+                                    dialogString.value.button = context.getString(R.string.dialogOk)
+                                    dialogString.value.callback = { }
+                                    dialogString.value.show.value = true
+                                },
+                                onIncorrectPassword = {
+                                    dialogString.value.width = 400.dp
+                                    dialogString.value.height = 200.dp
+                                    dialogString.value.title = context.getString(R.string.dialogChangePassword)
+                                    dialogString.value.message =
+                                        context.getString(R.string.dialogOldPasswordIncorrect)
+                                    dialogString.value.button = context.getString(R.string.dialogOk)
+                                    dialogString.value.callback = { }
+                                    dialogString.value.show.value = true
+                                },
+                                onPasswordMismatch = {
+                                    dialogString.value.width = 400.dp
+                                    dialogString.value.height = 200.dp
+                                    dialogString.value.title = context.getString(R.string.dialogChangePassword)
+                                    dialogString.value.message =
+                                        context.getString(R.string.dialogPasswordMismatch)
+                                    dialogString.value.button = context.getString(R.string.dialogOk)
+                                    dialogString.value.callback = { }
+                                    dialogString.value.show.value = true
                                 }
-                                dialogString.value.show.value = true
-                            } else {
-                                dialogString.value.width = 400.dp
-                                dialogString.value.height = 200.dp
-                                dialogString.value.title = "Change password"
-                                dialogString.value.message = it.message
-                                dialogString.value.button = "Ok"
-                                dialogString.value.callback = { }
-                                dialogString.value.show.value = true
-                            }
-                        }
+                            )
+                        )
                     },
                 ) {
                     Text(text = stringResource(R.string.button_modify))

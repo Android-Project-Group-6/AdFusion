@@ -34,8 +34,40 @@ data class DialogString(
     var callback: (() -> Unit)? = null
 )
 
-data class FeedBack(
-    val state:Boolean,
-    val message:String
+//data class FeedBack(
+//    val state:Boolean,
+//    val message:String
+//)
+
+data class CallBackSupport(
+    val onSuccess: () -> Unit,
+    val onFailure: () -> Unit,
 )
 
+data class CallBackReset(
+    val onSuccess: () -> Unit,
+    val onSystemError: (String) -> Unit,
+    val onIncorrectPassword: () -> Unit,
+    val onPasswordMismatch: () -> Unit,
+)
+
+data class CallBackForgot(
+    val onSuccess: () -> Unit,
+    val onFailure: () -> Unit,
+)
+
+data class CallBackUserLogin(
+    val onSuccess: () -> Unit,
+    val onEmailPwError: () -> Unit,
+    val onEmailPwEmpty: () -> Unit,
+)
+
+data class CallBackUserSignup(
+    val onSuccess: () -> Unit,
+    val onSystemError: (String) -> Unit,
+    val onEmailPwEmpty: () -> Unit,
+    val onPwMismatch: () -> Unit,
+)
+data class CallBackModifyInfo(
+    val onSuccess: () -> Unit,
+)
