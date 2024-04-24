@@ -391,7 +391,7 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel) {
                                                 horizontalArrangement = Arrangement.Center,
                                                 verticalAlignment = Alignment.CenterVertically
                                             ) {
-                                                document.ads[0].getString(context.getString(R.string.data_adname))?.let { it2 ->
+                                                document.ads[0].getString(context.getString(R.string.data_adName))?.let { it2 ->
                                                     Text(
                                                         text = it2,
                                                         modifier = Modifier
@@ -436,7 +436,7 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel) {
                                                 horizontalArrangement = Arrangement.Center,
                                                 verticalAlignment = Alignment.CenterVertically
                                             ) {
-                                                val timestampStart = document.ads[0].getTimestamp(context.getString(R.string.data_periodstart))
+                                                val timestampStart = document.ads[0].getTimestamp(context.getString(R.string.data_periodStart))
                                                 timestampStart?.let { periodStart ->
                                                     val date = periodStart.toDate()
                                                     val formatter = SimpleDateFormat(context.getString(
@@ -460,7 +460,7 @@ fun MainScreen(navController: NavController, adViewModel: AdViewModel) {
                                                 )
                                                 val timestampStop = document.ads[0].getTimestamp(
                                                     context.getString(
-                                                        R.string.data_periodstop
+                                                        R.string.data_periodStop
                                                     ))
                                                 timestampStop?.let { periodStart ->
                                                     val date = periodStart.toDate()

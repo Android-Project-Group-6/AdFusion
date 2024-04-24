@@ -151,7 +151,7 @@ fun TopBar(navController: NavController, adViewModel: AdViewModel, screen:String
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text(stringResource(R.string.drop_signout)) },
+                                text = { Text(stringResource(R.string.drop_signOut)) },
                                 onClick = {
                                     adViewModel.userSignOut(navController)
                                 }

@@ -1,6 +1,5 @@
 package com.example.testandroidpro.view
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.testandroidpro.R
+import com.example.testandroidpro.data.CallBackSupport
 import com.example.testandroidpro.data.DialogString
 import com.example.testandroidpro.data.SupportItem
 import com.example.testandroidpro.viewmodel.AdViewModel
@@ -47,6 +48,7 @@ import java.util.Calendar
 
 @Composable
 fun SupportScreen(navController: NavController, adViewModel: AdViewModel) {
+    val context = LocalContext.current
     var email by remember { mutableStateOf(adViewModel.emailDisplay) }
     var name by remember { mutableStateOf(adViewModel.userInfoStore.value.name) }
     var message by remember { mutableStateOf("") }
@@ -92,7 +94,7 @@ fun SupportScreen(navController: NavController, adViewModel: AdViewModel) {
                         .padding(top = 6.dp, bottom = 6.dp)
                         .fillMaxWidth(0.6f)
                         .let {
-                            if (stringResource(R.string.borderdebug) == "true") it.border(
+                            if (stringResource(R.string.borderDebug) == "true") it.border(
                                 1.dp, Color.Red
                             ) else it
                         }
@@ -156,7 +158,7 @@ fun SupportScreen(navController: NavController, adViewModel: AdViewModel) {
                             )
                         },
                         label = { Text(
-                            text = stringResource(R.string.uesrname),
+                            text = stringResource(R.string.userName),
                             color = MaterialTheme.colorScheme.primary)
                         },
                         placeholder = { Text(
@@ -216,28 +218,34 @@ fun SupportScreen(navController: NavController, adViewModel: AdViewModel) {
                                 time = currentTime
                             )
 
-
-                            adViewModel.writeSupportMessage2(supportItem) { it ->
-                                if (it.state) {
-                                    Log.d("Support", "Message written successfully")
-                                    dialogString.value.width = 400.dp
-                                    dialogString.value.height = 200.dp
-                                    dialogString.value.title = "Message Success"
-                                    dialogString.value.message = it.message
-                                    dialogString.value.button = "Ok"
-                                    dialogString.value.callback = {navController.popBackStack()}
-                                    dialogString.value.show.value = true
-                                } else {
-                                    Log.e("Support", "Failed to write message")
-                                    dialogString.value.width = 400.dp
-                                    dialogString.value.height = 200.dp
-                                    dialogString.value.title = "Message Failed"
-                                    dialogString.value.message = it.message
-                                    dialogString.value.button = "Back"
-                                    dialogString.value.callback = {}
-                                    dialogString.value.show.value = true
-}
-                            }
+                            adViewModel.writeSupportMessage2(
+                                supportItem,
+                                CallBackSupport(
+                                    onSuccess = {
+                                        dialogString.value.width = 400.dp
+                                        dialogString.value.height = 200.dp
+                                        dialogString.value.title =
+                                            context.getString(R.string.dialogMessageSuccess)
+                                        dialogString.value.message =
+                                            context.getString(R.string.dialogMessageSuccessFeedback)
+                                        dialogString.value.button = context.getString(R.string.dialogOk)
+                                        dialogString.value.callback = {navController.popBackStack()}
+                                        dialogString.value.show.value = true
+                                    },
+                                    onFailure = {
+                                        dialogString.value.width = 400.dp
+                                        dialogString.value.height = 200.dp
+                                        dialogString.value.title =
+                                            context.getString(R.string.dialogMessageFailed)
+                                        dialogString.value.message =
+                                            context.getString(R.string.dialogMessageFailedFeedback)
+                                        dialogString.value.button =
+                                            context.getString(R.string.dialogBack)
+                                        dialogString.value.callback = {}
+                                        dialogString.value.show.value = true
+                                    }
+                                )
+                            )
                         },
                     ) {
                         Text(

@@ -13,10 +13,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import androidx.navigation.NavController
-import com.example.testandroidpro.data.FeedBack
-import com.example.testandroidpro.data.Myuser
-import com.example.testandroidpro.data.SupplierAd
-import com.example.testandroidpro.data.SupportItem
+import com.example.testandroidpro.data.*
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentSnapshot
@@ -190,7 +187,7 @@ class AdViewModel: ViewModel()  {
 
     }
 
-    fun modifyInfo(userInfo:Myuser, callback: (FeedBack) -> Unit) {
+    fun modifyInfo(userInfo:Myuser, callBackModifyInfo:CallBackModifyInfo) {
         viewModelScope.launch {
             val currentUser = fAuth.currentUser
             if (currentUser != null) {
@@ -210,14 +207,13 @@ class AdViewModel: ViewModel()  {
 
                 Log.d("signup", currentUser.uid)
                 userState = "Modified successfully"
-                val feedBack = FeedBack(state = true, message = "Modified successfully")
-                callback(feedBack)
+                callBackModifyInfo.onSuccess()
 
             }
         }
     }
 
-    fun userSignup(email:String, passWord1:String, passWord2:String, userInfo:Myuser,callback: (FeedBack) -> Unit) {
+    fun userSignup(email:String, passWord1:String, passWord2:String, userInfo:Myuser,callBackUserSignup:CallBackUserSignup) {
         viewModelScope.launch {
             if(passWord1 == passWord2) {
                 if (email.isNotEmpty() && passWord1.isNotEmpty()) {
@@ -248,31 +244,27 @@ class AdViewModel: ViewModel()  {
                                 currentEmail = currentUser.email.toString()
                                 emailDisplay = currentEmail
                                 readSuppliersData()
-                                val feedBack = FeedBack(state = true, message = "Register Successfully")
-                                callback(feedBack)
+                                callBackUserSignup.onSuccess()
 
                             }
                         }
                         .addOnFailureListener {
                             Log.d("Signup", it.message.toString())
                             userState = it.message.toString()
-                            val feedBack = FeedBack(state = false, message = it.message.toString())
-                            callback(feedBack)
+                            callBackUserSignup.onSystemError(it.message.toString())
                         }
                 } else {
                     userState = "Email or Password is empty"
                     Log.d("Signup", "Email or Password is empty")
-                    val feedBack = FeedBack(state = false, message = "Email or Password is empty")
-                    callback(feedBack)
+                    callBackUserSignup.onEmailPwEmpty()
                 }
             } else {
-                val feedBack = FeedBack(state = false, message = "Email or Password is empty")
-                callback(feedBack)
+                callBackUserSignup.onPwMismatch()
             }
         }
     }
 
-    fun userLogin(email:String, passWord:String, callback: (FeedBack) -> Unit) {
+    fun userLogin(email:String, passWord:String, callBackUserLogin:CallBackUserLogin) {
         viewModelScope.launch {
             if (email.isNotEmpty() && passWord.isNotEmpty()) {
                 fAuth.signInWithEmailAndPassword(email, passWord)
@@ -302,21 +294,18 @@ class AdViewModel: ViewModel()  {
                             emailDisplay = currentEmail
 
                             readSuppliersData()
-                            val feedBack = FeedBack(state = true, message = "Login Successful")
-                            callback(feedBack)
+                             callBackUserLogin.onSuccess()
                         }
                     }
                     .addOnFailureListener {
                         Log.d("userLogin", it.message.toString())
                         userState = "Email or Password is wrong"
-                        val feedBack = FeedBack(state = false, message = "Email or Password is wrong")
-                        callback(feedBack)
+                        callBackUserLogin.onEmailPwError()
                     }
             } else {
                 userState = "Email or Password is empty"
                 Log.d("Login", "Email or Password is empty")
-                val feedBack = FeedBack(state = false, message = "Email or Password is wrong")
-                callback(feedBack)
+                callBackUserLogin.onEmailPwEmpty()
             }
         }
     }
@@ -365,7 +354,7 @@ class AdViewModel: ViewModel()  {
         }
     }
 
-    fun forgotPassword(email:String, callback: (FeedBack) -> Unit){
+    fun forgotPassword(email:String, callBackForgot:CallBackForgot){
         viewModelScope.launch {
             if (!TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 fAuth.sendPasswordResetEmail(email)
@@ -374,20 +363,18 @@ class AdViewModel: ViewModel()  {
                             userState = "The reset email has been sent"
                             Log.d("forgotPassword", "The reset email has been sent.")
                             Log.d("forgotPassword", email)
-                            val feedBack = FeedBack(state = true, message = "The reset email has been sent")
-                            callback(feedBack)
+                            callBackForgot.onSuccess()
                         }
                     }
             }
             else {
                 userState = "User Email error"
-                val feedBack = FeedBack(state = false, message = "User Email error")
-                callback(feedBack)
+                callBackForgot.onFailure()
             }
         }
     }
 
-    fun resetPassword(opw:String, npw1:String, npw2:String, callback: (FeedBack) -> Unit){
+    fun resetPassword(opw:String, npw1:String, npw2:String, callBackReset:CallBackReset){
         viewModelScope.launch {
             if(npw1 == npw2) {
                 fAuth.signInWithEmailAndPassword(currentEmail, opw)
@@ -400,33 +387,31 @@ class AdViewModel: ViewModel()  {
                             user?.updatePassword(npw1)?.addOnCompleteListener { tasking ->
                                 if (tasking.isSuccessful) {
                                     Log.d("resetPassword", tasking.exception?.message.toString())
-                                    val feedBack = FeedBack(state = true, message = "Modify successfully, please login again")
-                                    callback(feedBack)
+
+                                    callBackReset.onSuccess()
 
                                     emailDisplay = currentEmail
                                 } else {
                                     Log.d("resetPassword", tasking.exception?.localizedMessage.toString())
-                                    val feedBack = FeedBack(state = false, message = tasking.exception?.localizedMessage.toString())
-                                    callback(feedBack)
+                                    callBackReset.onSystemError(tasking.exception?.localizedMessage.toString())
                                 }
                             }
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("resetPassword", "signInWithEmail:failure", task.exception)
                             // Incorrect current password, do not allow password change
-                            val feedBack = FeedBack(state = false, message = "Password is incorrect")
-                            callback(feedBack)
+                            callBackReset.onIncorrectPassword()
                         }
                     }
             } else {
                 userState = "Two passwords don't match"
-                val feedBack = FeedBack(state = false, message = "Two passwords don't match")
-                callback(feedBack)
+                callBackReset.onPasswordMismatch()
             }
         }
     }
 
-    fun writeSupportMessage2(supportMessage: SupportItem, callback: (FeedBack) -> Unit) {
+
+    fun writeSupportMessage2(supportMessage: SupportItem, callBackSupport: CallBackSupport) {
         viewModelScope.launch {
 
             db.collection("support")
@@ -434,13 +419,11 @@ class AdViewModel: ViewModel()  {
                 .add(supportMessage)
                 .addOnSuccessListener {
                     Log.d("writeSupportMessage", "Success")
-                    val feedBack = FeedBack(state = true, message = "We will contact you via email within 3 working days.")
-                    callback(feedBack)
+                    callBackSupport.onSuccess()
                 }
                 .addOnFailureListener { e ->
                     Log.w("writeSupportMessage", "Fail", e)
-                    val feedBack = FeedBack(state = false, message = "Failed to write message")
-                    callback(feedBack)
+                    callBackSupport.onFailure()
                 }
         }
     }
