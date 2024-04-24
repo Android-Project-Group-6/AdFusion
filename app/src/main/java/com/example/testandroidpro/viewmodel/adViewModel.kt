@@ -47,7 +47,6 @@ class AdViewModel: ViewModel()  {
     init {
         viewModelScope.launch {
             Log.d("MVVM", "Init")
-//            readSuppliersData()
             checkUserLogin()
         }
     }
@@ -100,7 +99,6 @@ class AdViewModel: ViewModel()  {
     private fun readSuppliersResEnter(){
         viewModelScope.launch {
             val storageReference = FirebaseStorage.getInstance().reference
-//            Log.d("readSuppliersResEnter", "Init readSuppliersResEnter")
             for (supplierAd in adList.value) {
                 val name = supplierAd.supplier.id
                 val enterPoint = supplierAd.ads[0].getString("enterPoint")
@@ -114,8 +112,7 @@ class AdViewModel: ViewModel()  {
                         .addOnSuccessListener {
                             localFilesEnter.add(localFile)
                             Log.d("readSuppliersResEnter", "success $name")
-//                        val fileContent = localFile.readText()
-//                        Log.d("FileContent", fileContent)
+
                         }
                         .addOnFailureListener { e ->
                             Log.e("readSuppliersResEnter", "Error loading PDF", e)
@@ -149,8 +146,7 @@ class AdViewModel: ViewModel()  {
                         .addOnSuccessListener {
                             localFilesIcon.add(localFile)
                             Log.d("Read suppliers Icon Data", "success $name")
-//                        val fileContent = localFile.readText()
-//                        Log.d("FileContent", fileContent)
+
                         }
                         .addOnFailureListener { e ->
                             Log.e("Read suppliers Icon Data", "Error loading PDF", e)
@@ -172,8 +168,7 @@ class AdViewModel: ViewModel()  {
             Log.d("getLocalFile", "No local file found for $iconName")
         } else {
             Log.d("getLocalFile", "success found for $iconName")
-//            val fileContent = file.readText()
-//            Log.d("FileContent", fileContent)
+
         }
         return file
 
@@ -186,8 +181,7 @@ class AdViewModel: ViewModel()  {
             Log.d("getLocalFileEnter", "No local file found for $iconName")
         } else {
             Log.d("getLocalFileEnter", "success found for $iconName")
-//            val fileContent = file.readText()
-//            Log.d("FileContent", fileContent)
+
         }
         return file
 
@@ -214,9 +208,7 @@ class AdViewModel: ViewModel()  {
                 Log.d("signup", currentUser.uid)
                 userState = "Modified successfully"
                 callBackModifyInfo.onSuccess()
-//            navController.popBackStack("signup", inclusive = true)
-//            navController.popBackStack("login", inclusive = true)
-//            navController.navigate("home")
+
             }
         }
     }
@@ -300,8 +292,7 @@ class AdViewModel: ViewModel()  {
                             userState = "Login success"
                             currentEmail = currentUser.email.toString()
                             emailDisplay = currentEmail
-//                            navController.popBackStack("login", inclusive = true)
-//                            navController.navigate("home")
+
                             readSuppliersData()
                              callBackUserLogin.onSuccess()
                         }
@@ -352,9 +343,7 @@ class AdViewModel: ViewModel()  {
                             phonenum = document.getString("phonenum").toString()
                         )
                         Log.d("checkUserLogin", currentUser.uid)
-//                        Log.d("checkUserLogin", userInfoStore.address)
-//                        Log.d("checkUserLogin", userInfoStore.phonenum)
-//                        Log.d("checkUserLogin", userInfoStore.name)
+
                     }
                     .addOnFailureListener { e ->
                         Log.w("checkUserLogin", "Error adding document", e)
@@ -398,8 +387,9 @@ class AdViewModel: ViewModel()  {
                             user?.updatePassword(npw1)?.addOnCompleteListener { tasking ->
                                 if (tasking.isSuccessful) {
                                     Log.d("resetPassword", tasking.exception?.message.toString())
+
                                     callBackReset.onSuccess()
-//                                    userSignOut(navController)
+
                                     emailDisplay = currentEmail
                                 } else {
                                     Log.d("resetPassword", tasking.exception?.localizedMessage.toString())
@@ -420,28 +410,12 @@ class AdViewModel: ViewModel()  {
         }
     }
 
-//    fun writeSupportMessage(navController: NavController, supportMessage: SupportItem,context: Context){
-//        viewModelScope.launch {
-//
-//            db.collection("support")
-//                .add(supportMessage)
-//                .addOnSuccessListener {
-//                    Log.d("writeSupportMessage", "Success")
-//                    showAlertDialog(context,"Support","Success","Confirm") {
-//                        navController.popBackStack()
-//                    }
-//                }
-//                .addOnFailureListener { e ->
-//                    Log.w("writeSupportMessage", "Fail", e)
-//                    showAlertDialog(context,"Support","Failed","Confirm") { }
-//                }
-//        }
-//    }
+
     fun writeSupportMessage2(supportMessage: SupportItem, callBackSupport: CallBackSupport) {
         viewModelScope.launch {
-//            val documentId = supportMessage.email
+
             db.collection("support")
-//                .document(documentId).set
+
                 .add(supportMessage)
                 .addOnSuccessListener {
                     Log.d("writeSupportMessage", "Success")
