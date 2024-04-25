@@ -34,10 +34,7 @@ data class DialogString(
     var callback: (() -> Unit)? = null
 )
 
-//data class FeedBack(
-//    val state:Boolean,
-//    val message:String
-//)
+
 
 data class CallBackSupport(
     val onSuccess: () -> Unit,
