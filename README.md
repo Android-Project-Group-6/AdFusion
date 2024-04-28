@@ -47,3 +47,4 @@ The application follows the MVVM (Model-View-ViewModel) architecture pattern. Th
 
 ### Related Presentation Materials
 - [Business Plan](https://oamk-my.sharepoint.com/:w:/r/personal/t2shsh00_students_oamk_fi/_layouts/15/Doc.aspx?sourcedoc=%7B7BC9FE08-E7D6-4F9F-AE43-2B2DFB4C0590%7D&file=DIN22SP_G6.docx&action=default&mobileredirect=true&DefaultItemOpen=1&login_hint=c3huyi00%40students.oamk.fi&ct=1713790476293&wdOrigin=OFFICECOM-WEB.MAIN.REC&cid=362607f2-2bc1-486e-bed4-75a858100ced&wdPreviousSessionSrc=HarmonyWeb&wdPreviousSession=42bc4bab-e112-4f82-b1da-767f9ac5495d)
+- [Video Demo](https://youtu.be/IkTa3voE8MQ)
